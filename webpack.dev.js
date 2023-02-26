@@ -20,4 +20,5 @@ module.exports = merge(common, {
             },
         ],
     },
+    target: 'web'
 });

@@ -1,13 +1,8 @@
 import './main.css';
+import { toggleSidebar } from './app/toggleSidebar';
+import { sidebarResize } from './app/sidebarResize';
+import { searchBarFocus } from './app/searchBarFocus';
 
-function component(){
-    const element = document.createElement('div');
-    
-    element.textContent = 'Hello webpack!';
-    element.classList.add('hello');
-    console.log('test');
-
-    return element;
-}
-
-document.body.appendChild(component());
+toggleSidebar();
+sidebarResize();
+searchBarFocus();

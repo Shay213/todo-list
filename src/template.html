@@ -7,6 +7,83 @@
     <title>todo-list</title>
 </head>
 <body>
-    <div id="content"></div>
+    <div id="content">
+        <div class="top-panel left">
+            <ul>
+                <li><img class="svg" src="./assets/icons/menu-outline.svg" alt="options"></li>
+                <li><img class="svg" src="./assets/icons/home.svg" alt="home"></li>
+                <li class="search">
+                    <label for="search">
+                        <input type="text" name="search" id="search" placeholder="Search">
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <div class="top-panel right">   
+            <ul>
+                <li><img class="svg" src="./assets/icons/add.svg" alt="add"></li>
+                <li><img class="svg" src="./assets/icons/notifications.svg" alt="notifications"></li>
+                <li><img class="svg" src="./assets/icons/acc.svg" alt="account"></li>
+            </ul>
+        </div> 
+        <div class="sidebar">
+            <ul>
+                <li>
+                    <img class="svg" src="./assets/icons/inbox.svg" alt="inbox">
+                    <p>Inbox</p>
+                    <p class="counter">5</p>
+                </li>
+                <li>
+                    <img class="svg" src="./assets/icons/calendar-number-outline.svg" alt="today">
+                    <p>Today</p>
+                    <p class="counter">8</p>
+                </li>
+                <li>
+                    <img class="svg" src="./assets/icons/calendar-clear-outline.svg" alt="upcoming">
+                    <p>Upcoming</p>
+                </li>
+                <li>
+                    <img class="svg" src="./assets/icons/grid-outline.svg" alt="filters and labels">
+                    <p>Filters & Labels</p>
+                </li>
+            </ul>
+            <ul>
+                <figcaption>
+                    <p>Projects</p>
+                    <img class="svg" src="./assets/icons/add.svg" alt="add">
+                    <img class="svg" src="./assets/icons/more.svg" alt="more">
+                </figcaption>
+                <li>
+                    <p>Home</p>
+                    <p class="counter">7</p>
+                    <img class="svg" src="./assets/icons/more-dots.svg" alt="more">
+                </li>
+            </ul>
+            <div class="handler"></div>
+        </div>
+        <div class="main-container">
+            <div class="container today">
+                <div class="title">
+                    <h3>Today</h3>
+                    <p class="date">Sun 26 Feb</p>
+                    <div class="view">
+                        <img class="svg grayFilter" src="./assets/icons/options-outline.svg" alt="options">
+                        <p>View</p>
+                    </div>
+                </div>
+                <ul class="task">
+                    <figcaption>Overdue</figcaption>
+                    <li>
+                        <!--Priority-->
+                        <!--task name-->
+                        <!--description-->
+                        <!--bottom panel-->
+                        <!--some kind of date or idk-->
+                        <!--path to task-->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -14,18 +14,22 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.html$/i,
+                use: 'html-loader',
+            },
+            {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                use: {
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[hash].[ext]',
-                        outputPath: 'imgs',
-                    }
-                },
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/images/[name].[hash].[ext]'
+                }
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 type: 'asset/resource',
+                generator: {
+                    filename: 'assets/fonts/[name].[hash].[ext]'
+                }
             },
             {
                 test: /\.m?js$/,
@@ -36,10 +40,6 @@ module.exports = {
                         presets: ['@babel/preset-env']
                     }
                 },
-            },
-            {
-                test: /\.html$/i,
-                use: ['html-loader']
             },
         ],
     },
