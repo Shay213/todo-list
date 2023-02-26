@@ -21,7 +21,7 @@
         </div>
         <div class="top-panel right">   
             <ul>
-                <li><img class="svg" src="./assets/icons/add.svg" alt="add"></li>
+                <li class="add-task"><img class="svg" src="./assets/icons/add.svg" alt="add"></li>
                 <li><img class="svg" src="./assets/icons/notifications.svg" alt="notifications"></li>
                 <li><img class="svg" src="./assets/icons/acc.svg" alt="account"></li>
             </ul>
@@ -62,6 +62,32 @@
             <div class="handler"></div>
         </div>
         <div class="main-container">
+            <div class="add-task-container">
+                <div class="top">
+                    <input type="text" name="task-name" id="task-name" placeholder="Task name">
+                    <input type="text" name="description" id="description" placeholder="Description">
+                    <div class="flex-container">
+                        <div class="due-date">
+                            <img class="svg" src="./assets/icons/today-outline.svg" alt="date-due">
+                            Today
+                        </div>
+                        <div class="priority">
+                            <img class="svg" src="./assets/icons/flag-outline.svg" alt="more">
+                            Priority
+                        </div>
+                        <div class="label">
+                            <img class="svg" src="./assets/icons/pricetag-outline.svg" alt="more">
+                            Labels
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom">
+                    <div class="select-project"><img src="./assets/icons/inbox.svg" alt="select-project">Inbox<img src="./assets/icons/more.svg" alt="expand"></div>
+                    <button class="cancel-btn" type="button">Cancel</button>
+                    <button class="add-btn" type="button">Add task</button>
+                </div>
+            </div>
             <div class="container today">
                 <div class="title">
                     <h3>Today</h3>

@@ -311,12 +311,16 @@ img.svg{
 
 .main-container{
     padding: 30px;
+    position: relative;
 }
 
 .main-container .container{
     width: clamp(300px, 65%, 900px);
     margin: 0 auto;
 }
+
+/* add task box styles */
+@import url('./app/addTaskStyles.css');
 
 .main-container .title{
     display: flex;

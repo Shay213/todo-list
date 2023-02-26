@@ -1,0 +1,132 @@
+.add-task-container{
+    background-color: var(--bg-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 1px 1px 30px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    transition: 200ms;
+}
+
+.toggleAddTask{
+    top:20%;
+    transform: translate(-50%, 0%) scale(1);
+    transition: 200ms;
+}
+
+.add-task-container .top,
+.add-task-container .bottom{
+    padding: 15px;
+}
+
+.add-task-container .bottom{
+    border-top: 1px solid var(--sidebar-hover-color);
+}
+
+.add-task-container input{
+    width: 52ch;
+    border: none;
+    outline: none;
+}
+
+.add-task-container input:first-of-type{
+    margin-bottom: 5px;
+}
+
+.add-task-container input:first-of-type,
+.add-task-container input:first-of-type::placeholder{
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.add-task-container input:nth-of-type(2),
+.add-task-container input:nth-of-type(2)::placeholder{
+    font-size: 0.87rem;
+    font-weight: 400;
+}
+
+.add-task-container .flex-container{
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-task-container .flex-container > div{
+    display: flex;
+    font-size: 0.85rem;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    border: 1px solid rgb(206, 206, 206);
+}
+
+.add-task-container .flex-container > div:hover{
+    background-color: var(--sidebar-hover-color);
+    cursor: pointer;
+    transition: 500ms;
+}
+
+.add-task-container .flex-container > div img{
+    width: 0.95rem;
+}
+
+.add-task-container .bottom{
+    display: flex;
+}
+
+.add-task-container .select-project{
+    margin-right: auto;
+}
+
+.add-task-container .bottom > *{
+    padding: 6px 10px;
+}
+
+.add-task-container .bottom > button{
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+}
+
+.add-task-container button.add-btn{
+    margin-left: 10px;
+    background-color: var(--topPanel-color);
+    color: #fff;
+    opacity: 0.6;
+}
+
+.add-task-container button.cancel-btn{
+    background-color: #f5f5f5;
+}
+
+.add-task-container button.cancel-btn:hover{
+    background-color: var(--sidebar-hover-color);
+    cursor: pointer;
+    transition: 500ms;
+}
+
+.add-task-container .select-project{
+    display: flex;
+    border-radius: 5px;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.7;
+}
+
+.add-task-container .select-project img{
+    width: 0.95rem;
+}
+
+.add-task-container .select-project:hover{
+    opacity: 1;
+    background-color: var(--sidebar-hover-color);
+    transition: 500ms;
+    cursor: pointer;
+}
