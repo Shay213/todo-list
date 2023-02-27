@@ -1,4 +1,4 @@
-const addTaskMouseEventManager = (function(){
+const toggleBoxesMouseClick = (function(){
     let elements = []; 
     let invokeOnce = true;
 
@@ -74,4 +74,4 @@ const addTaskMouseEventManager = (function(){
     };
 })();
 
-export default addTaskMouseEventManager
+export default toggleBoxesMouseClick

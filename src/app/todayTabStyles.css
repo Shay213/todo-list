@@ -1,0 +1,123 @@
+.today .title{
+    display: flex;
+    align-items: end;
+    gap: 5px;
+    margin-bottom: 40px;
+}
+
+.today .title h3,
+.today .title p{
+    margin: 0;
+}
+
+.today .title p{
+    font-weight: 100;
+    font-size: 0.85rem;
+}
+
+.today .title p.date{
+    margin-right: auto;
+}
+
+.grayFilter{
+    filter: invert(76%) sepia(0%) saturate(713%) hue-rotate(243deg) brightness(87%) contrast(84%);
+}
+
+.today .title .view{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px;
+}
+
+.today .title .view:hover{
+    background-color: var(--sidebar-hover-color);
+    cursor: pointer;
+    transition: 500ms;
+    border-radius: 3px;
+}
+
+.today ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.95rem;
+}
+
+.today ul li{
+    padding: 10px 0;
+    border-bottom: 1px solid var(--sidebar-hover-color);
+}
+
+.today ul figcaption{
+    padding: 6px 0;
+    border-bottom: 1px solid var(--sidebar-hover-color);
+}
+
+.today figcaption{
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.today .overdue figcaption p,
+.today .overdue figcaption h4{
+    margin: 0;
+}
+
+.today .overdue figcaption p{
+    font-size: 0.8rem;
+    color: var(--topPanel-color);
+}
+
+.today .overdue li .top{
+    display: flex;
+    align-items: flex-start;
+}
+
+.today .overdue li .top .text{
+    margin-right: auto;
+    padding-left: 10px;
+    font-size: 0.9rem;
+    max-width: 52ch;
+}
+
+.today .overdue li .top .text .description{
+    font-size: 0.85rem;
+    font-weight: 300;
+    padding: 5px 0 10px;
+}
+
+.today .overdue p{
+    margin: 0;
+}
+
+.today .overdue li .bottom{
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.today .overdue li .bottom .date{
+    margin-left: 34px;
+} 
+
+.today .overdue li .icons{
+    display: flex;
+    align-items: center;
+}
+
+.today .overdue li .icons div{
+    padding: 2px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.today .overdue li .icons div:hover{
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+    transition: 500ms;
+}

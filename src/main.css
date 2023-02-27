@@ -49,6 +49,13 @@ html{
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Roboto';
+    src: url(./assets/fonts/Roboto/Roboto-Light.ttf) format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
 body{
     margin: 0;
     font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -192,6 +199,7 @@ img.svg{
     top: 0;
     right: -5px;
     opacity: 0;
+    z-index: 20;
 }
 
 .sidebar .handler:hover{
@@ -322,58 +330,78 @@ img.svg{
 /* add task box styles */
 @import url('./app/addTaskStyles.css');
 
-.main-container .title{
-    display: flex;
-    align-items: end;
-    gap: 5px;
-    margin-bottom: 40px;
-}
+/* Today Tab */
+@import url('./app/todayTabStyles.css');
 
-.main-container .title h3,
-.main-container .title p{
-    margin: 0;
-}
-
-.main-container .title p{
-    font-weight: 100;
-    font-size: 0.85rem;
-}
-
-.main-container .title p.date{
-    margin-right: auto;
-}
-
-.grayFilter{
-    filter: invert(76%) sepia(0%) saturate(713%) hue-rotate(243deg) brightness(87%) contrast(84%);
-}
-
-.main-container .title .view{
+.prioOne{
+    width: 20px;
+    height: 20px;
+    background-color: #fee2e2;
+    border-radius: 50%;
+    border: 2px solid #ef4444;
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+}
+
+.prioTwo{
+    width: 20px;
+    height: 20px;
+    background-color: #ffedd5;
+    border-radius: 50%;
+    border: 2px solid #f97316;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioThree{
+    width: 20px;
+    height: 20px;
+    background-color: #dbeafe;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioFour{
+    width: 20px;
+    height: 20px;
+    background-color: #f5f5f4;
+    border-radius: 50%;
+    border: 2px solid #78716c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioOne img{
+    filter: invert(39%) sepia(61%) saturate(3822%) hue-rotate(338deg) brightness(96%) contrast(95%);
+}
+.prioTwo img{
+    filter: invert(66%) sepia(87%) saturate(4239%) hue-rotate(352deg) brightness(100%) contrast(96%);
+}
+.prioThree img{
+    filter: invert(40%) sepia(93%) saturate(1911%) hue-rotate(203deg) brightness(99%) contrast(94%);
+}
+.prioFour img{
+    filter: invert(50%) sepia(7%) saturate(470%) hue-rotate(342deg) brightness(87%) contrast(80%);
+}
+
+.today ul li .priority-box img{
+    width: 0.85rem;
+    opacity: 0;
+    transition: 400ms;
+}
+
+.today ul li .priority-box{
+    cursor: pointer;
     padding: 2px;
 }
 
-.main-container .title .view:hover{
-    background-color: var(--sidebar-hover-color);
-    cursor: pointer;
-    transition: 500ms;
-    border-radius: 3px;
-}
-
-.main-container ul{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0.95rem;
-}
-
-.main-container ul li,
-.main-container ul figcaption{
-    padding: 6px 0;
-    border-bottom: 1px solid var(--sidebar-hover-color);
-}
-
-.main-container figcaption{
-    font-weight: 700;
+.today ul li .priority-box:hover img{   
+    opacity: 1;
+    transition: 400ms;
 }
