@@ -10,6 +10,7 @@
     box-shadow: 1px 1px 30px rgba(0, 0, 0, 0.3);
     z-index: 10;
     transition: 200ms;
+    width: min-content;
 }
 
 .toggleAddTask{
@@ -28,7 +29,7 @@
 }
 
 .add-task-container input{
-    width: 52ch;
+    width: 450px;
     border: none;
     outline: none;
 }
@@ -56,21 +57,26 @@
 }
 
 .add-task-container .flex-container > div{
-    display: flex;
     font-size: 0.85rem;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 6px;
     border-radius: 5px;
     border: 1px solid rgb(206, 206, 206);
     position: relative;
 }
 
-.add-task-container .flex-container > div:hover{
+.add-task-container .flex-container > div .btn{
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    height: 100%;
+    padding: 2px 6px;
+}
+
+.add-task-container .flex-container > div .btn:hover{
     background-color: var(--sidebar-hover-color);
     cursor: pointer;
     transition: 500ms;
 }
+
 
 .add-task-container .flex-container > div img{
     width: 0.95rem;
@@ -86,6 +92,7 @@
 
 .add-task-container .bottom{
     display: flex;
+    position: relative;
 }
 
 .add-task-container .select-project{
@@ -152,6 +159,14 @@
     width: 260px;
     border-radius: 5px;
     z-index: 20;
+    transform: scaleY(0);
+    transition: 100ms;
+    transform-origin: top;
+}
+
+.add-task-container .date-picker.show{
+    transform: scaleY(1);
+    transition: 100ms;
 }
 
 .add-task-container .date-picker .type-date{
@@ -362,4 +377,178 @@
 
 .add-task-container .date-picker .add-time .time-picker .btns{
     padding-top: 10px;
+}
+
+
+/* Priority picker */
+.add-task-container .priority-picker{
+    background-color: #fff;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    width: max-content;
+    border-radius: 5px;
+    z-index: 20;
+    transform: scale(0);
+    transition: 100ms;
+    transform-origin: top;
+}
+
+.add-task-container .priority-picker.show{
+    transform: scale(1);
+    transition: 100ms;
+}
+
+.add-task-container .priority-picker > div{
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.add-task-container .priority-picker > div:hover{
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+    transition: 500ms;
+}
+
+.add-task-container .priority-picker > div p{
+    margin: 0;
+    padding: 0 10px;
+}
+
+.add-task-container .priority-picker > div img:last-of-type{
+    filter: invert(44%) sepia(74%) saturate(3398%) hue-rotate(334deg) brightness(96%) contrast(83%);
+    width: 1.2rem;
+    opacity: 0;
+}
+.add-task-container .priority-picker > div.checked img:last-of-type{
+    opacity: 1;
+}
+
+.add-task-container .priority-picker > div.prio1 img:first-of-type{
+    filter: invert(44%) sepia(74%) saturate(3398%) hue-rotate(334deg) brightness(96%) contrast(83%);
+}
+.add-task-container .priority-picker > div.prio2 img:first-of-type{
+    filter: invert(70%) sepia(49%) saturate(4175%) hue-rotate(1deg) brightness(105%) contrast(92%);
+}
+.add-task-container .priority-picker > div.prio3 img:first-of-type{
+    filter: invert(45%) sepia(41%) saturate(982%) hue-rotate(178deg) brightness(102%) contrast(94%);
+}
+
+/* Label Picker*/
+.add-task-container .label-picker{
+    width: max-content;
+    background-color: #fff;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    border-radius: 5px;
+    z-index: 20;
+    transform: scale(0);
+    transition: 100ms;
+    transform-origin: top;
+}
+.add-task-container .label-picker.show{
+    transform: scale(1);
+    transition: 100ms;
+}
+
+.add-task-container .label-picker > div{
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-task-container .label-picker > div:hover{
+    transition: 500ms;
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+}
+
+.add-task-container .label-picker > div img{
+    filter: invert(71%) sepia(3%) saturate(621%) hue-rotate(341deg) brightness(93%) contrast(88%);
+    width: 1.2rem
+}
+
+.add-task-container .label-picker > div p{
+    margin: 0;
+}
+
+/* project picker */
+.add-task-container .bottom .project-picker{
+    width: max-content;
+    background-color: #fff;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    border-radius: 5px;
+    z-index: 20;
+    transform: scale(0);
+    transition: 100ms;
+    transform-origin: top;
+}
+
+.add-task-container .bottom .project-picker.show{
+    transform: scale(1);
+    transition: 100ms;
+}
+
+.add-task-container .bottom .project-picker input{
+    width: 32ch;
+    font-size: 0.85rem;
+    margin: 0;
+    padding: 0;
+}
+
+.add-task-container .bottom .project-picker input::placeholder{
+    font-size: 0.85rem;
+}
+
+.add-task-container .bottom .project-picker > div{
+    display: flex;
+    font-size: 0.9rem;
+    gap: 8px;
+    margin-top: 5px;
+    border-top: 1px solid var(--sidebar-hover-color);
+}
+
+.add-task-container .bottom .project-picker p{
+    margin: 0;
+    padding: 5px 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.add-task-container .bottom .project-picker > ul figcaption{
+    font-size: 0.9rem;
+    font-weight: 400;
+    position: relative;
+    padding: 0;
+    padding-left: 23px;
+}
+
+.add-task-container .bottom .project-picker > ul figcaption::before{
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 20px;
+    height: 20px;
+    background: url('../assets/icons/dot.svg');
+    filter: invert(60%) sepia(44%) saturate(0%) hue-rotate(255deg) brightness(97%) contrast(98%);
+}
+
+.add-task-container .bottom .project-picker > ul > *{
+    border: none;
+}
+
+.add-task-container .bottom .project-picker > ul li{
+    font-size: 0.90rem;
+    padding-left: 30px;
 }

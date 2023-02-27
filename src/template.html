@@ -68,8 +68,11 @@
                     <input type="text" name="description" id="description" placeholder="Description">
                     <div class="flex-container">
                         <div class="due-date">
-                            <img class="svg" src="./assets/icons/today-outline.svg" alt="date-due">
-                            Today
+                            <div class="btn">
+                                <img class="svg" src="./assets/icons/today-outline.svg" alt="date-due">
+                                Today
+                            </div>
+                            
                             <div class="date-picker">
                                 <div class="type-date">
                                     <input type="text" name="type-due-date" id="type-due-date" placeholder="Type a due date">
@@ -119,20 +122,67 @@
                             </div>
                         </div>
                         <div class="priority">
-                            <img class="svg" src="./assets/icons/flag-outline.svg" alt="more">
-                            Priority
+                            <div class="btn">
+                                <img class="svg" src="./assets/icons/flag-outline.svg" alt="more">
+                                Priority
+                            </div>
+                            <div class="priority-picker">
+                                <div class="prio1">
+                                    <img src="./assets/icons/flag.svg" alt="priority 1">
+                                    <p>Priority 1</p>
+                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                                </div>
+                                <div class="prio2">
+                                    <img src="./assets/icons/flag.svg" alt="priority 2">
+                                    <p>Priority 2</p>
+                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                                </div>
+                                <div class="prio3">
+                                    <img src="./assets/icons/flag.svg" alt="priority 3">
+                                    <p>Priority 3</p>
+                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                                </div>
+                                <div class="prio4 checked">
+                                    <img src="./assets/icons/flag-outline.svg" alt="priority 4">
+                                    <p>Priority 4</p>
+                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                                </div>        
+                            </div>
                         </div>
                         <div class="label">
-                            <img class="svg" src="./assets/icons/pricetag-outline.svg" alt="more">
-                            Labels
+                            <div class="btn">
+                                <img class="svg" src="./assets/icons/label-outline.svg" alt="more">
+                                Labels
+                            </div>
+                            <div class="label-picker">
+                                <div>
+                                    <img src="./assets/icons/label-fill.svg" alt="label">
+                                    <p>aasdfa</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="bottom">
-                    <div class="select-project"><img src="./assets/icons/inbox.svg" alt="select-project">Inbox<img src="./assets/icons/more.svg" alt="expand"></div>
+                    <div class="select-project">
+                        <img src="./assets/icons/inbox.svg" alt="select-project">
+                        Inbox
+                        <img src="./assets/icons/more.svg" alt="expand">
+                    </div>
                     <button class="cancel-btn" type="button">Cancel</button>
                     <button class="add-btn" type="button">Add task</button>
+                    <div class="project-picker">
+                        <input type="text" name="project" id="project" placeholder="Type a project">
+                        <div class="inbox">
+                            <img src="./assets/icons/inbox.svg" alt="inbox">
+                            <p>Inbox</p>
+                        </div>
+                        <ul>
+                            <figcaption><p>Home</p></figcaption>
+                            <li>EL</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="container today">
