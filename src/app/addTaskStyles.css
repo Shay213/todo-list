@@ -63,6 +63,7 @@
     padding: 2px 6px;
     border-radius: 5px;
     border: 1px solid rgb(206, 206, 206);
+    position: relative;
 }
 
 .add-task-container .flex-container > div:hover{
@@ -73,6 +74,14 @@
 
 .add-task-container .flex-container > div img{
     width: 0.95rem;
+}
+
+.add-task-container .flex-container .due-date{
+    color: #0d9488;
+}
+
+.add-task-container .flex-container .due-date img{
+    filter: invert(42%) sepia(17%) saturate(4200%) hue-rotate(140deg) brightness(94%) contrast(90%);
 }
 
 .add-task-container .bottom{
@@ -129,4 +138,228 @@
     background-color: var(--sidebar-hover-color);
     transition: 500ms;
     cursor: pointer;
+}
+
+/* Date picker */
+
+.add-task-container .date-picker{
+    color: #000;
+    background-color: #fff;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    width: 260px;
+    border-radius: 5px;
+    z-index: 20;
+}
+
+.add-task-container .date-picker .type-date{
+    padding: 15px;
+    border-bottom: 1px solid var(--sidebar-hover-color);
+}
+
+.add-task-container .date-picker .type-date input{
+    width: 100%;
+    font-size: 0.85rem;
+    margin: 0;
+    padding: 0;
+    font-weight: 100;
+}
+
+.add-task-container .date-picker .type-date input::placeholder{
+    font-size: 0.85rem;
+    font-weight: 100;
+}
+
+.add-task-container .date-picker .pick-icon{
+    padding: 10px;
+}
+
+.add-task-container .date-picker .pick-icon > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.add-task-container .date-picker .pick-icon > div span{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.add-task-container .date-picker .pick-icon > div:hover{
+    background-color: var(--sidebar-hover-color);
+    cursor: pointer;
+    transition: 500ms;
+}
+
+.add-task-container .date-picker .pick-icon > div p{
+    margin: 0;
+}
+
+.add-task-container .date-picker .pick-icon > div > p{
+    font-weight: 100;
+    font-size: 0.8rem;
+}
+
+.add-task-container .date-picker .pick-icon > div img{
+    width: 1.3rem;
+}
+
+.add-task-container .date-picker .pick-icon > div:first-of-type img{
+    filter: invert(78%) sepia(27%) saturate(4607%) hue-rotate(3deg) brightness(99%) contrast(94%);
+}
+.add-task-container .date-picker .pick-icon > div:nth-of-type(2) img{
+    filter: invert(76%) sepia(55%) saturate(7086%) hue-rotate(166deg) brightness(97%) contrast(90%);
+}
+.add-task-container .date-picker .pick-icon > div:last-of-type img{
+    filter: invert(100%) sepia(31%) saturate(324%) hue-rotate(298deg) brightness(87%) contrast(91%);
+}
+
+.add-task-container .date-picker .calendar{
+    border-top: 1px solid var(--sidebar-hover-color);
+    padding: 0px 15px;
+    overflow: auto;
+    height: 200px;
+    position: relative;
+}
+
+.add-task-container .date-picker .calendar ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.add-task-container .date-picker .calendar .nav{
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 50;
+}
+
+.add-task-container .date-picker .calendar .nav p{
+    margin: 0;
+}
+
+.add-task-container .date-picker .calendar .nav img{
+    filter: invert(67%) sepia(0%) saturate(565%) hue-rotate(240deg) brightness(106%) contrast(63%);
+}
+
+.add-task-container .date-picker .calendar .nav .icons{
+    display: flex;
+}
+
+.add-task-container .date-picker .calendar .nav .icons > div{
+    padding: 3px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-task-container .date-picker .calendar .nav .icons > div:hover{
+    background-color: var(--sidebar-hover-color);
+    cursor: pointer;
+    transition: 500ms;
+}
+
+.add-task-container .date-picker .calendar .bottom{
+    border: none;
+    padding-top: 0;
+    display: flex;
+}
+
+.add-task-container .date-picker .calendar .bottom ul{
+    display: flex;
+    border: none;
+}
+
+.add-task-container .date-picker .calendar .bottom ul li{
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.add-task-container .date-picker .calendar ul{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    justify-items: center;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.add-task-container .date-picker .calendar ul li{
+    border: none;
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+
+.add-task-container .date-picker .add-time{
+    border-top: 1px solid var(--sidebar-hover-color);
+    padding: 5px 0 5px 15px;
+    position: relative;
+}
+
+.add-task-container .date-picker .add-time p{
+    cursor: pointer;
+    color: var(--topPanel-color);
+    font-weight: 700;
+    margin: 0;
+    padding: 5px 0;
+    width: max-content;
+}
+
+.add-task-container .date-picker .add-time .time-picker{
+    position: absolute;
+    width: 200px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 10px 15px;
+    bottom: 100%;
+    left: -20%;
+    z-index: 100;
+    background-color: #fff;
+}
+
+.add-task-container .date-picker .add-time .time-picker > div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.add-task-container .date-picker .add-time .time-picker input{
+    width: 100px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--sidebar-hover-color);
+    font-size: 0.85rem;
+    font-weight: 100;
+    padding: 4px;
+    border-radius: 5px;
+}
+
+.add-task-container .date-picker .add-time .time-picker input::placeholder{
+    font-size: 0.85rem;
+    font-weight: 100;
+}
+.add-task-container .date-picker .add-time .time-picker input:focus{
+    outline: 1px solid var(--sidebar-hover-color);
+}
+
+.add-task-container .date-picker .add-time .time-picker .time{
+    border-bottom: 1px solid var(--sidebar-hover-color);
+    padding-bottom: 10px;
+}
+
+.add-task-container .date-picker .add-time .time-picker .btns{
+    padding-top: 10px;
 }

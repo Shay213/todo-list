@@ -235,7 +235,7 @@ img.svg{
 }
 
 .sidebar ul:first-child li:nth-of-type(2) img{
-    filter: invert(63%) sepia(25%) saturate(1398%) hue-rotate(41deg) brightness(108%) contrast(85%);
+    filter: invert(42%) sepia(17%) saturate(4200%) hue-rotate(140deg) brightness(94%) contrast(90%);
 }
 .sidebar ul:first-child li:nth-of-type(3) img {
     filter: invert(26%) sepia(34%) saturate(7211%) hue-rotate(263deg) brightness(93%) contrast(96%);
