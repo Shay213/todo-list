@@ -114,6 +114,7 @@
     background-color: var(--topPanel-color);
     color: #fff;
     opacity: 0.6;
+    cursor:not-allowed;
 }
 
 .add-task-container button.cancel-btn{

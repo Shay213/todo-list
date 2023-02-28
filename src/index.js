@@ -2,11 +2,11 @@ import './main.css';
 import { toggleSidebar } from './app/toggleSidebar';
 import { sidebarResize } from './app/sidebarResize';
 import { searchBarFocus } from './app/searchBarFocus';
-import toggleBoxesMouseClick from './app/toggleBoxesMouseClick';
+import addTaskBox from './app/addTaskBox';
 import tasks from './app/tasks';
 
 toggleSidebar();
 sidebarResize();
 searchBarFocus();
-toggleBoxesMouseClick.run();
+addTaskBox.activateBtns();
 tasks.displayTasks();

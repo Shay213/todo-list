@@ -61,14 +61,28 @@ const tasks = (function(){
     </li>
     `;
     const overdue = document.querySelector('.today .overdue');
+    let newTask = null;
     
-    function Task(priority = 4, taskName, description = '', date, projectName = 'inbox'){
+    function Task(priority, taskName, description, dueDate, projectName, labels){
+        this.id = allTasks.length+1,
+        this.creationDate = new Date(),
         this.priority = priority,
         this.taskName = taskName,
         this.description = description,
-        this.date = date,
-        this.projectName = projectName  
+        this.dueDate = dueDate,
+        this.projectName = projectName,
+        this.labels = labels
     }
+
+    Task.prototype.pushToTasks = function(){
+        allTasks.push(this);
+    };
+
+    const createTask = function({priority, taskName, description, dueDate, projectName, labels}){
+        newTask = new Task(priority, taskName, description, dueDate, projectName, labels); 
+        newTask.pushToTasks();
+        console.log(allTasks);
+    };
 
     const displayTasks = function(){
         allTasks.forEach(el => {
@@ -90,7 +104,8 @@ const tasks = (function(){
     };
 
     return {
-        displayTasks
+        displayTasks,
+        createTask
     };
     
 })();
