@@ -50,6 +50,51 @@
     font-weight: 400;
 }
 
+.add-task-container .inputs{
+    position: relative;
+}
+
+.add-task-container .inputs .label-box{
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 60%;
+    left: 0;
+    border-radius: 5px;
+    z-index: 20;
+    transform: scale(0);
+    transition: 100ms;
+    transform-origin: top;
+}
+.add-task-container .inputs .label-box.show{
+    transform: scale(1);
+    transition: 100ms;
+}
+
+.add-task-container .inputs .label-box > div img{
+    transform: rotate(90deg);
+    width: 0.95rem;
+}
+
+.add-task-container .inputs .label-box > div p{
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.add-task-container .inputs .label-box > div{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.add-task-container .inputs .label-box > div:hover{
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+    transition: 400ms;
+}
+
 .add-task-container .flex-container{
     margin-top: 20px;
     display: flex;
@@ -456,6 +501,10 @@
     transition: 100ms;
 }
 
+.add-task-container .label img{
+    transform: rotate(90deg);
+}
+
 .add-task-container .label-picker > div{
     padding: 10px 15px;
     display: flex;
@@ -469,13 +518,25 @@
     background-color: var(--sidebar-hover-color);
 }
 
-.add-task-container .label-picker > div img{
-    filter: invert(71%) sepia(3%) saturate(621%) hue-rotate(341deg) brightness(93%) contrast(88%);
-    width: 1.2rem
-}
-
 .add-task-container .label-picker > div p{
     margin: 0;
+    width: 15ch;
+}
+
+.add-task-container .label-picker .check-box{
+    width: 17px;
+    height: 17px;
+    border: 1px solid #525252;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-task-container .label-picker .check-box img{
+    transform: rotate(0);
+    opacity: 0;
+    filter: invert(100%) sepia(99%) saturate(0%) hue-rotate(182deg) brightness(109%) contrast(101%);
 }
 
 /* project picker */

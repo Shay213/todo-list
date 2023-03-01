@@ -1,6 +1,7 @@
 import tasks from "./tasks";
 import fullFlag from '../assets/icons/flag.svg';
 import flagOutline from '../assets/icons/flag-outline.svg';
+import tag from '../assets/icons/tag.svg';
 
 const addTaskBox = (function(){
     let elements = []; 
@@ -9,10 +10,12 @@ const addTaskBox = (function(){
     const cancelBtn = document.querySelector('.add-task-container button.cancel-btn');
     const taskName = document.getElementById('task-name');
     const description = document.getElementById('description');
+    const labelBox = document.querySelector('.add-task-container .label-box');
     let priority = null;
     let dueDate = null;
     let projectName = null;
     let labels = null;
+    let testLabels = ['cat', 'dog', 'horse', 'lion', 'bird', 'dino', 'driver', 'tree', 'carpet', 'ham', 'horny', 'lol', 'less', 'likely']
 
     const _addTask = function(e){
         tasks.createTask({
@@ -26,16 +29,52 @@ const addTaskBox = (function(){
     };
 
     const _checkTaskNameEmpty = function(){
-        taskName.addEventListener('keyup', e => {
-            if(taskName.value === ''){
-                addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
-                addBtn.removeEventListener('click', _addTask);
-            }
-            else{
-                addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
-                addBtn.addEventListener('click', _addTask, {once: true});
-            }
+        if(taskName.value === ''){
+            addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
+            addBtn.removeEventListener('click', _addTask);
+        }
+        else{
+            addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
+            addBtn.addEventListener('click', _addTask, {once: true});
+        }
+    };
+
+    const _searchInExistingLabels = function(currString){
+        let withoutAtSign = currString.split('@');
+        let re = new RegExp(`${withoutAtSign[1]}`, 'g');
+        return testLabels.filter(el => re.test(el));
+    };
+
+    taskName.addEventListener('keyup', e => {
+        _checkTaskNameEmpty();
+        let currString = e.target.value;
+        
+        //where user clicked in input
+        //taskName.addEventListener('click', e => console.log(e.target.selectionStart));
+
+        let stringBasedOnCaretPos = currString.slice(0, e.target.selectionStart);
+        let currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
+        if(currLabel){
+            const matches = _searchInExistingLabels(currLabel[0]);
+            _createLabelBoxContent(matches);
+            _showLabelBox();
+        }else{
+            _hideElWithClass(/label-box/, 'show');
+        }
+    });
+
+    const _createLabelBoxContent = function(matches){
+        const getTemplate = (labelName) => `<div><img src="${tag}" alt="label"><p>${labelName}</p></div>`;
+        let content = '';
+        matches.forEach(el => {
+            content += getTemplate(el);
         });
+        labelBox.innerHTML = content;
+    };
+
+    const _showLabelBox = function(){
+        labelBox.classList.add('show');
+        elements.push({element: labelBox, className: 'show'});
     };
 
     const _hideElWithClass = function(regex, removeClass){
@@ -99,7 +138,7 @@ const addTaskBox = (function(){
         function show(e){
             e.stopImmediatePropagation();
             if(e.currentTarget.classList.contains('btn')){
-                _hideElWithClass(/date-picker|priority-picker|label-picker|project-picker/, className);
+                _hideElWithClass(/date-picker|priority-picker|label-picker|project-picker|label-box/, className);
                 _activateChoices(btn, element, className);
             }
 
@@ -154,8 +193,6 @@ const addTaskBox = (function(){
             element: document.querySelector('.add-task-container .bottom .project-picker'),
             className: 'show'
         });
-
-        _checkTaskNameEmpty();
     };
 
     return {
