@@ -15,7 +15,10 @@ const addTaskBox = (function(){
     let dueDate = null;
     let projectName = null;
     let labels = null;
-    let testLabels = ['cat', 'dog', 'horse', 'lion', 'bird', 'dino', 'driver', 'tree', 'carpet', 'ham', 'horny', 'lol', 'less', 'likely']
+    let testLabels = ['cat', 'dog', 'horse', 'lion', 'bird', 'dino', 'driver', 'tree', 'carpet', 'ham', 'horny', 'lol', 'less', 'likely'];
+    let currLabelsInsideInput = [];
+    let labelData = {};
+    let caretBeforeAtSign = [false, null];
 
     const _addTask = function(e){
         tasks.createTask({
@@ -45,23 +48,68 @@ const addTaskBox = (function(){
         return testLabels.filter(el => re.test(el));
     };
 
-    taskName.addEventListener('keyup', e => {
+    taskName.addEventListener('keyup', lookForLabels);
+    taskName.addEventListener('click', lookForLabels);
+
+    function lookForLabels(e){
         _checkTaskNameEmpty();
         let currString = e.target.value;
-        
-        //where user clicked in input
-        //taskName.addEventListener('click', e => console.log(e.target.selectionStart));
-
-        let stringBasedOnCaretPos = currString.slice(0, e.target.selectionStart);
+        let caretPos = e.target.selectionStart;
+        let stringBasedOnCaretPos = currString.slice(0, caretPos);
         let currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
+
+        if(caretBeforeAtSign[0] && e.key === 'Backspace') {
+            const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+            wrapper.removeChild(currLabelsInsideInput[caretBeforeAtSign[1]].redBox);
+            currLabelsInsideInput.splice(caretBeforeAtSign[1],1);
+            caretBeforeAtSign = [false, null];
+        };
+        
         if(currLabel){
             const matches = _searchInExistingLabels(currLabel[0]);
             _createLabelBoxContent(matches);
             _showLabelBox();
+            const index = currLabelsInsideInput.findIndex(el => el.start === currLabel.index);
+            //areWeInExistingLabel
+            if(index === -1){
+                currLabelsInsideInput.push({
+                    start: currLabel.index,
+                    end: currLabel.index + currLabel[0].length-1,
+                    redBox: _createRedBox(currString.slice(0, currLabel.index), currLabel[0]),
+                });
+            }else{
+                //update existing red box
+                currLabelsInsideInput[index].start =  currLabel.index;
+                currLabelsInsideInput[index].end = currLabel.index + currLabel[0].length-1;
+                currLabelsInsideInput[index].redBox.style.width = `${_getTextWidth(currLabel[0], 'bold 0.95rem Arial')}px`;
+                
+                // if start and end equals 0 check for backspace
+                if(currLabelsInsideInput[index].start === currLabelsInsideInput[index].end) caretBeforeAtSign = [true, index];
+            }
         }else{
             _hideElWithClass(/label-box/, 'show');
         }
-    });
+    };
+
+    const _getTextWidth = function(text, font){
+        const canvas = _getTextWidth.canvas || (_getTextWidth.canvas = document.createElement('canvas'));
+        const ctx = canvas.getContext('2d');
+        ctx.font = font;
+        const metrics = ctx.measureText(text);
+        return metrics.width;
+    };
+
+    const _createRedBox = function(startStr, currStr){
+        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const el = document.createElement('div');
+        const left = _getTextWidth(startStr, 'bold 0.95rem Arial') + 2;
+        const txtWidth = _getTextWidth(currStr, 'bold 0.95rem Arial');
+        
+        el.classList.add('label-added');
+        el.style.cssText = `left: ${left}px; width: ${txtWidth}px`;
+        wrapper.appendChild(el);
+        return el;
+    };
 
     const _createLabelBoxContent = function(matches){
         const getTemplate = (labelName) => `<div><img src="${tag}" alt="label"><p>${labelName}</p></div>`;
@@ -159,7 +207,7 @@ const addTaskBox = (function(){
             let lastEl = elements[elements.length-1].element;
             let lastClassName = elements[elements.length-1].className;
             
-            if(!(e.target === lastEl || lastEl.contains(e.target))){
+            if(!(e.target === lastEl || lastEl.contains(e.target) || (e.target.id === 'task-name') && lastEl.classList.contains('label-box'))){
                 lastEl.classList.remove(`${lastClassName}`);
                 elements.pop();
             }

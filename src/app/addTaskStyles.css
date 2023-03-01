@@ -32,20 +32,37 @@
     width: 450px;
     border: none;
     outline: none;
+    background-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.add-task-container input:first-of-type{
-    margin-bottom: 5px;
+.add-task-container .top .inputs div:first-of-type{
+    position: relative;
 }
 
-.add-task-container input:first-of-type,
-.add-task-container input:first-of-type::placeholder{
+.add-task-container .top .inputs div .label-added{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #fecaca;
+    z-index: -1;
+    border-radius: 3px;
+}
+
+.add-task-container .top .inputs #task-name,
+.add-task-container .top .inputs #task-name::placeholder{
     font-size: 0.95rem;
     font-weight: 700;
 }
 
-.add-task-container input:nth-of-type(2),
-.add-task-container input:nth-of-type(2)::placeholder{
+.add-task-container .top .inputs #description{
+    margin-top: 6px;
+}
+
+.add-task-container .top .inputs #description,
+.add-task-container .top .inputs #description::placeholder{
     font-size: 0.87rem;
     font-weight: 400;
 }
@@ -56,6 +73,8 @@
 
 .add-task-container .inputs .label-box{
     width: 100%;
+    max-height: 150px;
+    overflow: auto;
     background-color: #fff;
     box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
     position: absolute;
@@ -87,6 +106,7 @@
     align-items: center;
     gap: 10px;
     padding: 10px;
+    border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
 .add-task-container .inputs .label-box > div:hover{
