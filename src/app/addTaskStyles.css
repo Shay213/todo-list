@@ -109,7 +109,8 @@
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
-.add-task-container .inputs .label-box > div:hover{
+.add-task-container .inputs .label-box > div:hover,
+.add-task-container .inputs .label-box > div.active{
     cursor: pointer;
     background-color: var(--sidebar-hover-color);
     transition: 400ms;

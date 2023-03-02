@@ -16,9 +16,9 @@ const addTaskBox = (function(){
     let projectName = null;
     let labels = null;
     let testLabels = ['cat', 'dog', 'horse', 'lion', 'bird', 'dino', 'driver', 'tree', 'carpet', 'ham', 'horny', 'lol', 'less', 'likely'];
-    let currLabelsInsideInput = [];
-    let labelData = {};
-    let caretBeforeAtSign = [false, null];
+    let isLabelBoxVisible = false;
+    let activeLabelBoxItem;
+    let currLabelBasedOnCaretPos;
 
     const _addTask = function(e){
         tasks.createTask({
@@ -42,52 +42,63 @@ const addTaskBox = (function(){
         }
     };
 
-    const _searchInExistingLabels = function(currString){
+    const _searchInExistingLabels = function(currString, fullMatch){
         let withoutAtSign = currString.split('@');
-        let re = new RegExp(`${withoutAtSign[1]}`, 'g');
+        let re;
+        fullMatch ? re = new RegExp(`^${withoutAtSign[1]}$`, 'i') : re = new RegExp(`^${withoutAtSign[1]}`, 'i');
         return testLabels.filter(el => re.test(el));
     };
 
-    taskName.addEventListener('keyup', lookForLabels);
+    taskName.addEventListener('input', lookForLabels);
     taskName.addEventListener('click', lookForLabels);
+    document.addEventListener('keydown', arrowMoveInsideLabelBox);
+    //disable arrow up/down inside input field
+    taskName.addEventListener('keydown', e => {
+        if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+    });
 
     function lookForLabels(e){
         _checkTaskNameEmpty();
-        let currString = e.target.value;
-        let caretPos = e.target.selectionStart;
-        let stringBasedOnCaretPos = currString.slice(0, caretPos);
-        let currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
+        
+        let currString;
+        let caretPos;
+        if(e === taskName){
+            currString = e.value;
+            caretPos = e.selectionStart;
+        }else{
+            currString = e.target.value;
+            caretPos = e.target.selectionStart;
+        }
 
-        if(caretBeforeAtSign[0] && e.key === 'Backspace') {
-            const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
-            wrapper.removeChild(currLabelsInsideInput[caretBeforeAtSign[1]].redBox);
-            currLabelsInsideInput.splice(caretBeforeAtSign[1],1);
-            caretBeforeAtSign = [false, null];
-        };
+        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const allRedBoxes = wrapper.querySelectorAll('.label-added');
+        const stringBasedOnCaretPos = currString.slice(0, caretPos);
+        const currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
+        const re = /@[^ @]+/g;
+        let allMatches = [];
+        let match;
+
+        allRedBoxes.forEach(el => wrapper.removeChild(el));
+        while ((match = re.exec(currString)) != null) {
+            allMatches.push({
+                str: match[0],
+                start: match.index,
+                end: (match.index + match[0].length-1),
+                redBox: _createRedBox(currString.slice(0, match.index), match[0])
+            });
+        }
         
         if(currLabel){
-            const matches = _searchInExistingLabels(currLabel[0]);
-            _createLabelBoxContent(matches);
+            const matches = _searchInExistingLabels(currLabel[0], false);
+            const fullMatch = _searchInExistingLabels(currLabel[0], true);
+            currLabelBasedOnCaretPos = currLabel[0];
+            
+            _createLabelBoxContent(matches, fullMatch, currLabel[0]);
             _showLabelBox();
-            const index = currLabelsInsideInput.findIndex(el => el.start === currLabel.index);
-            //areWeInExistingLabel
-            if(index === -1){
-                currLabelsInsideInput.push({
-                    start: currLabel.index,
-                    end: currLabel.index + currLabel[0].length-1,
-                    redBox: _createRedBox(currString.slice(0, currLabel.index), currLabel[0]),
-                });
-            }else{
-                //update existing red box
-                currLabelsInsideInput[index].start =  currLabel.index;
-                currLabelsInsideInput[index].end = currLabel.index + currLabel[0].length-1;
-                currLabelsInsideInput[index].redBox.style.width = `${_getTextWidth(currLabel[0], 'bold 0.95rem Arial')}px`;
-                
-                // if start and end equals 0 check for backspace
-                if(currLabelsInsideInput[index].start === currLabelsInsideInput[index].end) caretBeforeAtSign = [true, index];
-            }
+            _labelBoxChooseByClicking(currLabel[0]);
         }else{
             _hideElWithClass(/label-box/, 'show');
+            isLabelBoxVisible = false;
         }
     };
 
@@ -102,6 +113,7 @@ const addTaskBox = (function(){
     const _createRedBox = function(startStr, currStr){
         const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
         const el = document.createElement('div');
+        // +2 because of padding
         const left = _getTextWidth(startStr, 'bold 0.95rem Arial') + 2;
         const txtWidth = _getTextWidth(currStr, 'bold 0.95rem Arial');
         
@@ -111,18 +123,97 @@ const addTaskBox = (function(){
         return el;
     };
 
-    const _createLabelBoxContent = function(matches){
+    const _createLabelBoxContent = function(matches, fullMatch, currStr){
         const getTemplate = (labelName) => `<div><img src="${tag}" alt="label"><p>${labelName}</p></div>`;
         let content = '';
-        matches.forEach(el => {
-            content += getTemplate(el);
-        });
-        labelBox.innerHTML = content;
+        
+        if(fullMatch.length != 0) labelBox.innerHTML = content;
+        else{
+            if(currStr != '@') content += `<div><p>To create label <span>${currStr}</span> click here or press (space, @, enter)</p></div>`;
+
+            matches.forEach(el => {
+                content += getTemplate(el);
+            });
+            labelBox.innerHTML = content;
+            let span = labelBox.querySelector('span');
+            if(span) span.style.color = '#f87171';
+        }
     };
 
     const _showLabelBox = function(){
+        const [...labelElements] = labelBox.querySelectorAll('div');
+
         labelBox.classList.add('show');
         elements.push({element: labelBox, className: 'show'});
+
+        isLabelBoxVisible = true;
+        labelBox.scrollTop = 0;
+        activeLabelBoxItem = 0;
+        if(labelElements.length != 0){
+            let currActive = labelElements.find(el => el.classList.contains('active'));
+            if(currActive) currActive.classList.remove('active');
+            labelElements[0].classList.add('active');
+        }
+    };
+
+    function arrowMoveInsideLabelBox(e){
+        const labelElements = labelBox.querySelectorAll('div');
+        if(labelElements.length === 0 )return;
+        if((e.key === 'Enter' || e.key === 'ArrowUp' || e.key === 'ArrowDown') && isLabelBoxVisible){
+            
+            if(e.key === 'Enter'){
+                _labelBoxChoice(labelElements[activeLabelBoxItem], currLabelBasedOnCaretPos);
+            }else{
+                labelElements[activeLabelBoxItem].classList.remove('active');
+                e.key === 'ArrowUp' ? activeLabelBoxItem-- : activeLabelBoxItem++;
+                if(activeLabelBoxItem < 0) activeLabelBoxItem = 0;
+                if(activeLabelBoxItem > labelElements.length-1) activeLabelBoxItem = labelElements.length-1;
+                
+                labelElements[activeLabelBoxItem].classList.add('active');
+                scroll();
+
+                function scroll(){
+                    let elHeight = labelElements[0].offsetHeight;
+                    let scrollTop = labelBox.scrollTop;
+                    let viewport = scrollTop + labelBox.offsetHeight;
+                    let elOffset = elHeight * activeLabelBoxItem;
+
+                    if(elOffset < scrollTop || (elOffset + elHeight) > viewport){
+                        labelBox.scrollTop = elOffset;
+                    }
+                }
+            }
+        }
+    }
+
+    const _labelBoxChooseByClicking = function(currLab){
+        const labelElements = labelBox.querySelectorAll('div');
+        
+        labelElements.forEach(el => {
+            el.addEventListener('click', func, {once: true});
+            function func(e){
+                _labelBoxChoice(el,currLab);
+                taskName.focus();
+            }
+        });
+    };
+
+    const _labelBoxChoice = function(el, currLab){
+        let currLabWithoutAtSign = currLab.split('@')[1];
+        if(/span/g.test(el.innerHTML)){
+            // add to existing labels
+            testLabels.push(currLabWithoutAtSign);
+            taskName.value += ' ';
+            _hideElWithClass(/label-box/, 'show');
+            isLabelBoxVisible = false;
+            lookForLabels(taskName);
+        }else{
+            let restOfExistingLabel = el.innerText.replace(currLabWithoutAtSign, '');
+            taskName.value += restOfExistingLabel + ' ';
+            _hideElWithClass(/label-box/, 'show');
+            isLabelBoxVisible = false;
+            lookForLabels(taskName);
+        }
     };
 
     const _hideElWithClass = function(regex, removeClass){
