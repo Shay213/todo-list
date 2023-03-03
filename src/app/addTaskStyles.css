@@ -509,6 +509,8 @@
     background-color: #fff;
     box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
     position: absolute;
+    max-height: 150px;
+    overflow: auto;
     top: calc(100% + 1px);
     left: 0;
     border-radius: 5px;
@@ -552,6 +554,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.add-task-container .label-picker div.checked img{
+    opacity: 1;
+}
+.add-task-container .label-picker div.checked .check-box{
+    background-color: #525252;
 }
 
 .add-task-container .label-picker .check-box img{

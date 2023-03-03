@@ -2,10 +2,10 @@ import tasks from "./tasks";
 import fullFlag from '../assets/icons/flag.svg';
 import flagOutline from '../assets/icons/flag-outline.svg';
 import tag from '../assets/icons/tag.svg';
+import checkMark from '../assets/icons/check-bold.svg';
 
 const addTaskBox = (function(){
-    let elements = []; 
-    let invokeOnce = true;
+    let showHideBtn = []; 
     const addBtn = document.querySelector('.add-task-container button.add-btn');
     const cancelBtn = document.querySelector('.add-task-container button.cancel-btn');
     const taskName = document.getElementById('task-name');
@@ -19,6 +19,10 @@ const addTaskBox = (function(){
     let isLabelBoxVisible = false;
     let activeLabelBoxItem;
     let currLabelBasedOnCaretPos;
+    // inside taskName
+    let caretPos;
+    let allUniqueMatchesInsideTaskName = [];
+    let isLabelRepeated;
 
     const _addTask = function(e){
         tasks.createTask({
@@ -52,6 +56,7 @@ const addTaskBox = (function(){
     taskName.addEventListener('input', lookForLabels);
     taskName.addEventListener('click', lookForLabels);
     document.addEventListener('keydown', arrowMoveInsideLabelBox);
+    document.addEventListener('click', activateButtons);
     //disable arrow up/down inside input field
     taskName.addEventListener('keydown', e => {
         if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
@@ -61,7 +66,6 @@ const addTaskBox = (function(){
         _checkTaskNameEmpty();
         
         let currString;
-        let caretPos;
         if(e === taskName){
             currString = e.value;
             caretPos = e.selectionStart;
@@ -77,27 +81,35 @@ const addTaskBox = (function(){
         const re = /@[^ @]+/g;
         let allMatches = [];
         let match;
-
+        
         allRedBoxes.forEach(el => wrapper.removeChild(el));
         while ((match = re.exec(currString)) != null) {
-            allMatches.push({
-                str: match[0],
-                start: match.index,
-                end: (match.index + match[0].length-1),
-                redBox: _createRedBox(currString.slice(0, match.index), match[0])
-            });
+            if(allMatches.find(el => el.str === match[0])) isLabelRepeated = true;
+            else{
+                isLabelRepeated = false;
+                allMatches.push({
+                    str: match[0],
+                    start: match.index,
+                    end: (match.index + match[0].length-1),
+                    redBox: _createRedBox(currString.slice(0, match.index), match[0])
+                });
+            }
         }
+
+        const allMatchesOnlyStr = allMatches.map(el => el.str);
+        const unique = allMatchesOnlyStr.filter((el, i, arr) => arr.indexOf(el) === i);
+        allUniqueMatchesInsideTaskName = unique;
         
         if(currLabel){
             const matches = _searchInExistingLabels(currLabel[0], false);
             const fullMatch = _searchInExistingLabels(currLabel[0], true);
             currLabelBasedOnCaretPos = currLabel[0];
             
-            _createLabelBoxContent(matches, fullMatch, currLabel[0]);
+            _createLabelBoxContent(matches, fullMatch, currLabel[0], isLabelRepeated);
             _showLabelBox();
             _labelBoxChooseByClicking(currLabel[0]);
         }else{
-            _hideElWithClass(/label-box/, 'show');
+            labelBox.classList.remove('show');
             isLabelBoxVisible = false;
         }
     };
@@ -123,11 +135,12 @@ const addTaskBox = (function(){
         return el;
     };
 
-    const _createLabelBoxContent = function(matches, fullMatch, currStr){
+    const _createLabelBoxContent = function(matches, fullMatch, currStr, repeated){
         const getTemplate = (labelName) => `<div><img src="${tag}" alt="label"><p>${labelName}</p></div>`;
         let content = '';
         
-        if(fullMatch.length != 0) labelBox.innerHTML = content;
+        if(repeated) labelBox.innerHTML = `<div><p>Label ${fullMatch} is already included</p></div>`;
+        else if(fullMatch.length != 0) labelBox.innerHTML = content;
         else{
             if(currStr != '@') content += `<div><p>To create label <span>${currStr}</span> click here or press (space, @, enter)</p></div>`;
 
@@ -144,11 +157,10 @@ const addTaskBox = (function(){
         const [...labelElements] = labelBox.querySelectorAll('div');
 
         labelBox.classList.add('show');
-        elements.push({element: labelBox, className: 'show'});
-
         isLabelBoxVisible = true;
         labelBox.scrollTop = 0;
         activeLabelBoxItem = 0;
+
         if(labelElements.length != 0){
             let currActive = labelElements.find(el => el.classList.contains('active'));
             if(currActive) currActive.classList.remove('active');
@@ -199,28 +211,30 @@ const addTaskBox = (function(){
     };
 
     const _labelBoxChoice = function(el, currLab){
+        if(isLabelRepeated) return;
+
         let currLabWithoutAtSign = currLab.split('@')[1];
         if(/span/g.test(el.innerHTML)){
             // add to existing labels
             testLabels.push(currLabWithoutAtSign);
             taskName.value += ' ';
-            _hideElWithClass(/label-box/, 'show');
+            labelBox.classList.remove('show');
             isLabelBoxVisible = false;
             lookForLabels(taskName);
         }else{
             let restOfExistingLabel = el.innerText.replace(currLabWithoutAtSign, '');
             taskName.value += restOfExistingLabel + ' ';
-            _hideElWithClass(/label-box/, 'show');
+            labelBox.classList.remove('show');
             isLabelBoxVisible = false;
             lookForLabels(taskName);
         }
     };
 
     const _hideElWithClass = function(regex, removeClass){
-        elements.forEach((el, i) => {
-            if([...el.element.classList].find(el => regex.test(el))){
-                el.element.classList.remove(`${removeClass}`);
-                elements.splice(i, 1);
+        showHideBtn.forEach((item, i) => {
+            if([...item.el.classList].find(classN => regex.test(classN))){
+                item.el.classList.remove(removeClass);
+                item.active = false;
             }
         });
     };
@@ -264,78 +278,145 @@ const addTaskBox = (function(){
 
         }
         else if(isLabelPicker){
+            const labelPicker = document.querySelector('.add-task-container .top .label .label-picker');
+            //Create label picker content
+            createLabelPickerContent();
+            //put labels inside input
+            putLabelsInsideInput();
+            //hide label picker
 
+            function putLabelsInsideInput(){
+                const options = document.querySelectorAll('.add-task-container .top .label .label-picker > div');
+                const spliceIn = (originalStr, strToAdd, pos) => [originalStr.slice(0, pos), strToAdd, originalStr.slice(pos)].join('');
+
+                options.forEach(el => {
+                    el.addEventListener('click', e => {
+                        if(!el.classList.contains('checked')){
+                            el.classList.add('checked');
+                            taskName.value = spliceIn(taskName.value, `@${el.innerText} `, caretPos);
+                        }else{
+                            const re = new RegExp(`@${el.innerText}`);
+                            taskName.value = taskName.value.replace(re, '');
+                            el.classList.remove('checked');
+                        }
+                        taskName.focus();
+                        lookForLabels(taskName);
+                    });
+                });
+            }
+
+            function createLabelPickerContent(){
+                const getTemplate = (labelName, checked = '') => `
+                <div class="${checked}">
+                    <img src="${tag}" alt="label">
+                    <p>${labelName}</p>
+                    <div class="check-box">
+                        <img src="${checkMark}" alt="check">
+                    </div>
+                </div>
+                `;
+                let content = '';
+
+                testLabels.forEach(el => {
+                    allUniqueMatchesInsideTaskName.find(item => item.slice(1) === el) ? content += getTemplate(el, 'checked') : content += getTemplate(el);
+                });
+                labelPicker.innerHTML = content;
+            }
         }
         else if(isProjectPicker){
 
         }
     };
 
-    const _showElement = function({btn, element, className}) {
-        btn.addEventListener('click', show);
+    function activateButtons(e){
+        const isAnyOfButtonsClicked = showHideBtn.findIndex(item => e.target === item.btn || item.btn.contains(e.target));
+        const isBtnToggleElClicked = showHideBtn.find(item => e.target === item.el || item.el.contains(e.target));
         
-        function show(e){
-            e.stopImmediatePropagation();
-            if(e.currentTarget.classList.contains('btn')){
-                _hideElWithClass(/date-picker|priority-picker|label-picker|project-picker|label-box/, className);
-                _activateChoices(btn, element, className);
-            }
+        if(isAnyOfButtonsClicked != -1){
+            const i = isAnyOfButtonsClicked;
+            const itemsWithSameLayer = showHideBtn.filter(item => item.layer === showHideBtn[i].layer && item != showHideBtn[i]);
 
-            element.classList.add(`${className}`);
-            if(!elements.find(el => el.element === element))
-                elements.push({element, className});
-        }
-
-        if(invokeOnce){
-            invokeOnce = false;
-            _hideElements();
-        }
-    };
-
-    const _hideElements = function(){
-        document.addEventListener('click', e => {
-            if(elements.length === 0) return;
-            let lastEl = elements[elements.length-1].element;
-            let lastClassName = elements[elements.length-1].className;
+            hideItemsOnTheSameLayer();
+            showClickedItem();
             
-            if(!(e.target === lastEl || lastEl.contains(e.target) || (e.target.id === 'task-name') && lastEl.classList.contains('label-box'))){
-                lastEl.classList.remove(`${lastClassName}`);
-                elements.pop();
+            function showClickedItem(){
+                showHideBtn[i].active = true;
+                _activateChoices(showHideBtn[i].btn, showHideBtn[i].el, showHideBtn[i].className);
+                showHideBtn[i].el.classList.toggle(showHideBtn[i].className);
             }
-        });
-    };
 
-    const activateBtns = function(){
-        _showElement({
+            function hideItemsOnTheSameLayer(){
+                itemsWithSameLayer.forEach(item => {
+                    item.active = false;
+                    item.el.classList.remove(item.className);
+                });
+            }
+        }
+        else{
+            const onlyActive = showHideBtn.filter(item => item.active);
+            
+            if(onlyActive.length > 0){
+                const sortByLayer = onlyActive.sort((a,b) => b.layer - a.layer);
+
+                if(isBtnToggleElClicked != sortByLayer[0] && !(labelBox.classList.contains('show') && sortByLayer[0].layer === 1)){
+                    sortByLayer[0].active = false;
+                    sortByLayer[0].el.classList.remove(sortByLayer[0].className);
+                }   
+            }
+        }
+
+        // Hide label-box 
+        if(e.target != taskName && e.target != labelBox && !labelBox.contains(e.target)){
+            labelBox.classList.remove('show');
+        }
+    }
+    
+    const _addToShowHideBtn = ({el, btn, className, layer, active}) => showHideBtn.push({el, btn, className, layer, active});
+
+    const getAllButtons = function(){
+        _addToShowHideBtn({
+            el: document.querySelector('.add-task-container .date-picker'),
             btn: document.querySelector('.add-task-container .flex-container > div:first-child .btn'),
-            element: document.querySelector('.add-task-container .date-picker'),
-            className: 'show'
+            className: 'show',
+            layer: 2,
+            active: false
         });
-        _showElement({
-                btn: document.querySelector('.top-panel .add-task'),
-                element: document.querySelector('.add-task-container'),
-                className: 'toggleAddTask'
-        });
-        _showElement({
+
+        _addToShowHideBtn({
+            el: document.querySelector('.add-task-container .flex-container > .priority .priority-picker'),
             btn: document.querySelector('.add-task-container .flex-container > .priority .btn'),
-            element: document.querySelector('.add-task-container .flex-container > .priority .priority-picker'),
-            className: 'show'
-        });
-        _showElement({
-            btn: document.querySelector('.add-task-container .flex-container > .label .btn'),
-            element: document.querySelector('.add-task-container .label-picker'),
-            className: 'show'
+            className: 'show',
+            layer: 2,
+            active: false
         });
         
-        _showElement({
+        _addToShowHideBtn({
+            el: document.querySelector('.add-task-container .label-picker'),
+            btn: document.querySelector('.add-task-container .flex-container > .label .btn'),
+            className: 'show',
+            layer: 2,
+            active: false
+        });
+
+        _addToShowHideBtn({
+            el: document.querySelector('.add-task-container .bottom .project-picker'),
             btn: document.querySelector('.add-task-container .bottom .select-project'),
-            element: document.querySelector('.add-task-container .bottom .project-picker'),
-            className: 'show'
+            className: 'show',
+            layer: 2,
+            active: false
+        });
+
+        _addToShowHideBtn({
+            el: document.querySelector('.add-task-container'),
+            btn: document.querySelector('.top-panel .add-task'),
+            className: 'toggleAddTask',
+            layer: 1,
+            active: false
         });
     };
 
     return {
-        activateBtns,
+        getAllButtons,
     };
 })();
 

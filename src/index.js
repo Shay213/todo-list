@@ -8,5 +8,5 @@ import tasks from './app/tasks';
 toggleSidebar();
 sidebarResize();
 searchBarFocus();
-addTaskBox.activateBtns();
+addTaskBox.getAllButtons();
 tasks.displayTasks();
