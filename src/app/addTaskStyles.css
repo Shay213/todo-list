@@ -83,12 +83,10 @@
     border-radius: 5px;
     z-index: 20;
     transform: scale(0);
-    transition: 100ms;
     transform-origin: top;
 }
 .add-task-container .inputs .label-box.show{
     transform: scale(1);
-    transition: 100ms;
 }
 
 .add-task-container .inputs .label-box > div img{
@@ -227,18 +225,17 @@
     border-radius: 5px;
     z-index: 20;
     transform: scaleY(0);
-    transition: 100ms;
     transform-origin: top;
 }
 
 .add-task-container .date-picker.show{
     transform: scaleY(1);
-    transition: 100ms;
 }
 
 .add-task-container .date-picker .type-date{
     padding: 15px;
     border-bottom: 1px solid var(--sidebar-hover-color);
+    position: relative;
 }
 
 .add-task-container .date-picker .type-date input{
@@ -249,9 +246,85 @@
     font-weight: 100;
 }
 
+.add-task-container .date-picker .type-date .icon{
+    position: absolute;
+    height: max-content;
+    right: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+}
+
+.add-task-container .date-picker .type-date .icon img{
+    filter: invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%);
+    width: 1.4rem;
+}
+
 .add-task-container .date-picker .type-date input::placeholder{
     font-size: 0.85rem;
     font-weight: 100;
+}
+
+.add-task-container .date-picker .input-validation-text{
+    padding: 10px 10px 0;
+    display: none;
+}
+
+.add-task-container .date-picker .input-validation-text p{
+    margin: 0;
+    font-weight: 300;
+    font-size: 0.8rem;
+}
+
+.add-task-container .date-picker .input-validation-text > div img{
+    width: 1.7rem;
+    filter: invert(30%) sepia(2%) saturate(1790%) hue-rotate(202deg) brightness(96%) contrast(84%);
+}
+
+.add-task-container .date-picker .input-validation-text > div:first-of-type{
+    display: flex;
+    gap: 8px;
+}
+
+.add-task-container .date-picker .input-validation-text > div:first-of-type p:first-of-type{
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+.add-task-container .date-picker .input-validation-text > div:nth-of-type(2){
+    padding-top: 10px;
+}
+
+.add-task-container .date-picker .input-validation-text .date-req{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-task-container .date-picker .input-validation-text .date-req img{
+    width: 1.4rem;
+    transition: 400ms;
+}
+
+.add-task-container .date-picker .input-validation-text .date-req img:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: 400ms;
+}
+
+.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul.show{
+    transform: scaleY(1);
+    height: auto;
+}
+
+.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul{
+    margin: 5px 20px;
+    padding: 0;
+    height: 0;
+    transform: scaleY(0);
+}
+.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul li{
+    padding-top: 5px;
 }
 
 .add-task-container .date-picker .pick-icon{
@@ -295,7 +368,10 @@
     filter: invert(78%) sepia(27%) saturate(4607%) hue-rotate(3deg) brightness(99%) contrast(94%);
 }
 .add-task-container .date-picker .pick-icon > div:nth-of-type(2) img{
-    filter: invert(76%) sepia(55%) saturate(7086%) hue-rotate(166deg) brightness(97%) contrast(90%);
+    filter: invert(26%) sepia(34%) saturate(7211%) hue-rotate(263deg) brightness(93%) contrast(96%);
+}
+.add-task-container .date-picker .pick-icon > div:nth-of-type(3) img{
+    filter: invert(35%) sepia(24%) saturate(7486%) hue-rotate(180deg) brightness(94%) contrast(98%);
 }
 .add-task-container .date-picker .pick-icon > div:last-of-type img{
     filter: invert(100%) sepia(31%) saturate(324%) hue-rotate(298deg) brightness(87%) contrast(91%);
@@ -303,10 +379,14 @@
 
 .add-task-container .date-picker .calendar{
     border-top: 1px solid var(--sidebar-hover-color);
-    padding: 0px 15px;
+    padding: 0px 15px 15px;
     overflow: auto;
-    height: 200px;
+    scrollbar-width: none;
+    height: 240px;
     position: relative;
+}
+.add-task-container .date-picker .calendar::-webkit-scrollbar{
+    display: none;
 }
 
 .add-task-container .date-picker .calendar ul{
@@ -373,16 +453,61 @@
 .add-task-container .date-picker .calendar ul{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    justify-items: center;
-    align-items: center;
-    margin-top: 10px;
     width: 100%;
+    gap: 9px;
+}
+
+.add-task-container .date-picker .calendar .nav ul{
+    height: 30px;
+}
+
+.add-task-container .date-picker .calendar .months ul{
+    grid-auto-rows: 1fr;
+    height: 150px;
+}
+
+.add-task-container .date-picker .calendar .months div{
+    border-bottom: 1px solid var(--sidebar-hover-color);
+    padding: 12px 0 6px;
+    margin-bottom: 8px;
 }
 
 .add-task-container .date-picker .calendar ul li{
+    height: 100%;
+    width: 100%;
     border: none;
     font-size: 0.7rem;
     font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.add-task-container .date-picker .calendar .months ul li:hover{
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+}
+
+.add-task-container .date-picker .calendar ul li.today,
+.add-task-container .date-picker .calendar ul li.today:hover{
+    background-color: var(--topPanel-color);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.add-task-container .date-picker .calendar ul li.weekend{
+    opacity: 0.5;
+}
+
+.add-task-container .date-picker .calendar ul li.past{
+    opacity: 0.2;
+}
+
+.add-task-container .date-picker .calendar ul li.past:hover{
+    background-color: #fff;
+    cursor: auto;
 }
 
 .add-task-container .date-picker .add-time{
@@ -409,7 +534,13 @@
     bottom: 100%;
     left: -20%;
     z-index: 100;
-    background-color: #fff;
+    background-color: #fff;    
+    transform: scaleY(0);
+    transform-origin: bottom;
+}
+
+.add-task-container .date-picker .add-time .time-picker.show{
+    transform: scaleY(1);
 }
 
 .add-task-container .date-picker .add-time .time-picker > div{
@@ -458,13 +589,11 @@
     border-radius: 5px;
     z-index: 20;
     transform: scale(0);
-    transition: 100ms;
     transform-origin: top;
 }
 
 .add-task-container .priority-picker.show{
     transform: scale(1);
-    transition: 100ms;
 }
 
 .add-task-container .priority-picker > div{
@@ -516,12 +645,10 @@
     border-radius: 5px;
     z-index: 20;
     transform: scale(0);
-    transition: 100ms;
     transform-origin: top;
 }
 .add-task-container .label-picker.show{
     transform: scale(1);
-    transition: 100ms;
 }
 
 .add-task-container .label img{
@@ -580,13 +707,11 @@
     border-radius: 5px;
     z-index: 20;
     transform: scale(0);
-    transition: 100ms;
     transform-origin: top;
 }
 
 .add-task-container .bottom .project-picker.show{
     transform: scale(1);
-    transition: 100ms;
 }
 
 .add-task-container .bottom .project-picker input{

@@ -84,16 +84,35 @@
                             
                             <div class="date-picker">
                                 <div class="type-date">
+                                    <div class="icon"><img src="./assets/icons/invalid.svg" alt=""></div>
                                     <input type="text" name="type-due-date" id="type-due-date" placeholder="Type a due date">
+                                </div>
+                                <div class="input-validation-text">
+                                    <div>
+                                        <img src="./assets/icons/event_busy.svg" alt="available">
+                                        <div><p>No results</p><p></p></div>
+                                    </div>
+                                    <div>
+                                        <div class="date-req"><p>Date requirements: </p><img src="./assets/icons/expand_circle_down.svg" alt="expand"></div>
+                                        <ul class="">
+                                            <li><p>yyyy/mm/dd hh:mm:ss (/,-,space)</p></li>
+                                            <li><p>Days are required, rest is optional</p></li>
+                                            <li><p>Keywords are allowed: Mon, Tue, Feb, Jun, etc.</p></li>
+                                            <li><p>Special keywords: Today, Weekend, Tomorrow, Day after tomorrow, Next week,
+                                                in x days, in x weeks, in x months, every day,mon,tue etc.
+                                            </p></li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div class="pick-icon">
                                     <div><span><img src="./assets/icons/sunny-outline.svg" alt="Tomorrow">Tomorrow</span><p>Mon</p></div>
+                                    <div><span><img src="./assets/icons/event-upcoming.svg" alt="Next weekend">Next week</span><p>Sat 4 mar</p></div>
                                     <div><span><img src="./assets/icons/weekend.svg" alt="Next weekend">Next weekend</span><p>Sat 4 mar</p></div>
                                     <div><span><img src="./assets/icons/block.svg" alt="No date">No date</span></div>
                                 </div>
                                 <div class="calendar">
                                     <div class="nav">
-                                        <p class="curr-month">Feb 2023</p>
+                                        <p class="curr-month"></p>
                                         <div class="icons">
                                             <div><img class="previous" src="./assets/icons/chevron-back-outline.svg" alt="previous"></div>
                                             <div><img class="go-back" src="./assets/icons/ellipse-outline.svg" alt="go-back"></div>
@@ -112,7 +131,7 @@
                                         </ul>
                                     </div>
                                     <div class="months">
-                                        <ul></ul>
+
                                     </div>
                                 </div>
                                 <div class="add-time">
