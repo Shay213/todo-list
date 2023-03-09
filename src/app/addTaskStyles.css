@@ -1,3 +1,7 @@
+:root{
+    --bullet-filter: invert(0%) sepia(0%) saturate(7469%) hue-rotate(215deg) brightness(91%) contrast(107%);
+}
+
 .add-task-container{
     background-color: var(--bg-color);
     position: absolute;
@@ -147,11 +151,11 @@
 }
 
 .add-task-container .flex-container .due-date{
-    color: #0d9488;
+    color: #059669;
 }
 
 .add-task-container .flex-container .due-date img{
-    filter: invert(42%) sepia(17%) saturate(4200%) hue-rotate(140deg) brightness(94%) contrast(90%);
+    filter: invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%);
 }
 
 .add-task-container .bottom{
@@ -161,6 +165,10 @@
 
 .add-task-container .select-project{
     margin-right: auto;
+}
+
+.add-task-container .select-project p{
+    margin: 0;
 }
 
 .add-task-container .bottom > *{
@@ -365,12 +373,15 @@
 }
 
 .add-task-container .date-picker .pick-icon > div:first-of-type img{
-    filter: invert(78%) sepia(27%) saturate(4607%) hue-rotate(3deg) brightness(99%) contrast(94%);
+    filter: invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%);
 }
 .add-task-container .date-picker .pick-icon > div:nth-of-type(2) img{
-    filter: invert(26%) sepia(34%) saturate(7211%) hue-rotate(263deg) brightness(93%) contrast(96%);
+    filter: invert(84%) sepia(47%) saturate(2119%) hue-rotate(339deg) brightness(104%) contrast(97%);
 }
 .add-task-container .date-picker .pick-icon > div:nth-of-type(3) img{
+    filter: invert(16%) sepia(67%) saturate(6573%) hue-rotate(272deg) brightness(84%) contrast(92%);
+}
+.add-task-container .date-picker .pick-icon > div:nth-of-type(4) img{
     filter: invert(35%) sepia(24%) saturate(7486%) hue-rotate(180deg) brightness(94%) contrast(98%);
 }
 .add-task-container .date-picker .pick-icon > div:last-of-type img{
@@ -708,6 +719,9 @@
     z-index: 20;
     transform: scale(0);
     transform-origin: top;
+    padding: 0;
+    height: 140px;
+    overflow: hidden;
 }
 
 .add-task-container .bottom .project-picker.show{
@@ -718,40 +732,51 @@
     width: 32ch;
     font-size: 0.85rem;
     margin: 0;
-    padding: 0;
+    padding: 8px;
+    border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
 .add-task-container .bottom .project-picker input::placeholder{
     font-size: 0.85rem;
 }
 
-.add-task-container .bottom .project-picker > div{
-    display: flex;
-    font-size: 0.9rem;
-    gap: 8px;
-    margin-top: 5px;
-    border-top: 1px solid var(--sidebar-hover-color);
-}
-
 .add-task-container .bottom .project-picker p{
     margin: 0;
-    padding: 5px 0;
+    padding: 0;
     font-size: 0.9rem;
     font-weight: 400;
+    margin-right: auto;
+}
+
+.add-task-container .bottom .project-picker div.inbox{
+    padding-left: 8px;
+    font-size: 0.9rem;
+}
+
+.add-task-container .bottom .project-picker div.inbox p{
+    margin-left: 8px;
+}
+.add-task-container .bottom .project-picker div.inbox img:last-of-type{
+    margin-right: 10px;
+}
+
+.add-task-container .bottom .project-picker ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .add-task-container .bottom .project-picker > ul figcaption{
     font-size: 0.9rem;
     font-weight: 400;
     position: relative;
-    padding: 0;
-    padding-left: 23px;
+    padding: 0 0 0 33px;
 }
 
 .add-task-container .bottom .project-picker > ul figcaption::before{
     content: '';
     position: absolute;
-    left: -2px;
+    left: 7px;
     top: 0;
     bottom: 0;
     margin: auto 0;
@@ -767,5 +792,59 @@
 
 .add-task-container .bottom .project-picker > ul li{
     font-size: 0.90rem;
-    padding-left: 30px;
+    padding-left: 20px;
+}
+
+.add-task-container .bottom .project-picker img.projectChecked{
+    display: none;
+}
+
+.add-task-container .bottom .project-picker img.projectChecked.active{
+    display: block;
+}
+
+.add-task-container .bottom .project-picker > ul li img,
+.add-task-container .bottom .project-picker > ul figcaption img{
+    width: 1rem;
+    margin-right: 10px;
+}
+
+.add-task-container .bottom .project-picker div.inbox img{
+    width: 1.1rem;
+}
+
+.add-task-container .bottom .project-picker div.inbox,
+.add-task-container .bottom .project-picker > ul li,
+.add-task-container .bottom .project-picker > ul figcaption{
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.add-task-container .bottom .project-picker .inbox:hover,
+.add-task-container .bottom .project-picker > ul li:hover,
+.add-task-container .bottom .project-picker > ul figcaption:hover{
+    cursor: pointer;
+    background-color: var(--sidebar-hover-color);
+}
+
+
+
+
+p.bullet::before{
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 20px;
+    height: 20px;
+    background: url('../assets/icons/dot.svg');
+    filter: var(--bullet-filter);
+}
+
+p.bullet{
+    padding-left: 10px;
+    position: relative;
 }

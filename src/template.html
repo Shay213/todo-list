@@ -62,154 +62,7 @@
             <div class="handler"></div>
         </div>
         <div class="main-container">
-            <div class="add-task-container">
-                <div class="top">
-                    <div class="inputs">
-                        <div>
-                            <input type="text" name="task-name" id="task-name" placeholder="Task name">
-                        </div>
-                        <input type="text" name="description" id="description" placeholder="Description">
-
-                        <div class="label-box">
-                            
-                        </div>
-                    </div>
-                    
-                    <div class="flex-container">
-                        <div class="due-date">
-                            <div class="btn">
-                                <img class="svg" src="./assets/icons/today-outline.svg" alt="date-due">
-                                Today
-                            </div>
-                            
-                            <div class="date-picker">
-                                <div class="type-date">
-                                    <div class="icon"><img src="./assets/icons/invalid.svg" alt=""></div>
-                                    <input type="text" name="type-due-date" id="type-due-date" placeholder="Type a due date">
-                                </div>
-                                <div class="input-validation-text">
-                                    <div>
-                                        <img src="./assets/icons/event_busy.svg" alt="available">
-                                        <div><p>No results</p><p></p></div>
-                                    </div>
-                                    <div>
-                                        <div class="date-req"><p>Date requirements: </p><img src="./assets/icons/expand_circle_down.svg" alt="expand"></div>
-                                        <ul class="">
-                                            <li><p>yyyy/mm/dd hh:mm:ss (/,-,space)</p></li>
-                                            <li><p>Days are required, rest is optional</p></li>
-                                            <li><p>Keywords are allowed: Mon, Tue, Feb, Jun, etc.</p></li>
-                                            <li><p>Special keywords: Today, Weekend, Tomorrow, Day after tomorrow, Next week,
-                                                in x days, in x weeks, in x months, every day,mon,tue etc.
-                                            </p></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="pick-icon">
-                                    <div><span><img src="./assets/icons/sunny-outline.svg" alt="Tomorrow">Tomorrow</span><p>Mon</p></div>
-                                    <div><span><img src="./assets/icons/event-upcoming.svg" alt="Next weekend">Next week</span><p>Sat 4 mar</p></div>
-                                    <div><span><img src="./assets/icons/weekend.svg" alt="Next weekend">Next weekend</span><p>Sat 4 mar</p></div>
-                                    <div><span><img src="./assets/icons/block.svg" alt="No date">No date</span></div>
-                                </div>
-                                <div class="calendar">
-                                    <div class="nav">
-                                        <p class="curr-month"></p>
-                                        <div class="icons">
-                                            <div><img class="previous" src="./assets/icons/chevron-back-outline.svg" alt="previous"></div>
-                                            <div><img class="go-back" src="./assets/icons/ellipse-outline.svg" alt="go-back"></div>
-                                            <div><img class="next" src="./assets/icons/chevron-forward-outline.svg" alt="next"></div>
-                                        
-                                        </div>
-
-                                        <ul>
-                                            <li>M</li>
-                                            <li>T</li>
-                                            <li>W</li>
-                                            <li>T</li>
-                                            <li>F</li>
-                                            <li>S</li>
-                                            <li>S</li>
-                                        </ul>
-                                    </div>
-                                    <div class="months">
-
-                                    </div>
-                                </div>
-                                <div class="add-time">
-                                    <p>+ Add time</p>
-                                    <div class="time-picker">
-                                        <div class="time">
-                                            <p>Time</p>
-                                            <input type="text" name="time" id="time" placeholder="eg. 14:00">
-                                        </div>
-                                        <div class="btns">
-                                            <p>Cancel</p>
-                                            <p>Add</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="priority">
-                            <div class="btn">
-                                <img class="svg" src="./assets/icons/flag-outline.svg" alt="more">
-                                Priority
-                            </div>
-                            <div class="priority-picker">
-                                <div class="prio1" data-priority="1">
-                                    <img src="./assets/icons/flag.svg" alt="priority 1">
-                                    <p>Priority 1</p>
-                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
-                                </div>
-                                <div class="prio2" data-priority="2">
-                                    <img src="./assets/icons/flag.svg" alt="priority 2">
-                                    <p>Priority 2</p>
-                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
-                                </div>
-                                <div class="prio3" data-priority="3">
-                                    <img src="./assets/icons/flag.svg" alt="priority 3">
-                                    <p>Priority 3</p>
-                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
-                                </div>
-                                <div class="prio4 checked" data-priority="4">
-                                    <img src="./assets/icons/flag-outline.svg" alt="priority 4">
-                                    <p>Priority 4</p>
-                                    <img src="./assets/icons/checkmark-outline.svg" alt="checked">
-                                </div>        
-                            </div>
-                        </div>
-                        <div class="label">
-                            <div class="btn">
-                                <img class="svg" src="./assets/icons/tag.svg" alt="more">
-                                Labels
-                            </div>
-                            <div class="label-picker">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bottom">
-                    <div class="select-project btn">
-                        <img src="./assets/icons/inbox.svg" alt="select-project">
-                        Inbox
-                        <img src="./assets/icons/more.svg" alt="expand">
-                    </div>
-                    <button class="cancel-btn" type="button">Cancel</button>
-                    <button class="add-btn" type="button">Add task</button>
-                    <div class="project-picker">
-                        <input type="text" name="project" id="project" placeholder="Type a project">
-                        <div class="inbox">
-                            <img src="./assets/icons/inbox.svg" alt="inbox">
-                            <p>Inbox</p>
-                        </div>
-                        <ul>
-                            <figcaption><p>Home</p></figcaption>
-                            <li>EL</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            
             <div class="container today">
                 <div class="title">
                     <h3>Today</h3>
@@ -227,7 +80,161 @@
                     
                 </ul>
             </div>
+
         </div>
+        <div class="add-task-container">
+            <div class="top">
+                <div class="inputs">
+                    <div>
+                        <input type="text" name="task-name" id="task-name" placeholder="Task name">
+                    </div>
+                    <input type="text" name="description" id="description" placeholder="Description">
+
+                    <div class="label-box">
+                        
+                    </div>
+                </div>
+                
+                <div class="flex-container">
+                    <div class="due-date">
+                        <div class="btn">
+                            <img class="svg" src="./assets/icons/today-outline.svg" alt="date-due">
+                            Today
+                        </div>
+                        
+                        <div class="date-picker">
+                            <div class="type-date">
+                                <div class="icon"><img src="./assets/icons/invalid.svg" alt=""></div>
+                                <input type="text" name="type-due-date" id="type-due-date" placeholder="Type a due date">
+                            </div>
+                            <div class="input-validation-text">
+                                <div>
+                                    <img src="./assets/icons/event_busy.svg" alt="available">
+                                    <div><p>No results</p><p></p></div>
+                                </div>
+                                <div>
+                                    <div class="date-req"><p>Date requirements: </p><img src="./assets/icons/expand_circle_down.svg" alt="expand"></div>
+                                    <ul class="">
+                                        <li><p>yyyy/mm/dd hh:mm:ss (/,-,space)</p></li>
+                                        <li><p>Days are required, rest is optional</p></li>
+                                        <li><p>Keywords are allowed: Mon, Tue, Feb, Jun, etc.</p></li>
+                                        <li><p>Special keywords: Today, Weekend, Tomorrow, Day after tomorrow, Next week,
+                                            in x days, in x weeks, in x months, every day,mon,tue etc.
+                                        </p></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="pick-icon">
+                                <div><span><img src="./assets/icons/calendar-clear-outline.svg" alt="Today">Today</span><p></p></div>
+                                <div><span><img src="./assets/icons/sunny-outline.svg" alt="Tomorrow">Tomorrow</span><p></p></div>
+                                <div><span><img src="./assets/icons/event-upcoming.svg" alt="Next weekend">Next week</span><p></p></div>
+                                <div><span><img src="./assets/icons/weekend.svg" alt="Next weekend">Next weekend</span><p></p></div>
+                                <div><span><img src="./assets/icons/block.svg" alt="No date">No date</span></div>
+                            </div>
+                            <div class="calendar">
+                                <div class="nav">
+                                    <p class="curr-month"></p>
+                                    <div class="icons">
+                                        <div><img class="previous" src="./assets/icons/chevron-back-outline.svg" alt="previous"></div>
+                                        <div><img class="go-back" src="./assets/icons/ellipse-outline.svg" alt="go-back"></div>
+                                        <div><img class="next" src="./assets/icons/chevron-forward-outline.svg" alt="next"></div>
+                                    
+                                    </div>
+
+                                    <ul>
+                                        <li>M</li>
+                                        <li>T</li>
+                                        <li>W</li>
+                                        <li>T</li>
+                                        <li>F</li>
+                                        <li>S</li>
+                                        <li>S</li>
+                                    </ul>
+                                </div>
+                                <div class="months">
+
+                                </div>
+                            </div>
+                            <div class="add-time">
+                                <p>+ Add time</p>
+                                <div class="time-picker">
+                                    <div class="time">
+                                        <p>Time</p>
+                                        <input type="text" name="time" id="time" placeholder="eg. 14:00">
+                                    </div>
+                                    <div class="btns">
+                                        <p>Cancel</p>
+                                        <p>Add</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="priority">
+                        <div class="btn">
+                            <img class="svg" src="./assets/icons/flag-outline.svg" alt="more">
+                            Priority
+                        </div>
+                        <div class="priority-picker">
+                            <div class="prio1" data-priority="1">
+                                <img src="./assets/icons/flag.svg" alt="priority 1">
+                                <p>Priority 1</p>
+                                <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                            </div>
+                            <div class="prio2" data-priority="2">
+                                <img src="./assets/icons/flag.svg" alt="priority 2">
+                                <p>Priority 2</p>
+                                <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                            </div>
+                            <div class="prio3" data-priority="3">
+                                <img src="./assets/icons/flag.svg" alt="priority 3">
+                                <p>Priority 3</p>
+                                <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                            </div>
+                            <div class="prio4 checked" data-priority="4">
+                                <img src="./assets/icons/flag-outline.svg" alt="priority 4">
+                                <p>Priority 4</p>
+                                <img src="./assets/icons/checkmark-outline.svg" alt="checked">
+                            </div>        
+                        </div>
+                    </div>
+                    <div class="label">
+                        <div class="btn">
+                            <img class="svg" src="./assets/icons/tag.svg" alt="more">
+                            Labels
+                        </div>
+                        <div class="label-picker">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bottom">
+                <div class="select-project btn">
+                    <img src="./assets/icons/inbox.svg" alt="select-project">
+                    <p>Inbox</p> 
+                    <img src="./assets/icons/more.svg" alt="expand">
+                </div>
+                <button class="cancel-btn" type="button">Cancel</button>
+                <button class="add-btn" type="button">Add task</button>
+                <div class="project-picker">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="alert-box">
+            <div class="icons">
+                <img src="./assets/icons/info.svg" alt="info">
+                <div class="close"><img src="./assets/icons/close-outline.svg" alt="close"></div>
+            </div>
+            <p>Are you sure you want to discard your current task?</p>
+            <div class="buttons">
+                <button type="button">Cancel</button>
+                <button type="button">Discard task</button>
+            </div>
+        </div>
+        <div class="filter-background"></div>
     </div>
 </body>
 </html>

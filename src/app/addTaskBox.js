@@ -7,6 +7,9 @@ import light from '../assets/icons/invalid.svg';
 import lightFull from '../assets/icons/valid.svg';
 import eventAvailable from '../assets/icons/event_available.svg';
 import eventBusy from '../assets/icons/event_busy.svg';
+import moreSvg from '../assets/icons/more.svg';
+import projects from "./projects";
+import inboxIcon from '../assets/icons/inbox.svg';
 
 const addTaskBox = (function(){
     let showHideBtn = []; 
@@ -25,6 +28,7 @@ const addTaskBox = (function(){
     let isLabelBoxVisible = false;
     let activeLabelBoxItem;
     let currLabelBasedOnCaretPos;
+    let dateUtilFunctions;
     // inside taskName
     let caretPos;
     let allUniqueMatchesInsideTaskName = [];
@@ -35,9 +39,9 @@ const addTaskBox = (function(){
             priority: priority,
             taskName: taskName.value,
             description: description.value,
-            dueDate: 'dd',
-            projectName: 'dasd',
-            labels: 'df'
+            dueDate: dueDate,
+            projectName: projectName,
+            labels: labels
         });
     };
 
@@ -78,6 +82,7 @@ const addTaskBox = (function(){
             currString = e.value;
             caretPos = e.selectionStart;
         }else{
+            _hideElWithClass(/label-picker/, 'show');
             currString = e.target.value;
             caretPos = e.target.selectionStart;
         }
@@ -92,7 +97,7 @@ const addTaskBox = (function(){
         
         allRedBoxes.forEach(el => wrapper.removeChild(el));
         while ((match = re.exec(currString)) != null) {
-            if(allMatches.find(el => el.str === match[0])) isLabelRepeated = true;
+            if(allMatches.find(el => el.str.toLowerCase() === match[0].toLowerCase())) isLabelRepeated = true;
             else{
                 isLabelRepeated = false;
                 allMatches.push({
@@ -107,6 +112,7 @@ const addTaskBox = (function(){
         const allMatchesOnlyStr = allMatches.map(el => el.str);
         const unique = allMatchesOnlyStr.filter((el, i, arr) => arr.indexOf(el) === i);
         allUniqueMatchesInsideTaskName = unique;
+        labels = unique;
         
         if(currLabel){
             const matches = _searchInExistingLabels(currLabel[0], false);
@@ -213,7 +219,6 @@ const addTaskBox = (function(){
             el.addEventListener('click', func, {once: true});
             function func(e){
                 _labelBoxChoice(el,currLab);
-                taskName.focus();
             }
         });
     };
@@ -286,45 +291,119 @@ const addTaskBox = (function(){
             });
         }
         else if(isDatePicker){
+            const dueDateBtn = document.querySelector('.add-task-container .due-date');
             const input = document.getElementById('type-due-date');
             const inputValidationText = document.querySelector('.add-task-container .date-picker .input-validation-text');
             const dateReqText = document.querySelector('.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul');
             const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
             const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
             const eventIcon = inputValidationText.querySelector('div:first-of-type img');
-
+            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const today = new Date();
+            const quickBtns = document.querySelectorAll('.add-task-container .due-date .date-picker .pick-icon > div');
+            const formatDate = (date, repeat = '') => {
+                return {
+                    year: date.getFullYear(),
+                    month: date.getMonth(),
+                    day: date.getDate(),
+                    weekDay: date.getDay(),
+                    repeat: repeat,
+                    time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
+                    toText: function(){
+                        return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                    }
+                }
+            };
+            
+            updateQuickBtnsSideDate();
             dateReqText.classList.remove('show');
             inputValidationText.style.display = 'none';
 
             validateInputDate();
             createCalendar();
             input.addEventListener('focus', e => inputValidationText.style.display = 'block');
+            quickBtns.forEach(el => el.addEventListener('click', changeDateBtn));
+            
+            
+            dateUtilFunctions = {
+                formatDateFun: (date, repeat = '') => formatDate(date, repeat),
+                styleDueDateBtnFun: (date) => styleDueDateBtn(date),
+            };
 
-            // validate input date
-            // add event listeners to quick buttons
-            // add event listeners to calendar 
+            function changeDateBtn(e){
+                let date;
+                switch(e.currentTarget.querySelector('span').innerText){
+                    case 'Today':
+                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        styleDueDateBtn(date);
+                        dueDate = formatDate(date);
+                        _hideElWithClass(/date-picker/, 'show');
+                        input.value = dueDate.toText();
+                        break;
+                    case 'Tomorrow':
+                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
+                        styleDueDateBtn(date);
+                        dueDate = formatDate(date);
+                        _hideElWithClass(/date-picker/, 'show');
+                        input.value = dueDate.toText();
+                        break;
+                    case 'Next week':
+                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                        styleDueDateBtn(date);
+                        dueDate = formatDate(date);
+                        _hideElWithClass(/date-picker/, 'show');
+                        input.value = dueDate.toText();
+                        break;
+                    case 'Next weekend':
+                        let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
+                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
+                        styleDueDateBtn(date);
+                        dueDate = formatDate(date);
+                        _hideElWithClass(/date-picker/, 'show');
+                        input.value = dueDate.toText();
+                        break;
+                    case 'No date':
+                        styleDueDateBtn(null);
+                        dueDate = null;
+                        _hideElWithClass(/date-picker/, 'show');
+                        input.value = '';
+                        break;
+                }
+            }
+
+            function updateQuickBtnsSideDate(){
+                quickBtns.forEach(el => {
+                    const p = el.querySelector('p');
+                    const span = el.querySelector('span');
+                    switch(span.innerText){
+                        case 'Today':
+                            p.innerText = `${days[today.getDay()]}`;
+                            break;
+                        case 'Tomorrow':
+                            p.innerText = `${days[new Date(today.getFullYear(), today.getMonth(), today.getDate()+1).getDay()]}`;
+                            break;
+                        case 'Next week':
+                            let nextW = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                            p.innerText = `${days[nextW.getDay()]} ${nextW.getDate()} ${months[nextW.getMonth()]}`;
+                            break;
+                        case 'Next weekend':
+                            let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
+                            let nextWEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
+                            p.innerText = `${days[nextWEnd.getDay()]} ${nextWEnd.getDate()} ${months[nextWEnd.getMonth()]}`;
+                            break;
+                        case 'No date':
+                            break;
+                    }
+                });
+            }
 
             function validateInputDate(){
                 const icon = document.querySelector('.add-task-container .date-picker .type-date .icon img');
-                const today = new Date();
                 const currDay = today.getDate();  // 1-31
                 const currMonth = today.getMonth();  // 0-11
                 const currYear = today.getFullYear(); 
-                const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                const formatDate = (date, repeat = '') => {
-                    return {
-                        year: date.getFullYear(),
-                        month: date.getMonth(),
-                        day: date.getDate(),
-                        weekDay: date.getDay(),
-                        repeat: repeat,
-                        time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
-                        toText: function(){
-                            return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
-                        }
-                    }
-                };
+                
 
                 input.addEventListener('input', e => {
                     // match day depending on current month, month is not specified by user
@@ -344,7 +423,8 @@ const addTaskBox = (function(){
                         const time = (value) => value ? value.split(':') : '';
                         let date;
                         let repeatDays = '';
-                        console.log(values);
+                        
+                        //console.log(values);
                         if(values[0].length === 4 && !/[a-z]/i.test(values[0])) date = new Date(values[0], month(values[1])-1, day(values[2]), ...time(values[3]));
                         else{
                             if(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(inputVal)){
@@ -416,8 +496,10 @@ const addTaskBox = (function(){
                             let formattedDate;
                             repeatDays.length === 0 ? formattedDate=formatDate(date) : formattedDate=formatDate(date, repeatDays);
                             fullDateTypedInInput.innerText = formattedDate.toText();
+                            anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
+                            dueDate = formattedDate;
 
-                            console.log(formattedDate);
+                            input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});
                         } 
                     }
                     else if(re1.test(`${currMonth} ${inputVal}`)){
@@ -432,8 +514,10 @@ const addTaskBox = (function(){
                         if(date < today && !(+day === +currDay && time === '')) date.setFullYear(currYear+1);
                         let formattedDate = formatDate(date);
                         fullDateTypedInInput.innerText = formattedDate.toText();
-                        // LATER CHECK IF THERE ARE ANY TASKS IN THAT DAY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        // SAVE TO VARIABLE                                                           
+                        anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
+                        dueDate = formattedDate;
+                        
+                        input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});                                                      
                     }
                     else invalidInput('No results');
 
@@ -458,9 +542,12 @@ const addTaskBox = (function(){
                 const currMonthEl = document.querySelector('.add-task-container .date-picker .calendar .curr-month');
                 const calendar = document.querySelector('.add-task-container .date-picker .calendar');
                 const nav = document.querySelector('.add-task-container .date-picker .calendar .nav');
+                const navUl = nav.querySelector('ul');
+                const navUlElements = navUl.querySelectorAll('li');
                 const previousBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:first-of-type');
                 const goToStartBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:nth-of-type(2)');
                 const nextBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:last-of-type');
+                const input = document.getElementById('type-due-date');
                 calendar.scrollTop = 0;
 
                 calendar.addEventListener('scroll', scrolling);
@@ -488,21 +575,25 @@ const addTaskBox = (function(){
                 }
 
                 function goToStart(){
+                    nav.style.cssText = 'border: none;';
                     calendar.removeEventListener('scroll', scrolling);
                     currUl = calendarUl;
                     currUl.scrollIntoView({behavior: 'smooth', block: 'end'});
-                    calendar.addEventListener('scroll', scrolling);
+                    setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
                 }
                 
                 function next(){  
+                    nav.style.cssText = 'border-bottom: 1px solid gray;';
                     calendar.removeEventListener('scroll', scrolling);
-                    if(!currUl.nextElementSibling)
+                    if(!currUl.nextElementSibling.nextElementSibling.nextElementSibling){
                         showNextMonth();
+                        showNextMonth();
+                    }
                 
                     let nextUl = currUl.nextElementSibling.nextElementSibling;
                     nextUl.scrollIntoView({behavior: "smooth", block: 'nearest'});
                     currUl = nextUl;
-                    calendar.addEventListener('scroll', scrolling);
+                    setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
                 }
 
                 function previous(){
@@ -511,7 +602,8 @@ const addTaskBox = (function(){
                         let prevUl = currUl.previousElementSibling.previousElementSibling;
                         prevUl.scrollIntoView({behavior: 'smooth', block: 'end'});
                         currUl = prevUl;
-                        calendar.addEventListener('scroll', scrolling);
+                        if(!currUl.previousElementSibling) nav.style.cssText = 'border: none;';
+                        setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
                     }
                 }
 
@@ -556,13 +648,77 @@ const addTaskBox = (function(){
                                 const li = document.createElement('li');
                                 li.innerText = date;
                                 if(date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) li.classList.add('today');
+                                else if(date < today.getDate()) li.classList.add('past');
                                 else if(j === 6 || j === 5) li.classList.add('weekend'); 
+
+                                if(!li.classList.contains('past')){
+                                    li.addEventListener('mouseover', e => {
+                                        navUl.innerHTML = '';
+                                        const p = document.createElement('p');
+                                        let date2 = new Date(year, month, li.innerText);
+
+                                        p.innerText = `${days[date2.getDay()]} ${date2.getDate()} ${months[date2.getMonth()]} ${year === today.getFullYear() ? '' : year}`;
+                                        p.innerText += ` - ${tasks.howManyTasksInSpecifiedDay(date2).length} tasks due`;
+                                        p.style.cssText = 'grid-area: 1 / 1 / 2 / -1; align-self: center; justify-self: center; font-size: .85rem; color: #737373';
+                                        navUl.appendChild(p);
+                                    });
+                                    li.addEventListener('mouseout', e => {
+                                        navUl.innerHTML = '';
+                                        navUlElements.forEach(el => navUl.appendChild(el));
+                                    });
+                                    li.addEventListener('click', e => {
+                                        let date2 = new Date(year, month, e.currentTarget.innerText);
+                                        dateUtilFunctions.styleDueDateBtnFun(date2);
+                                        dueDate = dateUtilFunctions.formatDateFun(date2);
+                                        _hideElWithClass(/date-picker/, 'show');
+                                        input.value = dueDate.toText();
+                                    });
+                                }
                                 ul.appendChild(li);
                                 date++;
                             }
                         }
                     }
                     wrapper.appendChild(ul);
+                }
+            }
+
+            function styleDueDateBtn(date){
+                const btn = dueDateBtn.querySelector('.btn');
+                const img = btn.querySelector('img');
+                const today = new Date();
+                const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
+                const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                
+                if(date === null){
+                    btn.innerText = 'Set due date';
+                    btn.insertBefore(img, btn.firstChild);
+                    btn.style.color = '#737373';
+                    img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
+                }
+                else if(date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()){
+                    btn.innerText = 'Today';
+                    btn.insertBefore(img, btn.firstChild);
+                    btn.style.color = '#059669';
+                    img.style.filter = 'invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%)';
+                }
+                else if(date.getDate() === tomorrow.getDate() && date.getMonth() === tomorrow.getMonth() && date.getFullYear() === tomorrow.getFullYear()){
+                    btn.innerText = 'Tomorrow';
+                    btn.insertBefore(img, btn.firstChild);
+                    btn.style.color = '#fbbf24';
+                    img.style.filter = 'invert(84%) sepia(47%) saturate(2119%) hue-rotate(339deg) brightness(104%) contrast(97%)';
+                }
+                else if(date.getDate() <= nextWeek.getDate() && date.getMonth() <= nextWeek.getMonth() && date.getFullYear() === nextWeek.getFullYear()){
+                    btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+                    btn.insertBefore(img, btn.firstChild);
+                    btn.style.color = '#7e22ce';
+                    img.style.filter = 'invert(16%) sepia(67%) saturate(6573%) hue-rotate(272deg) brightness(84%) contrast(92%)';
+                }
+                else{
+                    btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear() === today.getFullYear() ? '' : date.getFullYear()}`;
+                    btn.insertBefore(img, btn.firstChild);
+                    btn.style.color = '#737373';
+                    img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
                 }
             }
         }
@@ -583,8 +739,9 @@ const addTaskBox = (function(){
                             el.classList.add('checked');
                             taskName.value = spliceIn(taskName.value, `@${el.innerText} `, caretPos);
                         }else{
-                            const re = new RegExp(`@${el.innerText}`);
+                            const re = new RegExp(`@${el.innerText}`, 'gi');
                             taskName.value = taskName.value.replace(re, '');
+                            taskName.value = taskName.value.trim();
                             el.classList.remove('checked');
                         }
                         taskName.focus();
@@ -612,13 +769,135 @@ const addTaskBox = (function(){
             }
         }
         else if(isProjectPicker){
+            const selectProjectBtn = document.querySelector('.add-task-container .bottom .select-project');
+            const projectPicker = document.querySelector('.add-task-container .project-picker');
+            const inbox = projectPicker.querySelector('.inbox');
+            const mainProjects = projectPicker.querySelectorAll('ul figcaption');
+            const sideProjects = projectPicker.querySelectorAll('ul li');
+            const allProjects = [inbox, ...mainProjects, ...sideProjects];
+            const [...projectChecked] = projectPicker.querySelectorAll('img.projectChecked');
+            const input = projectPicker.querySelector('input');
+            input.value = '';
+            allProjects.forEach(el => el.style.removeProperty('display'));
 
+            allProjects.forEach(el => {
+                el.addEventListener('click', e => {
+                    const clickedProject = e.target.innerText;
+                    projects.getAllProjects().forEach(el2 => {
+                        if(el2.name === clickedProject){
+                            selectProjectBtn.innerHTML = el2.getTemplateHTML() + `<img src="${moreSvg}" alt="expand">`;
+                            document.documentElement.style.setProperty('--bullet-filter', `${el2.filterValue}`);
+                            projectName = {element: el2, sideProjectIndex: null};
+                        }
+                        else{
+                            el2.subProjects.forEach((sub, i) => {
+                                if(sub.name === clickedProject){
+                                    selectProjectBtn.innerHTML = el2.getTemplateHTML(i) + `<img src="${moreSvg}" alt="expand">`;
+                                    document.documentElement.style.setProperty('--bullet-filter', `${el2.filterValue}`);  
+                                    projectName = {element: el2, sideProjectIndex: i};                                 
+                                }
+                            });
+                        }
+                    });
+                    const img = e.currentTarget.querySelector('img.projectChecked');
+                    projectChecked.forEach(el => el.classList.contains('active') ? el.classList.remove('active') : el);
+                    img.classList.add('active');
+                    _hideElWithClass(/project-picker/, 'show');
+                },{once: true});
+            });
+
+            input.addEventListener('input', e => {
+                const re = new RegExp(`${e.target.value}`, 'i');
+                allProjects.forEach(el => {
+                    re.test(el.innerText) ? el.style.display = 'flex' : el.style.display = 'none'; 
+                });
+            });
+        }
+    };
+
+    const _resetValuesAddTaskContainer = function(){
+        priority = null;
+        dueDate = null;
+        projectName = null;
+        labels = null;
+        taskName.value = '';
+        description.value = '';
+        allUniqueMatchesInsideTaskName = [];
+
+        // reset due date btn and date picker
+        const dueDateBtn = document.querySelector('.add-task-container .top .due-date'); 
+        const input = document.getElementById('type-due-date');
+        const btn = dueDateBtn.querySelector('.btn');
+        const img = btn.querySelector('img');
+        input.value = '';
+        btn.innerText = 'Today';
+        btn.insertBefore(img, btn.firstChild);
+        btn.style.color = '#059669';
+        img.style.filter = 'invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%)';
+
+        // reset project picker and select project btn
+        const selectProjBtn = document.querySelector('.add-task-container .bottom .select-project');
+        const projectChecked = document.querySelectorAll('.add-task-container .bottom .project-picker img.projectChecked');
+        const inboxChecked = document.querySelector('.add-task-container .bottom .project-picker .inbox img.projectChecked');
+
+        selectProjBtn.innerHTML = `<img src="${inboxIcon}" alt="select-project"><p>Inbox</p><img src="${moreSvg}" alt="expand">`;
+        projectChecked.forEach(el => el.classList.contains('active') ? el.classList.remove('active') : el);
+        inboxChecked.classList.add('active');
+
+        // reset priority picker
+        const priorityBtn = document.querySelector('.add-task-container .top .priority .btn');
+        const choices = document.querySelectorAll('.add-task-container .top .priority .priority-picker > div');
+
+        choices.forEach(el => el.classList.contains('prio4') ? el.classList.add('checked') : el.classList.remove('checked'));
+        priorityBtn.innerHTML = `<img class="svg" src="${flagOutline}" alt="more">Priority`;
+
+        // reset label picker
+        const options = document.querySelectorAll('.add-task-container .top .label .label-picker > div');
+        options.forEach(el => el.classList.contains('checked') ? el.classList.remove('checked') : el);
+        
+        // remove red boxes inside task name input
+        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const allRedBoxes = wrapper.querySelectorAll('.label-added');     
+        allRedBoxes.forEach(el => wrapper.removeChild(el));
+
+        // reset add task btn
+        addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
+        addBtn.removeEventListener('click', _addTask);
+    };
+
+    const _discardCurrentTaskAlert = function(hideTaskBox){
+        const alertBox = document.querySelector('.alert-box');
+        const cancel = document.querySelector('.alert-box .buttons button:first-of-type');
+        const xBtn = document.querySelector('.alert-box .icons .close');
+        const discardBtn = document.querySelector('.alert-box .buttons button:last-of-type');
+        const filterBg = document.querySelector('.filter-background');
+        alertBox.style.display = 'flex';
+        filterBg.style.display = 'block';
+                
+        document.removeEventListener('click', activateButtons);
+        document.addEventListener('click', alertBoxDecision);
+
+        function alertBoxDecision(e){
+            if((e.target != alertBox && !alertBox.contains(e.target)) || e.target === cancel || (e.target === xBtn || xBtn.contains(e.target))){ 
+                alertBox.style.display = 'none';
+                filterBg.style.display = 'none';
+                document.removeEventListener('click', alertBoxDecision);
+                document.addEventListener('click', activateButtons);
+                return;
+            }
+            else if(e.target === discardBtn){
+                alertBox.style.display = 'none';
+                filterBg.style.display = 'none';
+                hideTaskBox();
+                document.removeEventListener('click', alertBoxDecision);
+                document.addEventListener('click', activateButtons);
+            }
         }
     };
 
     function activateButtons(e){
         const isAnyOfButtonsClicked = showHideBtn.findIndex(item => e.target === item.btn || item.btn.contains(e.target));
-        const isBtnToggleElClicked = showHideBtn.find(item => e.target === item.el || item.el.contains(e.target));
+        const isBtnToggleElClicked = showHideBtn.find(item => e.target === item.el || (item.el.contains(e.target)&&e.target != cancelBtn));
         
         if(isAnyOfButtonsClicked != -1){
             const i = isAnyOfButtonsClicked;
@@ -645,10 +924,22 @@ const addTaskBox = (function(){
             
             if(onlyActive.length > 0){
                 const sortByLayer = onlyActive.sort((a,b) => b.layer - a.layer);
-
+                
                 if(isBtnToggleElClicked != sortByLayer[0] && !(labelBox.classList.contains('show') && sortByLayer[0].layer === 1)){
-                    sortByLayer[0].active = false;
-                    sortByLayer[0].el.classList.remove(sortByLayer[0].className);
+                    if((sortByLayer[0].el.classList.contains('add-task-container') && taskName.value != '')||
+                    (sortByLayer[0].el.classList.contains('add-task-container') && taskName.value != '' && e.target === cancelBtn)){
+                        _discardCurrentTaskAlert(() => {
+                            _resetValuesAddTaskContainer();
+                            sortByLayer[0].active = false;
+                            sortByLayer[0].el.classList.remove(sortByLayer[0].className);
+                        });
+                    }
+                    else{
+                        if((sortByLayer[0].el.classList.contains('add-task-container'))||
+                        (sortByLayer[0].el.classList.contains('add-task-container') && e.target === cancelBtn)) _resetValuesAddTaskContainer();
+                        sortByLayer[0].active = false;
+                        sortByLayer[0].el.classList.remove(sortByLayer[0].className);
+                    }
                 }   
             }
         }
