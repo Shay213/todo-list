@@ -23,33 +23,35 @@ const projects = (function(){
         
         getTemplateHTML(subProjectIndex=null){      
             return this.name === 'Inbox' ? `<img src="${inbox}" alt="select-project"><p>${this.name}</p>`:
-            `<p class="bullet">${this.name}${subProjectIndex === null ? '':'/' + this.subProjects[subProjectIndex].name}</p>`;
+            `<div style="display:flex;align-items:center; gap: 6px">
+            <div class="bullet" style="background-color: ${this.colorValue}"></div><p>${this.name}${subProjectIndex === null ? '':'/' + this.subProjects[subProjectIndex].name}</p>
+            </div>`;
         }
 
-        get filterValue(){
+        get colorValue(){
             switch(this.color){
                 case 'yellow':
-                    return 'invert(96%) sepia(41%) saturate(5669%) hue-rotate(338deg) brightness(98%) contrast(98%)';
+                    return '#facc15';
                 case 'orange':
-                    return 'invert(68%) sepia(38%) saturate(1303%) hue-rotate(331deg) brightness(100%) contrast(97%)';
+                    return '#f97316';
                 case 'red':
-                    return 'invert(61%) sepia(85%) saturate(1973%) hue-rotate(315deg) brightness(99%) contrast(96%)';
+                    return '#ef4444';
                 case 'lime':
-                    return 'invert(85%) sepia(57%) saturate(588%) hue-rotate(24deg) brightness(94%) contrast(92%)';
+                    return '#a3e635';
                 case 'teal':
-                    return 'invert(93%) sepia(47%) saturate(6869%) hue-rotate(127deg) brightness(88%) contrast(87%)';
+                    return '#14b8a6';
                 case 'cyan':
-                    return 'invert(73%) sepia(99%) saturate(1296%) hue-rotate(150deg) brightness(90%) contrast(109%)';
+                    return '#22d3ee';
                 case 'purple':
-                    return 'invert(78%) sepia(36%) saturate(7485%) hue-rotate(221deg) brightness(100%) contrast(98%)';
+                    return '#a855f7';
                 case 'neutral':
-                    return 'invert(61%) sepia(80%) saturate(9%) hue-rotate(32deg) brightness(91%) contrast(94%)';
+                    return '#737373';
             }
         }
     };
 
     const _updateProjectPicker = function(){
-        let content = '<input type="text" name="project" id="project" placeholder="Type a project">';
+        let content = '<input type="text" placeholder="Type a project">';
         const inboxTemplate = `
         <div class="inbox">
             <img src="${inboxIcon}" alt="inbox">
@@ -60,7 +62,8 @@ const projects = (function(){
         const projectTemplate = (name,subProjects) => `
         <ul>
             <figcaption>
-                <p>${name}</p>
+                <div class="bullet"></div>
+                <p style="padding-left: 11px;">${name}</p>
                 <img class="projectChecked" src="${checkBold}" alt="checked">
             </figcaption>
             ${subProjects}
@@ -78,7 +81,7 @@ const projects = (function(){
             el.subProjects.forEach(el2 => subProjectsContent += subProjectTemplate(el2.name));
             content += projectTemplate(el.name, subProjectsContent);
         });
-        projectPicker.innerHTML += content;   
+        projectPicker.innerHTML += content;  
     };
 
     const _initialProjects = (function(){

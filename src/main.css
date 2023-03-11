@@ -334,77 +334,11 @@ img.svg{
 /* Today Tab */
 @import url('./app/todayTabStyles.css');
 
-.prioOne{
-    width: 20px;
-    height: 20px;
-    background-color: #fee2e2;
+.bullet{
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    border: 2px solid #ef4444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioTwo{
-    width: 20px;
-    height: 20px;
-    background-color: #ffedd5;
-    border-radius: 50%;
-    border: 2px solid #f97316;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioThree{
-    width: 20px;
-    height: 20px;
-    background-color: #dbeafe;
-    border-radius: 50%;
-    border: 2px solid #3b82f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioFour{
-    width: 20px;
-    height: 20px;
-    background-color: #f5f5f4;
-    border-radius: 50%;
-    border: 2px solid #78716c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioOne img{
-    filter: invert(39%) sepia(61%) saturate(3822%) hue-rotate(338deg) brightness(96%) contrast(95%);
-}
-.prioTwo img{
-    filter: invert(66%) sepia(87%) saturate(4239%) hue-rotate(352deg) brightness(100%) contrast(96%);
-}
-.prioThree img{
-    filter: invert(40%) sepia(93%) saturate(1911%) hue-rotate(203deg) brightness(99%) contrast(94%);
-}
-.prioFour img{
-    filter: invert(50%) sepia(7%) saturate(470%) hue-rotate(342deg) brightness(87%) contrast(80%);
-}
-
-.today ul li .priority-box img{
-    width: 0.85rem;
-    opacity: 0;
-    transition: 400ms;
-}
-
-.today ul li .priority-box{
-    cursor: pointer;
-    padding: 2px;
-}
-
-.today ul li .priority-box:hover img{   
-    opacity: 1;
-    transition: 400ms;
+    background-color: #000;
 }
 
 .alert-box{

@@ -3,10 +3,14 @@ import { toggleSidebar } from './app/toggleSidebar';
 import { sidebarResize } from './app/sidebarResize';
 import { searchBarFocus } from './app/searchBarFocus';
 import addTaskBox from './app/addTaskBox';
-import tasks from './app/tasks';
+import todayTab from './app/todayTab';
+import editTaskBox from './app/editTaskBox';
+import tabs from './app/tabs';
 
 toggleSidebar();
 sidebarResize();
 searchBarFocus();
-addTaskBox.getAllButtons();
-tasks.displayTasks();
+
+
+
+

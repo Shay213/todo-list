@@ -10,21 +10,22 @@ import eventBusy from '../assets/icons/event_busy.svg';
 import moreSvg from '../assets/icons/more.svg';
 import projects from "./projects";
 import inboxIcon from '../assets/icons/inbox.svg';
+import existingLabels from './labels';
 
 const addTaskBox = (function(){
     let showHideBtn = []; 
-    const addBtn = document.querySelector('.add-task-container button.add-btn');
-    const cancelBtn = document.querySelector('.add-task-container button.cancel-btn');
-    const taskName = document.getElementById('task-name');
-    const description = document.getElementById('description');
-    const labelBox = document.querySelector('.add-task-container .label-box');
-    const expandArrow = document.querySelector('.add-task-container .date-picker .input-validation-text .date-req img');
-    const dateReqText = document.querySelector('.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul');
+    const addTaskContainer = document.querySelector('#content > .add-task-container');
+    const addBtn = addTaskContainer.querySelector('button.add-btn');
+    const cancelBtn = addTaskContainer.querySelector('button.cancel-btn');
+    const taskName = addTaskContainer.querySelector('.inputs div:first-child input');
+    const description = addTaskContainer.querySelector('.inputs input:nth-child(2)');
+    const labelBox = addTaskContainer.querySelector('.label-box');
+    const expandArrow = addTaskContainer.querySelector('.date-picker .input-validation-text .date-req img');
+    const dateReqText = addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
     let priority = null;
     let dueDate = null;
     let projectName = null;
     let labels = null;
-    let testLabels = ['cat', 'dog', 'horse', 'lion', 'bird', 'dino', 'driver', 'tree', 'carpet', 'ham', 'horny', 'lol', 'less', 'likely'];
     let isLabelBoxVisible = false;
     let activeLabelBoxItem;
     let currLabelBasedOnCaretPos;
@@ -43,6 +44,12 @@ const addTaskBox = (function(){
             projectName: projectName,
             labels: labels
         });
+        
+        showHideBtn.forEach(item => {
+            item.el.active = false;
+            item.el.classList.remove(item.className);
+        });
+        _resetValuesAddTaskContainer();
     };
 
     const _checkTaskNameEmpty = function(){
@@ -54,13 +61,6 @@ const addTaskBox = (function(){
             addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
             addBtn.addEventListener('click', _addTask, {once: true});
         }
-    };
-
-    const _searchInExistingLabels = function(currString, fullMatch){
-        let withoutAtSign = currString.split('@');
-        let re;
-        fullMatch ? re = new RegExp(`^${withoutAtSign[1]}$`, 'i') : re = new RegExp(`^${withoutAtSign[1]}`, 'i');
-        return testLabels.filter(el => re.test(el));
     };
 
     taskName.addEventListener('input', lookForLabels);
@@ -82,12 +82,12 @@ const addTaskBox = (function(){
             currString = e.value;
             caretPos = e.selectionStart;
         }else{
-            _hideElWithClass(/label-picker/, 'show');
+            _hideElWithClass(/label-picker|priority-picker|date-picker|project-picker/, 'show');
             currString = e.target.value;
             caretPos = e.target.selectionStart;
         }
 
-        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const allRedBoxes = wrapper.querySelectorAll('.label-added');
         const stringBasedOnCaretPos = currString.slice(0, caretPos);
         const currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
@@ -115,8 +115,8 @@ const addTaskBox = (function(){
         labels = unique;
         
         if(currLabel){
-            const matches = _searchInExistingLabels(currLabel[0], false);
-            const fullMatch = _searchInExistingLabels(currLabel[0], true);
+            const matches = existingLabels.isInExistingLabels(currLabel[0], false);
+            const fullMatch = existingLabels.isInExistingLabels(currLabel[0], true);
             currLabelBasedOnCaretPos = currLabel[0];
             
             _createLabelBoxContent(matches, fullMatch, currLabel[0], isLabelRepeated);
@@ -137,7 +137,7 @@ const addTaskBox = (function(){
     };
 
     const _createRedBox = function(startStr, currStr){
-        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const el = document.createElement('div');
         // +2 because of padding
         const left = _getTextWidth(startStr, 'bold 0.95rem Arial') + 2;
@@ -229,7 +229,7 @@ const addTaskBox = (function(){
         let currLabWithoutAtSign = currLab.split('@')[1];
         if(/span/g.test(el.innerHTML)){
             // add to existing labels
-            testLabels.push(currLabWithoutAtSign);
+            existingLabels.names.push(currLabWithoutAtSign);
             taskName.value += ' ';
             labelBox.classList.remove('show');
             isLabelBoxVisible = false;
@@ -260,7 +260,7 @@ const addTaskBox = (function(){
         let isDatePicker = element.classList.contains('date-picker');
         let isLabelPicker = element.classList.contains('label-picker');
         let isProjectPicker = element.classList.contains('project-picker');
-
+        
         if(isPriorityPicker){
             const choices = [...element.children];
             choices.forEach(el => {
@@ -291,17 +291,17 @@ const addTaskBox = (function(){
             });
         }
         else if(isDatePicker){
-            const dueDateBtn = document.querySelector('.add-task-container .due-date');
-            const input = document.getElementById('type-due-date');
-            const inputValidationText = document.querySelector('.add-task-container .date-picker .input-validation-text');
-            const dateReqText = document.querySelector('.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul');
+            const dueDateBtn = addTaskContainer.querySelector('.due-date');
+            const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
+            const inputValidationText = addTaskContainer.querySelector('.date-picker .input-validation-text');
+            const dateReqText = addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
             const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
             const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
             const eventIcon = inputValidationText.querySelector('div:first-of-type img');
             const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             const today = new Date();
-            const quickBtns = document.querySelectorAll('.add-task-container .due-date .date-picker .pick-icon > div');
+            const quickBtns = addTaskContainer.querySelectorAll('.due-date .date-picker .pick-icon > div');
             const formatDate = (date, repeat = '') => {
                 return {
                     year: date.getFullYear(),
@@ -333,42 +333,56 @@ const addTaskBox = (function(){
 
             function changeDateBtn(e){
                 let date;
+                const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
                 switch(e.currentTarget.querySelector('span').innerText){
                     case 'Today':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
                         dueDate = formatDate(date);
-                        _hideElWithClass(/date-picker/, 'show');
-                        input.value = dueDate.toText();
+                        input.value = 'Today';
                         break;
                     case 'Tomorrow':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
+                        _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
                         dueDate = formatDate(date);
-                        _hideElWithClass(/date-picker/, 'show');
-                        input.value = dueDate.toText();
+                        input.value = 'Tomorrow';
                         break;
                     case 'Next week':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                        _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
                         dueDate = formatDate(date);
-                        _hideElWithClass(/date-picker/, 'show');
-                        input.value = dueDate.toText();
+                        input.value = days[dueDate.weekDay];
                         break;
                     case 'Next weekend':
                         let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
+                        _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
                         dueDate = formatDate(date);
-                        _hideElWithClass(/date-picker/, 'show');
-                        input.value = dueDate.toText();
+                        input.value = days[dueDate.weekDay];
                         break;
                     case 'No date':
                         styleDueDateBtn(null);
                         dueDate = null;
                         _hideElWithClass(/date-picker/, 'show');
                         input.value = '';
+
+                        icon.src = `${light}`;
+                        icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
+                        eventIcon.src = eventBusy;
+                        fullDateTypedInInput.innerText = 'No results';
+                        anyTasksText.innerText = '';
                         break;
+                }
+                if(e.currentTarget.querySelector('span').innerText != 'No date'){
+                    icon.src = `${lightFull}`;
+                    icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
+                    eventIcon.src = eventAvailable;
+                    fullDateTypedInInput.innerText = dueDate.toText();
+                    anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
                 }
             }
 
@@ -399,7 +413,7 @@ const addTaskBox = (function(){
             }
 
             function validateInputDate(){
-                const icon = document.querySelector('.add-task-container .date-picker .type-date .icon img');
+                const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
                 const currDay = today.getDate();  // 1-31
                 const currMonth = today.getMonth();  // 0-11
                 const currYear = today.getFullYear(); 
@@ -522,6 +536,8 @@ const addTaskBox = (function(){
                     else invalidInput('No results');
 
                     function invalidInput(txt){
+                        input.addEventListener('focusout', e => styleDueDateBtn(null),{once:true});
+                        dueDate = null;
                         icon.src = `${light}`;
                         icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
                         eventIcon.src = eventBusy;
@@ -537,17 +553,17 @@ const addTaskBox = (function(){
                 let currentYear = today.getFullYear();
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
    
-                const wrapper = document.querySelector('.add-task-container .date-picker .calendar .months');
+                const wrapper = addTaskContainer.querySelector('.date-picker .calendar .months');
                 wrapper.innerHTML = '';
-                const currMonthEl = document.querySelector('.add-task-container .date-picker .calendar .curr-month');
-                const calendar = document.querySelector('.add-task-container .date-picker .calendar');
-                const nav = document.querySelector('.add-task-container .date-picker .calendar .nav');
+                const currMonthEl = addTaskContainer.querySelector('.date-picker .calendar .curr-month');
+                const calendar = addTaskContainer.querySelector('.date-picker .calendar');
+                const nav = addTaskContainer.querySelector('.date-picker .calendar .nav');
                 const navUl = nav.querySelector('ul');
                 const navUlElements = navUl.querySelectorAll('li');
-                const previousBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:first-of-type');
-                const goToStartBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:nth-of-type(2)');
-                const nextBtn = document.querySelector('.add-task-container .date-picker .calendar .nav .icons > div:last-of-type');
-                const input = document.getElementById('type-due-date');
+                const previousBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:first-of-type');
+                const goToStartBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:nth-of-type(2)');
+                const nextBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:last-of-type');
+                const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
                 calendar.scrollTop = 0;
 
                 calendar.addEventListener('scroll', scrolling);
@@ -558,7 +574,7 @@ const addTaskBox = (function(){
                 currMonthEl.innerHTML = months[currentMonth] + ' ' + currentYear;
                 showMonth(currentMonth, currentYear);
                 showNextMonth();
-                const calendarUl = document.querySelector('.add-task-container .date-picker .calendar .months ul');
+                const calendarUl = addTaskContainer.querySelector('.date-picker .calendar .months ul');
                 let currUl = calendarUl;
 
 
@@ -723,14 +739,14 @@ const addTaskBox = (function(){
             }
         }
         else if(isLabelPicker){
-            const labelPicker = document.querySelector('.add-task-container .top .label .label-picker');
+            const labelPicker = addTaskContainer.querySelector('.top .label .label-picker');
             //Create label picker content
             createLabelPickerContent();
             //put labels inside input
             putLabelsInsideInput();
 
             function putLabelsInsideInput(){
-                const options = document.querySelectorAll('.add-task-container .top .label .label-picker > div');
+                const options = addTaskContainer.querySelectorAll('.top .label .label-picker > div');
                 const spliceIn = (originalStr, strToAdd, pos) => [originalStr.slice(0, pos), strToAdd, originalStr.slice(pos)].join('');
 
                 options.forEach(el => {
@@ -762,15 +778,15 @@ const addTaskBox = (function(){
                 `;
                 let content = '';
 
-                testLabels.forEach(el => {
+                existingLabels.names.forEach(el => {
                     allUniqueMatchesInsideTaskName.find(item => item.slice(1) === el) ? content += getTemplate(el, 'checked') : content += getTemplate(el);
                 });
                 labelPicker.innerHTML = content;
             }
         }
         else if(isProjectPicker){
-            const selectProjectBtn = document.querySelector('.add-task-container .bottom .select-project');
-            const projectPicker = document.querySelector('.add-task-container .project-picker');
+            const selectProjectBtn = addTaskContainer.querySelector('.bottom .select-project');
+            const projectPicker = addTaskContainer.querySelector('.project-picker');
             const inbox = projectPicker.querySelector('.inbox');
             const mainProjects = projectPicker.querySelectorAll('ul figcaption');
             const sideProjects = projectPicker.querySelectorAll('ul li');
@@ -780,21 +796,21 @@ const addTaskBox = (function(){
             input.value = '';
             allProjects.forEach(el => el.style.removeProperty('display'));
 
+            mainProjects.forEach(el => el.querySelector('.bullet').style.cssText = `background-color: ${projects.getAllProjects().find(proj => el.innerText === proj.name).colorValue};`);
+
             allProjects.forEach(el => {
                 el.addEventListener('click', e => {
                     const clickedProject = e.target.innerText;
                     projects.getAllProjects().forEach(el2 => {
                         if(el2.name === clickedProject){
                             selectProjectBtn.innerHTML = el2.getTemplateHTML() + `<img src="${moreSvg}" alt="expand">`;
-                            document.documentElement.style.setProperty('--bullet-filter', `${el2.filterValue}`);
-                            projectName = {element: el2, sideProjectIndex: null};
+                            projectName = {element: el2, subProjectIndex: null};
                         }
                         else{
                             el2.subProjects.forEach((sub, i) => {
                                 if(sub.name === clickedProject){
                                     selectProjectBtn.innerHTML = el2.getTemplateHTML(i) + `<img src="${moreSvg}" alt="expand">`;
-                                    document.documentElement.style.setProperty('--bullet-filter', `${el2.filterValue}`);  
-                                    projectName = {element: el2, sideProjectIndex: i};                                 
+                                    projectName = {element: el2, subProjectIndex: i};                                 
                                 }
                             });
                         }
@@ -825,38 +841,48 @@ const addTaskBox = (function(){
         allUniqueMatchesInsideTaskName = [];
 
         // reset due date btn and date picker
-        const dueDateBtn = document.querySelector('.add-task-container .top .due-date'); 
-        const input = document.getElementById('type-due-date');
+        const dueDateBtn = addTaskContainer.querySelector('.top .due-date'); 
+        const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
         const btn = dueDateBtn.querySelector('.btn');
         const img = btn.querySelector('img');
+        const inputValidationText = addTaskContainer.querySelector('.date-picker .input-validation-text');
+        const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
+        const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
+        const eventIcon = inputValidationText.querySelector('div:first-of-type img');
+        const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
         input.value = '';
         btn.innerText = 'Today';
         btn.insertBefore(img, btn.firstChild);
         btn.style.color = '#059669';
         img.style.filter = 'invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%)';
+        icon.src = `${light}`;
+        icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
+        eventIcon.src = eventBusy;
+        fullDateTypedInInput.innerText = 'No results';
+        anyTasksText.innerText = '';
 
         // reset project picker and select project btn
-        const selectProjBtn = document.querySelector('.add-task-container .bottom .select-project');
-        const projectChecked = document.querySelectorAll('.add-task-container .bottom .project-picker img.projectChecked');
-        const inboxChecked = document.querySelector('.add-task-container .bottom .project-picker .inbox img.projectChecked');
+        const selectProjBtn = addTaskContainer.querySelector('.bottom .select-project');
+        const projectChecked = addTaskContainer.querySelectorAll('.bottom .project-picker img.projectChecked');
+        const inboxChecked = addTaskContainer.querySelector('.bottom .project-picker .inbox img.projectChecked');
 
         selectProjBtn.innerHTML = `<img src="${inboxIcon}" alt="select-project"><p>Inbox</p><img src="${moreSvg}" alt="expand">`;
         projectChecked.forEach(el => el.classList.contains('active') ? el.classList.remove('active') : el);
         inboxChecked.classList.add('active');
 
         // reset priority picker
-        const priorityBtn = document.querySelector('.add-task-container .top .priority .btn');
-        const choices = document.querySelectorAll('.add-task-container .top .priority .priority-picker > div');
+        const priorityBtn = addTaskContainer.querySelector('.top .priority .btn');
+        const choices = addTaskContainer.querySelectorAll('.top .priority .priority-picker > div');
 
         choices.forEach(el => el.classList.contains('prio4') ? el.classList.add('checked') : el.classList.remove('checked'));
         priorityBtn.innerHTML = `<img class="svg" src="${flagOutline}" alt="more">Priority`;
 
         // reset label picker
-        const options = document.querySelectorAll('.add-task-container .top .label .label-picker > div');
+        const options = addTaskContainer.querySelectorAll('.top .label .label-picker > div');
         options.forEach(el => el.classList.contains('checked') ? el.classList.remove('checked') : el);
         
         // remove red boxes inside task name input
-        const wrapper = document.querySelector('.add-task-container .top .inputs div:first-of-type');
+        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const allRedBoxes = wrapper.querySelectorAll('.label-added');     
         allRedBoxes.forEach(el => wrapper.removeChild(el));
 
@@ -902,7 +928,7 @@ const addTaskBox = (function(){
         if(isAnyOfButtonsClicked != -1){
             const i = isAnyOfButtonsClicked;
             const itemsWithSameLayer = showHideBtn.filter(item => item.layer === showHideBtn[i].layer && item != showHideBtn[i]);
-
+            
             hideItemsOnTheSameLayer();
             showClickedItem();
             
@@ -926,8 +952,8 @@ const addTaskBox = (function(){
                 const sortByLayer = onlyActive.sort((a,b) => b.layer - a.layer);
                 
                 if(isBtnToggleElClicked != sortByLayer[0] && !(labelBox.classList.contains('show') && sortByLayer[0].layer === 1)){
-                    if((sortByLayer[0].el.classList.contains('add-task-container') && taskName.value != '')||
-                    (sortByLayer[0].el.classList.contains('add-task-container') && taskName.value != '' && e.target === cancelBtn)){
+                    if((sortByLayer[0].el === addTaskContainer && taskName.value != '')||
+                    (sortByLayer[0].el === addTaskContainer && taskName.value != '' && e.target === cancelBtn)){
                         _discardCurrentTaskAlert(() => {
                             _resetValuesAddTaskContainer();
                             sortByLayer[0].active = false;
@@ -935,8 +961,8 @@ const addTaskBox = (function(){
                         });
                     }
                     else{
-                        if((sortByLayer[0].el.classList.contains('add-task-container'))||
-                        (sortByLayer[0].el.classList.contains('add-task-container') && e.target === cancelBtn)) _resetValuesAddTaskContainer();
+                        if((sortByLayer[0].el === addTaskContainer)||(sortByLayer[0].el === addTaskContainer && e.target === cancelBtn)) 
+                            _resetValuesAddTaskContainer();
                         sortByLayer[0].active = false;
                         sortByLayer[0].el.classList.remove(sortByLayer[0].className);
                     }
@@ -950,61 +976,73 @@ const addTaskBox = (function(){
         }
     }
     
-    const _addToShowHideBtn = ({el, btn, className, layer, active}) => showHideBtn.push({el, btn, className, layer, active});
+    const _addToShowHideBtn = (arr, {el, btn, className, layer, active}) => arr.push({el, btn, className, layer, active});
 
-    const getAllButtons = function(){
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container .date-picker'),
-            btn: document.querySelector('.add-task-container .flex-container > div:first-child .btn'),
+    const getAllButtons = function(container, includeContainer, arr){
+        _addToShowHideBtn(arr, {
+            el: container.querySelector('.date-picker'),
+            btn: container.querySelector('.flex-container > div:first-child .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
 
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container .flex-container > .priority .priority-picker'),
-            btn: document.querySelector('.add-task-container .flex-container > .priority .btn'),
+        _addToShowHideBtn(arr, {
+            el: container.querySelector('.flex-container > .priority .priority-picker'),
+            btn: container.querySelector('.flex-container > .priority .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
         
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container .label-picker'),
-            btn: document.querySelector('.add-task-container .flex-container > .label .btn'),
+        _addToShowHideBtn(arr, {
+            el: container.querySelector('.label-picker'),
+            btn: container.querySelector('.flex-container > .label .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
 
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container .bottom .project-picker'),
-            btn: document.querySelector('.add-task-container .bottom .select-project'),
+        _addToShowHideBtn(arr, {
+            el: container.querySelector('.bottom .project-picker'),
+            btn: container.querySelector('.bottom .select-project'),
             className: 'show',
             layer: 2,
             active: false
         });
 
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container'),
-            btn: document.querySelector('.top-panel .add-task'),
-            className: 'toggleAddTask',
-            layer: 1,
-            active: false
-        });
+        if(includeContainer){
+            _addToShowHideBtn(arr, {
+                el: container,
+                btn: document.querySelector('.top-panel .add-task'),
+                className: 'toggleAddTask',
+                layer: 1,
+                active: false
+            });
+        }
 
-        _addToShowHideBtn({
-            el: document.querySelector('.add-task-container .date-picker .add-time .time-picker'),
-            btn: document.querySelector('.add-task-container .date-picker .add-time p'),
+        _addToShowHideBtn(arr, {
+            el: container.querySelector('.date-picker .add-time .time-picker'),
+            btn: container.querySelector('.date-picker .add-time p'),
             className: 'show',
             layer: 3,
             active: false
         });
     };
 
-    return {
+    getAllButtons(addTaskContainer, true, showHideBtn);
+
+    const getShowHideBtn = () => showHideBtn;
+    const setShowHideBtn = (arr) => showHideBtn = arr;
+    const getAddTaskContainer = () => addTaskContainer;
+    const setAddTaskContainer = (el) => addTaskContainer = el; 
+
+    return{
         getAllButtons,
+        getShowHideBtn,
+        setShowHideBtn
     };
+
 })();
 
 export default addTaskBox
