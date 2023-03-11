@@ -13,39 +13,46 @@ import inboxIcon from '../assets/icons/inbox.svg';
 import existingLabels from './labels';
 
 const addTaskBox = (function(){
-    let showHideBtn = []; 
-    const addTaskContainer = document.querySelector('#content > .add-task-container');
-    const addBtn = addTaskContainer.querySelector('button.add-btn');
-    const cancelBtn = addTaskContainer.querySelector('button.cancel-btn');
-    const taskName = addTaskContainer.querySelector('.inputs div:first-child input');
-    const description = addTaskContainer.querySelector('.inputs input:nth-child(2)');
-    const labelBox = addTaskContainer.querySelector('.label-box');
-    const expandArrow = addTaskContainer.querySelector('.date-picker .input-validation-text .date-req img');
-    const dateReqText = addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
-    let priority = null;
-    let dueDate = null;
-    let projectName = null;
-    let labels = null;
-    let isLabelBoxVisible = false;
-    let activeLabelBoxItem;
-    let currLabelBasedOnCaretPos;
-    let dateUtilFunctions;
-    // inside taskName
-    let caretPos;
-    let allUniqueMatchesInsideTaskName = [];
-    let isLabelRepeated;
+    const createData = (arr, container) => {
+        const data = {
+            showHideBtn: arr,
+            addTaskContainer: container,
+            addBtn: container.querySelector('button.add-btn'),
+            cancelBtn: container.querySelector('button.cancel-btn'),
+            taskName: container.querySelector('.inputs div:first-child input'),
+            description: container.querySelector('.inputs input:nth-child(2)'),
+            labelBox: container.querySelector('.label-box'),
+            expandArrow: container.querySelector('.date-picker .input-validation-text .date-req img'),
+            dateReqText: container.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul'),
+            priority: null,
+            dueDate: null,
+            projectName: null,
+            labels: null,
+            isLabelBoxVisible: false,
+            activeLabelBoxItem: null,
+            currLabelBasedOnCaretPos: null,
+            dateUtilFunctions: null,
+            // inside taskName
+            caretPos: null,
+            allUniqueMatchesInsideTaskName: [],
+            isLabelRepeated: null,
+        };
+        return data;
+    };
 
+    const data = createData([], document.querySelector('#content > .add-task-container'));
+    
     const _addTask = function(e){
         tasks.createTask({
-            priority: priority,
-            taskName: taskName.value,
-            description: description.value,
-            dueDate: dueDate,
-            projectName: projectName,
-            labels: labels
+            priority: data.priority,
+            taskName: data.taskName.value,
+            description: data.description.value,
+            dueDate: data.dueDate,
+            projectName: data.projectName,
+            labels: data.labels
         });
         
-        showHideBtn.forEach(item => {
+        data.showHideBtn.forEach(item => {
             item.el.active = false;
             item.el.classList.remove(item.className);
         });
@@ -53,43 +60,46 @@ const addTaskBox = (function(){
     };
 
     const _checkTaskNameEmpty = function(){
-        if(taskName.value === ''){
-            addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
-            addBtn.removeEventListener('click', _addTask);
+        if(data.taskName.value === ''){
+            data.addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
+            data.addBtn.removeEventListener('click', _addTask);
         }
         else{
-            addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
-            addBtn.addEventListener('click', _addTask, {once: true});
+            data.addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
+            data.addBtn.addEventListener('click', _addTask, {once: true});
         }
     };
 
-    taskName.addEventListener('input', lookForLabels);
-    taskName.addEventListener('click', lookForLabels);
-    document.addEventListener('keydown', arrowMoveInsideLabelBox);
-    document.addEventListener('click', activateButtons);
-    //disable arrow up/down inside input field
-    taskName.addEventListener('keydown', e => {
-        if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
-    });
+    const runEvents = () => {
+        data.taskName.addEventListener('input', lookForLabels);
+        data.taskName.addEventListener('click', lookForLabels);
+        document.addEventListener('keydown', arrowMoveInsideLabelBox);
+        document.addEventListener('click', activateButtons);
+        //disable arrow up/down inside input field
+        data.taskName.addEventListener('keydown', e => {
+            if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+        });
+        data.expandArrow.addEventListener('click', e => data.dateReqText.classList.toggle('show'));
+    };
 
-    expandArrow.addEventListener('click', e => dateReqText.classList.toggle('show'));
+    runEvents();
 
     function lookForLabels(e){
         _checkTaskNameEmpty();
         
         let currString;
-        if(e === taskName){
+        if(e === data.taskName){
             currString = e.value;
-            caretPos = e.selectionStart;
+            data.caretPos = e.selectionStart;
         }else{
             _hideElWithClass(/label-picker|priority-picker|date-picker|project-picker/, 'show');
             currString = e.target.value;
-            caretPos = e.target.selectionStart;
+            data.caretPos = e.target.selectionStart;
         }
 
-        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
+        const wrapper = data.addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const allRedBoxes = wrapper.querySelectorAll('.label-added');
-        const stringBasedOnCaretPos = currString.slice(0, caretPos);
+        const stringBasedOnCaretPos = currString.slice(0, data.caretPos);
         const currLabel = stringBasedOnCaretPos.match(/@[^ @]*$/);
         const re = /@[^ @]+/g;
         let allMatches = [];
@@ -97,9 +107,9 @@ const addTaskBox = (function(){
         
         allRedBoxes.forEach(el => wrapper.removeChild(el));
         while ((match = re.exec(currString)) != null) {
-            if(allMatches.find(el => el.str.toLowerCase() === match[0].toLowerCase())) isLabelRepeated = true;
+            if(allMatches.find(el => el.str.toLowerCase() === match[0].toLowerCase())) data.isLabelRepeated = true;
             else{
-                isLabelRepeated = false;
+                data.isLabelRepeated = false;
                 allMatches.push({
                     str: match[0],
                     start: match.index,
@@ -111,20 +121,20 @@ const addTaskBox = (function(){
 
         const allMatchesOnlyStr = allMatches.map(el => el.str);
         const unique = allMatchesOnlyStr.filter((el, i, arr) => arr.indexOf(el) === i);
-        allUniqueMatchesInsideTaskName = unique;
-        labels = unique;
+        data.allUniqueMatchesInsideTaskName = unique;
+        data.labels = unique;
         
         if(currLabel){
             const matches = existingLabels.isInExistingLabels(currLabel[0], false);
             const fullMatch = existingLabels.isInExistingLabels(currLabel[0], true);
-            currLabelBasedOnCaretPos = currLabel[0];
+            data.currLabelBasedOnCaretPos = currLabel[0];
             
-            _createLabelBoxContent(matches, fullMatch, currLabel[0], isLabelRepeated);
+            _createLabelBoxContent(matches, fullMatch, currLabel[0], data.isLabelRepeated);
             _showLabelBox();
             _labelBoxChooseByClicking(currLabel[0]);
         }else{
-            labelBox.classList.remove('show');
-            isLabelBoxVisible = false;
+            data.labelBox.classList.remove('show');
+            data.isLabelBoxVisible = false;
         }
     };
 
@@ -137,7 +147,7 @@ const addTaskBox = (function(){
     };
 
     const _createRedBox = function(startStr, currStr){
-        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
+        const wrapper = data.addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const el = document.createElement('div');
         // +2 because of padding
         const left = _getTextWidth(startStr, 'bold 0.95rem Arial') + 2;
@@ -153,27 +163,27 @@ const addTaskBox = (function(){
         const getTemplate = (labelName) => `<div><img src="${tag}" alt="label"><p>${labelName}</p></div>`;
         let content = '';
         
-        if(repeated) labelBox.innerHTML = `<div><p>Label ${fullMatch} is already included</p></div>`;
-        else if(fullMatch.length != 0) labelBox.innerHTML = content;
+        if(repeated) data.labelBox.innerHTML = `<div><p>Label ${fullMatch} is already included</p></div>`;
+        else if(fullMatch.length != 0) data.labelBox.innerHTML = content;
         else{
             if(currStr != '@') content += `<div><p>To create label <span>${currStr}</span> click here or press (space, @, enter)</p></div>`;
 
             matches.forEach(el => {
                 content += getTemplate(el);
             });
-            labelBox.innerHTML = content;
-            let span = labelBox.querySelector('span');
+            data.labelBox.innerHTML = content;
+            let span = data.labelBox.querySelector('span');
             if(span) span.style.color = '#f87171';
         }
     };
 
     const _showLabelBox = function(){
-        const [...labelElements] = labelBox.querySelectorAll('div');
+        const [...labelElements] = data.labelBox.querySelectorAll('div');
 
-        labelBox.classList.add('show');
-        isLabelBoxVisible = true;
-        labelBox.scrollTop = 0;
-        activeLabelBoxItem = 0;
+        data.labelBox.classList.add('show');
+        data.isLabelBoxVisible = true;
+        data.labelBox.scrollTop = 0;
+        data.activeLabelBoxItem = 0;
 
         if(labelElements.length != 0){
             let currActive = labelElements.find(el => el.classList.contains('active'));
@@ -183,29 +193,29 @@ const addTaskBox = (function(){
     };
 
     function arrowMoveInsideLabelBox(e){
-        const labelElements = labelBox.querySelectorAll('div');
+        const labelElements = data.labelBox.querySelectorAll('div');
         if(labelElements.length === 0 )return;
-        if((e.key === 'Enter' || e.key === 'ArrowUp' || e.key === 'ArrowDown') && isLabelBoxVisible){
+        if((e.key === 'Enter' || e.key === 'ArrowUp' || e.key === 'ArrowDown') && data.isLabelBoxVisible){
             
             if(e.key === 'Enter'){
-                _labelBoxChoice(labelElements[activeLabelBoxItem], currLabelBasedOnCaretPos);
+                _labelBoxChoice(labelElements[data.activeLabelBoxItem], data.currLabelBasedOnCaretPos);
             }else{
-                labelElements[activeLabelBoxItem].classList.remove('active');
-                e.key === 'ArrowUp' ? activeLabelBoxItem-- : activeLabelBoxItem++;
-                if(activeLabelBoxItem < 0) activeLabelBoxItem = 0;
-                if(activeLabelBoxItem > labelElements.length-1) activeLabelBoxItem = labelElements.length-1;
+                labelElements[data.activeLabelBoxItem].classList.remove('active');
+                e.key === 'ArrowUp' ? data.activeLabelBoxItem-- : data.activeLabelBoxItem++;
+                if(data.activeLabelBoxItem < 0) data.activeLabelBoxItem = 0;
+                if(data.activeLabelBoxItem > labelElements.length-1) data.activeLabelBoxItem = labelElements.length-1;
                 
-                labelElements[activeLabelBoxItem].classList.add('active');
+                labelElements[data.activeLabelBoxItem].classList.add('active');
                 scroll();
 
                 function scroll(){
                     let elHeight = labelElements[0].offsetHeight;
-                    let scrollTop = labelBox.scrollTop;
-                    let viewport = scrollTop + labelBox.offsetHeight;
-                    let elOffset = elHeight * activeLabelBoxItem;
+                    let scrollTop = data.labelBox.scrollTop;
+                    let viewport = scrollTop + data.labelBox.offsetHeight;
+                    let elOffset = elHeight * data.activeLabelBoxItem;
 
                     if(elOffset < scrollTop || (elOffset + elHeight) > viewport){
-                        labelBox.scrollTop = elOffset;
+                        data.labelBox.scrollTop = elOffset;
                     }
                 }
             }
@@ -213,7 +223,7 @@ const addTaskBox = (function(){
     }
 
     const _labelBoxChooseByClicking = function(currLab){
-        const labelElements = labelBox.querySelectorAll('div');
+        const labelElements = data.labelBox.querySelectorAll('div');
         
         labelElements.forEach(el => {
             el.addEventListener('click', func, {once: true});
@@ -224,29 +234,29 @@ const addTaskBox = (function(){
     };
 
     const _labelBoxChoice = function(el, currLab){
-        if(isLabelRepeated) return;
+        if(data.isLabelRepeated) return;
 
         let currLabWithoutAtSign = currLab.split('@')[1];
         if(/span/g.test(el.innerHTML)){
             // add to existing labels
             existingLabels.names.push(currLabWithoutAtSign);
-            taskName.value += ' ';
-            labelBox.classList.remove('show');
-            isLabelBoxVisible = false;
-            lookForLabels(taskName);
+            data.taskName.value += ' ';
+            data.labelBox.classList.remove('show');
+            data.isLabelBoxVisible = false;
+            lookForLabels(data.taskName);
         }else{
             let restOfExistingLabel = el.innerText.replace(currLabWithoutAtSign, '');
-            taskName.value += restOfExistingLabel + ' ';
-            labelBox.classList.remove('show');
-            isLabelBoxVisible = false;
-            lookForLabels(taskName);
+            data.taskName.value += restOfExistingLabel + ' ';
+            data.labelBox.classList.remove('show');
+            data.isLabelBoxVisible = false;
+            lookForLabels(data.taskName);
         }
     };
 
     const _hideElWithClass = function(regex, removeClass){ 
         // prevent add task container from disappearing
         document.removeEventListener('click', activateButtons);
-        showHideBtn.forEach((item, i) => {
+        data.showHideBtn.forEach((item, i) => {
             if([...item.el.classList].find(classN => regex.test(classN))){
                 item.el.classList.remove(removeClass);
                 item.active = false;
@@ -265,11 +275,11 @@ const addTaskBox = (function(){
             const choices = [...element.children];
             choices.forEach(el => {
                 el.addEventListener('click', e => {
-                    priority = +el.dataset.priority;
+                    data.priority = +el.dataset.priority;
                     choices.forEach(el2 => el2.classList.remove('checked'));
                     el.classList.add('checked');
 
-                    switch(priority){
+                    switch(data.priority){
                         case 1:
                             btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
                             style="filter: invert(44%) sepia(74%) saturate(3398%) hue-rotate(334deg) brightness(96%) contrast(83%);">Priority 1`;
@@ -291,17 +301,17 @@ const addTaskBox = (function(){
             });
         }
         else if(isDatePicker){
-            const dueDateBtn = addTaskContainer.querySelector('.due-date');
-            const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
-            const inputValidationText = addTaskContainer.querySelector('.date-picker .input-validation-text');
-            const dateReqText = addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
+            const dueDateBtn = data.addTaskContainer.querySelector('.due-date');
+            const input = data.addTaskContainer.querySelector('.due-date .date-picker .type-date input');
+            const inputValidationText = data.addTaskContainer.querySelector('.date-picker .input-validation-text');
+            const dateReqText = data.addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
             const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
             const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
             const eventIcon = inputValidationText.querySelector('div:first-of-type img');
             const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             const today = new Date();
-            const quickBtns = addTaskContainer.querySelectorAll('.due-date .date-picker .pick-icon > div');
+            const quickBtns = data.addTaskContainer.querySelectorAll('.due-date .date-picker .pick-icon > div');
             const formatDate = (date, repeat = '') => {
                 return {
                     year: date.getFullYear(),
@@ -326,47 +336,47 @@ const addTaskBox = (function(){
             quickBtns.forEach(el => el.addEventListener('click', changeDateBtn));
             
             
-            dateUtilFunctions = {
+            data.dateUtilFunctions = {
                 formatDateFun: (date, repeat = '') => formatDate(date, repeat),
                 styleDueDateBtnFun: (date) => styleDueDateBtn(date),
             };
 
             function changeDateBtn(e){
                 let date;
-                const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
+                const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
                 switch(e.currentTarget.querySelector('span').innerText){
                     case 'Today':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                         _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
-                        dueDate = formatDate(date);
+                        data.dueDate = formatDate(date);
                         input.value = 'Today';
                         break;
                     case 'Tomorrow':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
                         _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
-                        dueDate = formatDate(date);
+                        data.dueDate = formatDate(date);
                         input.value = 'Tomorrow';
                         break;
                     case 'Next week':
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
                         _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
-                        dueDate = formatDate(date);
-                        input.value = days[dueDate.weekDay];
+                        data.dueDate = formatDate(date);
+                        input.value = days[data.dueDate.weekDay];
                         break;
                     case 'Next weekend':
                         let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
                         date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
                         _hideElWithClass(/date-picker/, 'show');
                         styleDueDateBtn(date);
-                        dueDate = formatDate(date);
-                        input.value = days[dueDate.weekDay];
+                        data.dueDate = formatDate(date);
+                        input.value = days[data.dueDate.weekDay];
                         break;
                     case 'No date':
                         styleDueDateBtn(null);
-                        dueDate = null;
+                        data.dueDate = null;
                         _hideElWithClass(/date-picker/, 'show');
                         input.value = '';
 
@@ -381,7 +391,7 @@ const addTaskBox = (function(){
                     icon.src = `${lightFull}`;
                     icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
                     eventIcon.src = eventAvailable;
-                    fullDateTypedInInput.innerText = dueDate.toText();
+                    fullDateTypedInInput.innerText = data.dueDate.toText();
                     anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
                 }
             }
@@ -413,7 +423,7 @@ const addTaskBox = (function(){
             }
 
             function validateInputDate(){
-                const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
+                const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
                 const currDay = today.getDate();  // 1-31
                 const currMonth = today.getMonth();  // 0-11
                 const currYear = today.getFullYear(); 
@@ -511,7 +521,7 @@ const addTaskBox = (function(){
                             repeatDays.length === 0 ? formattedDate=formatDate(date) : formattedDate=formatDate(date, repeatDays);
                             fullDateTypedInInput.innerText = formattedDate.toText();
                             anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
-                            dueDate = formattedDate;
+                            data.dueDate = formattedDate;
 
                             input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});
                         } 
@@ -529,7 +539,7 @@ const addTaskBox = (function(){
                         let formattedDate = formatDate(date);
                         fullDateTypedInInput.innerText = formattedDate.toText();
                         anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
-                        dueDate = formattedDate;
+                        data.dueDate = formattedDate;
                         
                         input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});                                                      
                     }
@@ -537,7 +547,7 @@ const addTaskBox = (function(){
 
                     function invalidInput(txt){
                         input.addEventListener('focusout', e => styleDueDateBtn(null),{once:true});
-                        dueDate = null;
+                        data.dueDate = null;
                         icon.src = `${light}`;
                         icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
                         eventIcon.src = eventBusy;
@@ -553,17 +563,17 @@ const addTaskBox = (function(){
                 let currentYear = today.getFullYear();
                 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
    
-                const wrapper = addTaskContainer.querySelector('.date-picker .calendar .months');
+                const wrapper = data.addTaskContainer.querySelector('.date-picker .calendar .months');
                 wrapper.innerHTML = '';
-                const currMonthEl = addTaskContainer.querySelector('.date-picker .calendar .curr-month');
-                const calendar = addTaskContainer.querySelector('.date-picker .calendar');
-                const nav = addTaskContainer.querySelector('.date-picker .calendar .nav');
+                const currMonthEl = data.addTaskContainer.querySelector('.date-picker .calendar .curr-month');
+                const calendar = data.addTaskContainer.querySelector('.date-picker .calendar');
+                const nav = data.addTaskContainer.querySelector('.date-picker .calendar .nav');
                 const navUl = nav.querySelector('ul');
                 const navUlElements = navUl.querySelectorAll('li');
-                const previousBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:first-of-type');
-                const goToStartBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:nth-of-type(2)');
-                const nextBtn = addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:last-of-type');
-                const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
+                const previousBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:first-of-type');
+                const goToStartBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:nth-of-type(2)');
+                const nextBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:last-of-type');
+                const input = data.addTaskContainer.querySelector('.due-date .date-picker .type-date input');
                 calendar.scrollTop = 0;
 
                 calendar.addEventListener('scroll', scrolling);
@@ -574,14 +584,13 @@ const addTaskBox = (function(){
                 currMonthEl.innerHTML = months[currentMonth] + ' ' + currentYear;
                 showMonth(currentMonth, currentYear);
                 showNextMonth();
-                const calendarUl = addTaskContainer.querySelector('.date-picker .calendar .months ul');
+                const calendarUl = data.addTaskContainer.querySelector('.date-picker .calendar .months ul');
                 let currUl = calendarUl;
-
 
                 function scrolling(e){
                     calendar.scrollTop === 0 ? nav.style.cssText = 'border: none;':nav.style.cssText = 'border-bottom: 1px solid gray;';
                     
-                    if(isScrolledIntoView(currUl.nextElementSibling.nextElementSibling)){
+                    if(currUl.nextElementSibling && isScrolledIntoView(currUl.nextElementSibling.nextElementSibling)){
                         showNextMonth();
                         currUl = currUl.nextElementSibling.nextElementSibling;
                     }
@@ -664,7 +673,7 @@ const addTaskBox = (function(){
                                 const li = document.createElement('li');
                                 li.innerText = date;
                                 if(date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) li.classList.add('today');
-                                else if(date < today.getDate()) li.classList.add('past');
+                                else if(new Date(year, month, date) < today) li.classList.add('past');
                                 else if(j === 6 || j === 5) li.classList.add('weekend'); 
 
                                 if(!li.classList.contains('past')){
@@ -684,10 +693,10 @@ const addTaskBox = (function(){
                                     });
                                     li.addEventListener('click', e => {
                                         let date2 = new Date(year, month, e.currentTarget.innerText);
-                                        dateUtilFunctions.styleDueDateBtnFun(date2);
-                                        dueDate = dateUtilFunctions.formatDateFun(date2);
+                                        data.dateUtilFunctions.styleDueDateBtnFun(date2);
+                                        data.dueDate = data.dateUtilFunctions.formatDateFun(date2);
                                         _hideElWithClass(/date-picker/, 'show');
-                                        input.value = dueDate.toText();
+                                        input.value = data.dueDate.toText();
                                     });
                                 }
                                 ul.appendChild(li);
@@ -739,29 +748,29 @@ const addTaskBox = (function(){
             }
         }
         else if(isLabelPicker){
-            const labelPicker = addTaskContainer.querySelector('.top .label .label-picker');
+            const labelPicker = data.addTaskContainer.querySelector('.top .label .label-picker');
             //Create label picker content
             createLabelPickerContent();
             //put labels inside input
             putLabelsInsideInput();
 
             function putLabelsInsideInput(){
-                const options = addTaskContainer.querySelectorAll('.top .label .label-picker > div');
+                const options = data.addTaskContainer.querySelectorAll('.top .label .label-picker > div');
                 const spliceIn = (originalStr, strToAdd, pos) => [originalStr.slice(0, pos), strToAdd, originalStr.slice(pos)].join('');
 
                 options.forEach(el => {
                     el.addEventListener('click', e => {
                         if(!el.classList.contains('checked')){
                             el.classList.add('checked');
-                            taskName.value = spliceIn(taskName.value, `@${el.innerText} `, caretPos);
+                            data.taskName.value = spliceIn(data.taskName.value, `@${el.innerText} `, data.caretPos);
                         }else{
                             const re = new RegExp(`@${el.innerText}`, 'gi');
-                            taskName.value = taskName.value.replace(re, '');
-                            taskName.value = taskName.value.trim();
+                            data.taskName.value = data.taskName.value.replace(re, '');
+                            data.taskName.value = data.taskName.value.trim();
                             el.classList.remove('checked');
                         }
-                        taskName.focus();
-                        lookForLabels(taskName);
+                        data.taskName.focus();
+                        lookForLabels(data.taskName);
                     });
                 });
             }
@@ -779,14 +788,14 @@ const addTaskBox = (function(){
                 let content = '';
 
                 existingLabels.names.forEach(el => {
-                    allUniqueMatchesInsideTaskName.find(item => item.slice(1) === el) ? content += getTemplate(el, 'checked') : content += getTemplate(el);
+                    data.allUniqueMatchesInsideTaskName.find(item => item.slice(1) === el) ? content += getTemplate(el, 'checked') : content += getTemplate(el);
                 });
                 labelPicker.innerHTML = content;
             }
         }
         else if(isProjectPicker){
-            const selectProjectBtn = addTaskContainer.querySelector('.bottom .select-project');
-            const projectPicker = addTaskContainer.querySelector('.project-picker');
+            const selectProjectBtn = data.addTaskContainer.querySelector('.bottom .select-project');
+            const projectPicker = data.addTaskContainer.querySelector('.project-picker');
             const inbox = projectPicker.querySelector('.inbox');
             const mainProjects = projectPicker.querySelectorAll('ul figcaption');
             const sideProjects = projectPicker.querySelectorAll('ul li');
@@ -804,13 +813,13 @@ const addTaskBox = (function(){
                     projects.getAllProjects().forEach(el2 => {
                         if(el2.name === clickedProject){
                             selectProjectBtn.innerHTML = el2.getTemplateHTML() + `<img src="${moreSvg}" alt="expand">`;
-                            projectName = {element: el2, subProjectIndex: null};
+                            data.projectName = {element: el2, subProjectIndex: null};
                         }
                         else{
                             el2.subProjects.forEach((sub, i) => {
                                 if(sub.name === clickedProject){
                                     selectProjectBtn.innerHTML = el2.getTemplateHTML(i) + `<img src="${moreSvg}" alt="expand">`;
-                                    projectName = {element: el2, subProjectIndex: i};                                 
+                                    data.projectName = {element: el2, subProjectIndex: i};                                 
                                 }
                             });
                         }
@@ -832,24 +841,24 @@ const addTaskBox = (function(){
     };
 
     const _resetValuesAddTaskContainer = function(){
-        priority = null;
-        dueDate = null;
-        projectName = null;
-        labels = null;
-        taskName.value = '';
-        description.value = '';
-        allUniqueMatchesInsideTaskName = [];
+        data.priority = null;
+        data.dueDate = null;
+        data.projectName = null;
+        data.labels = null;
+        data.taskName.value = '';
+        data.description.value = '';
+        data.allUniqueMatchesInsideTaskName = [];
 
         // reset due date btn and date picker
-        const dueDateBtn = addTaskContainer.querySelector('.top .due-date'); 
-        const input = addTaskContainer.querySelector('.due-date .date-picker .type-date input');
+        const dueDateBtn = data.addTaskContainer.querySelector('.top .due-date'); 
+        const input = data.addTaskContainer.querySelector('.due-date .date-picker .type-date input');
         const btn = dueDateBtn.querySelector('.btn');
         const img = btn.querySelector('img');
-        const inputValidationText = addTaskContainer.querySelector('.date-picker .input-validation-text');
+        const inputValidationText = data.addTaskContainer.querySelector('.date-picker .input-validation-text');
         const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
         const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
         const eventIcon = inputValidationText.querySelector('div:first-of-type img');
-        const icon = addTaskContainer.querySelector('.date-picker .type-date .icon img');
+        const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
         input.value = '';
         btn.innerText = 'Today';
         btn.insertBefore(img, btn.firstChild);
@@ -862,33 +871,33 @@ const addTaskBox = (function(){
         anyTasksText.innerText = '';
 
         // reset project picker and select project btn
-        const selectProjBtn = addTaskContainer.querySelector('.bottom .select-project');
-        const projectChecked = addTaskContainer.querySelectorAll('.bottom .project-picker img.projectChecked');
-        const inboxChecked = addTaskContainer.querySelector('.bottom .project-picker .inbox img.projectChecked');
+        const selectProjBtn = data.addTaskContainer.querySelector('.bottom .select-project');
+        const projectChecked = data.addTaskContainer.querySelectorAll('.bottom .project-picker img.projectChecked');
+        const inboxChecked = data.addTaskContainer.querySelector('.bottom .project-picker .inbox img.projectChecked');
 
         selectProjBtn.innerHTML = `<img src="${inboxIcon}" alt="select-project"><p>Inbox</p><img src="${moreSvg}" alt="expand">`;
         projectChecked.forEach(el => el.classList.contains('active') ? el.classList.remove('active') : el);
         inboxChecked.classList.add('active');
 
         // reset priority picker
-        const priorityBtn = addTaskContainer.querySelector('.top .priority .btn');
-        const choices = addTaskContainer.querySelectorAll('.top .priority .priority-picker > div');
+        const priorityBtn = data.addTaskContainer.querySelector('.top .priority .btn');
+        const choices = data.addTaskContainer.querySelectorAll('.top .priority .priority-picker > div');
 
         choices.forEach(el => el.classList.contains('prio4') ? el.classList.add('checked') : el.classList.remove('checked'));
         priorityBtn.innerHTML = `<img class="svg" src="${flagOutline}" alt="more">Priority`;
 
         // reset label picker
-        const options = addTaskContainer.querySelectorAll('.top .label .label-picker > div');
+        const options = data.addTaskContainer.querySelectorAll('.top .label .label-picker > div');
         options.forEach(el => el.classList.contains('checked') ? el.classList.remove('checked') : el);
         
         // remove red boxes inside task name input
-        const wrapper = addTaskContainer.querySelector('.top .inputs div:first-of-type');
+        const wrapper = data.addTaskContainer.querySelector('.top .inputs div:first-of-type');
         const allRedBoxes = wrapper.querySelectorAll('.label-added');     
         allRedBoxes.forEach(el => wrapper.removeChild(el));
 
         // reset add task btn
-        addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
-        addBtn.removeEventListener('click', _addTask);
+        data.addBtn.style.cssText = 'opacity: 0.6; cursor:not-allowed;';
+        data.addBtn.removeEventListener('click', _addTask);
     };
 
     const _discardCurrentTaskAlert = function(hideTaskBox){
@@ -922,20 +931,20 @@ const addTaskBox = (function(){
     };
 
     function activateButtons(e){
-        const isAnyOfButtonsClicked = showHideBtn.findIndex(item => e.target === item.btn || item.btn.contains(e.target));
-        const isBtnToggleElClicked = showHideBtn.find(item => e.target === item.el || (item.el.contains(e.target)&&e.target != cancelBtn));
+        const isAnyOfButtonsClicked = data.showHideBtn.findIndex(item => e.target === item.btn || item.btn.contains(e.target));
+        const isBtnToggleElClicked = data.showHideBtn.find(item => e.target === item.el || (item.el.contains(e.target)&&e.target != data.cancelBtn));
         
         if(isAnyOfButtonsClicked != -1){
             const i = isAnyOfButtonsClicked;
-            const itemsWithSameLayer = showHideBtn.filter(item => item.layer === showHideBtn[i].layer && item != showHideBtn[i]);
+            const itemsWithSameLayer = data.showHideBtn.filter(item => item.layer === data.showHideBtn[i].layer && item != data.showHideBtn[i]);
             
             hideItemsOnTheSameLayer();
             showClickedItem();
             
             function showClickedItem(){
-                showHideBtn[i].active = true;
-                _activateChoices(showHideBtn[i].btn, showHideBtn[i].el, showHideBtn[i].className);
-                showHideBtn[i].el.classList.toggle(showHideBtn[i].className);
+                data.showHideBtn[i].active = true;
+                _activateChoices(data.showHideBtn[i].btn, data.showHideBtn[i].el, data.showHideBtn[i].className);
+                data.showHideBtn[i].el.classList.toggle(data.showHideBtn[i].className);
             }
 
             function hideItemsOnTheSameLayer(){
@@ -946,14 +955,14 @@ const addTaskBox = (function(){
             }
         }
         else{
-            const onlyActive = showHideBtn.filter(item => item.active);
+            const onlyActive = data.showHideBtn.filter(item => item.active);
             
             if(onlyActive.length > 0){
                 const sortByLayer = onlyActive.sort((a,b) => b.layer - a.layer);
                 
-                if(isBtnToggleElClicked != sortByLayer[0] && !(labelBox.classList.contains('show') && sortByLayer[0].layer === 1)){
-                    if((sortByLayer[0].el === addTaskContainer && taskName.value != '')||
-                    (sortByLayer[0].el === addTaskContainer && taskName.value != '' && e.target === cancelBtn)){
+                if(isBtnToggleElClicked != sortByLayer[0] && !(data.labelBox.classList.contains('show') && sortByLayer[0].layer === 1)){
+                    if((sortByLayer[0].el === data.addTaskContainer && data.taskName.value != '')||
+                    (sortByLayer[0].el === data.addTaskContainer && data.taskName.value != '' && e.target === data.cancelBtn)){
                         _discardCurrentTaskAlert(() => {
                             _resetValuesAddTaskContainer();
                             sortByLayer[0].active = false;
@@ -961,7 +970,7 @@ const addTaskBox = (function(){
                         });
                     }
                     else{
-                        if((sortByLayer[0].el === addTaskContainer)||(sortByLayer[0].el === addTaskContainer && e.target === cancelBtn)) 
+                        if((sortByLayer[0].el === data.addTaskContainer)||(sortByLayer[0].el === data.addTaskContainer && e.target === data.cancelBtn)) 
                             _resetValuesAddTaskContainer();
                         sortByLayer[0].active = false;
                         sortByLayer[0].el.classList.remove(sortByLayer[0].className);
@@ -971,49 +980,47 @@ const addTaskBox = (function(){
         }
 
         // Hide label-box 
-        if(e.target != taskName && e.target != labelBox && !labelBox.contains(e.target)){
-            labelBox.classList.remove('show');
+        if(e.target != data.taskName && e.target != data.labelBox && !data.labelBox.contains(e.target)){
+            data.labelBox.classList.remove('show');
         }
     }
-    
-    const _addToShowHideBtn = (arr, {el, btn, className, layer, active}) => arr.push({el, btn, className, layer, active});
 
-    const getAllButtons = function(container, includeContainer, arr){
-        _addToShowHideBtn(arr, {
-            el: container.querySelector('.date-picker'),
-            btn: container.querySelector('.flex-container > div:first-child .btn'),
+    const getAllButtons = function(includeContainer){
+        data.showHideBtn.push({
+            el: data.addTaskContainer.querySelector('.date-picker'),
+            btn: data.addTaskContainer.querySelector('.flex-container > div:first-child .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
 
-        _addToShowHideBtn(arr, {
-            el: container.querySelector('.flex-container > .priority .priority-picker'),
-            btn: container.querySelector('.flex-container > .priority .btn'),
+        data.showHideBtn.push({
+            el: data.addTaskContainer.querySelector('.flex-container > .priority .priority-picker'),
+            btn: data.addTaskContainer.querySelector('.flex-container > .priority .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
         
-        _addToShowHideBtn(arr, {
-            el: container.querySelector('.label-picker'),
-            btn: container.querySelector('.flex-container > .label .btn'),
+        data.showHideBtn.push({
+            el: data.addTaskContainer.querySelector('.label-picker'),
+            btn: data.addTaskContainer.querySelector('.flex-container > .label .btn'),
             className: 'show',
             layer: 2,
             active: false
         });
 
-        _addToShowHideBtn(arr, {
-            el: container.querySelector('.bottom .project-picker'),
-            btn: container.querySelector('.bottom .select-project'),
+        data.showHideBtn.push({
+            el: data.addTaskContainer.querySelector('.bottom .project-picker'),
+            btn: data.addTaskContainer.querySelector('.bottom .select-project'),
             className: 'show',
             layer: 2,
             active: false
         });
 
         if(includeContainer){
-            _addToShowHideBtn(arr, {
-                el: container,
+            data.showHideBtn.push({
+                el: data.addTaskContainer,
                 btn: document.querySelector('.top-panel .add-task'),
                 className: 'toggleAddTask',
                 layer: 1,
@@ -1021,26 +1028,19 @@ const addTaskBox = (function(){
             });
         }
 
-        _addToShowHideBtn(arr, {
-            el: container.querySelector('.date-picker .add-time .time-picker'),
-            btn: container.querySelector('.date-picker .add-time p'),
+        data.showHideBtn.push({
+            el: data.addTaskContainer.querySelector('.date-picker .add-time .time-picker'),
+            btn: data.addTaskContainer.querySelector('.date-picker .add-time p'),
             className: 'show',
             layer: 3,
             active: false
         });
     };
 
-    getAllButtons(addTaskContainer, true, showHideBtn);
-
-    const getShowHideBtn = () => showHideBtn;
-    const setShowHideBtn = (arr) => showHideBtn = arr;
-    const getAddTaskContainer = () => addTaskContainer;
-    const setAddTaskContainer = (el) => addTaskContainer = el; 
+    getAllButtons(true);
 
     return{
         getAllButtons,
-        getShowHideBtn,
-        setShowHideBtn
     };
 
 })();

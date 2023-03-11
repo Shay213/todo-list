@@ -28,8 +28,6 @@ const editTaskBox = (function(){
     myPromise
         .then((value) => {
             addTaskBox.getAllButtons(value.editTaskContainer, false, showHideBtn);
-            const addTaskContainerShowHideBtn = addTaskBox.getShowHideBtn();
-            addTaskBox.setShowHideBtn(showHideBtn);
             completeData(value);
         })
         .catch((message) => console.log(message));
