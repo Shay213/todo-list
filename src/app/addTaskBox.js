@@ -13,9 +13,9 @@ import inboxIcon from '../assets/icons/inbox.svg';
 import existingLabels from './labels';
 
 const addTaskBox = (function(){
-    const createData = (arr, container) => {
+    const createData = (container) => {
         const data = {
-            showHideBtn: arr,
+            showHideBtn: [],
             addTaskContainer: container,
             addBtn: container.querySelector('button.add-btn'),
             cancelBtn: container.querySelector('button.cancel-btn'),
@@ -36,11 +36,18 @@ const addTaskBox = (function(){
             caretPos: null,
             allUniqueMatchesInsideTaskName: [],
             isLabelRepeated: null,
+            editMode: false, 
         };
         return data;
     };
 
-    const data = createData([], document.querySelector('#content > .add-task-container'));
+    let data;
+
+    const setData = container => data = createData(container);
+    const setAllUniqueMatchesInsideTaskName = value => data.allUniqueMatchesInsideTaskName = value; 
+    const setEditMode = (isEditMode) => data.editMode = isEditMode;
+
+    setData(document.querySelector('#content > .add-task-container'));
     
     const _addTask = function(e){
         tasks.createTask({
@@ -51,7 +58,7 @@ const addTaskBox = (function(){
             projectName: data.projectName,
             labels: data.labels
         });
-        
+
         data.showHideBtn.forEach(item => {
             item.el.active = false;
             item.el.classList.remove(item.className);
@@ -66,23 +73,51 @@ const addTaskBox = (function(){
         }
         else{
             data.addBtn.style.cssText = 'opacity: 1; cursor: pointer;';
-            data.addBtn.addEventListener('click', _addTask, {once: true});
+            if(!data.editMode) data.addBtn.addEventListener('click', _addTask, {once: true});
         }
     };
 
-    const runEvents = () => {
-        data.taskName.addEventListener('input', lookForLabels);
-        data.taskName.addEventListener('click', lookForLabels);
-        document.addEventListener('keydown', arrowMoveInsideLabelBox);
-        document.addEventListener('click', activateButtons);
-        //disable arrow up/down inside input field
-        data.taskName.addEventListener('keydown', e => {
-            if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
-        });
-        data.expandArrow.addEventListener('click', e => data.dateReqText.classList.toggle('show'));
+    const getTaskData = () => {
+        return {
+            priority: data.priority, 
+            taskName: data.taskName.value, 
+            description: data.description.value, 
+            dueDate: data.dueDate, 
+            projectName: data.projectName, 
+            labels: data.labels
+        };
     };
 
-    runEvents();
+    const setTaskData = ({priority,dueDate, projectName, labels}) => {
+        data.priority = priority;
+        data.dueDate = dueDate;
+        data.projectName = projectName;
+        data.labels = labels;
+    };
+
+    const events = (reset = false) => {
+        if(!reset){
+            data.taskName.addEventListener('input', lookForLabels);
+            data.taskName.addEventListener('click', lookForLabels);
+            document.addEventListener('keydown', arrowMoveInsideLabelBox);
+            document.addEventListener('click', activateButtons);
+            data.taskName.addEventListener('keydown', disableArrows);
+            data.expandArrow.addEventListener('click', e => data.dateReqText.classList.toggle('show'));
+        }else{
+            data.taskName.removeEventListener('input', lookForLabels);
+            data.taskName.removeEventListener('click', lookForLabels);
+            document.removeEventListener('keydown', arrowMoveInsideLabelBox);
+            document.removeEventListener('click', activateButtons);
+            data.taskName.removeEventListener('keydown', disableArrows);
+            data.expandArrow.removeEventListener('click', e => data.dateReqText.classList.toggle('show'));
+        }
+        //disable arrow up/down inside input field
+        function disableArrows(e){
+            if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+        }
+    };
+
+    events();
 
     function lookForLabels(e){
         _checkTaskNameEmpty();
@@ -118,7 +153,7 @@ const addTaskBox = (function(){
                 });
             }
         }
-
+        
         const allMatchesOnlyStr = allMatches.map(el => el.str);
         const unique = allMatchesOnlyStr.filter((el, i, arr) => arr.indexOf(el) === i);
         data.allUniqueMatchesInsideTaskName = unique;
@@ -265,6 +300,74 @@ const addTaskBox = (function(){
         setTimeout(() => document.addEventListener('click', activateButtons), 100);
     };
 
+    const contentPriorityBtn = (btn, priority) => {
+        switch(priority){
+            case 1:
+                btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
+                style="filter: invert(44%) sepia(74%) saturate(3398%) hue-rotate(334deg) brightness(96%) contrast(83%);">Priority 1`;
+                break;
+            case 2:
+                btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
+                style="filter: invert(70%) sepia(49%) saturate(4175%) hue-rotate(1deg) brightness(105%) contrast(92%);">Priority 2`;
+                break;
+            case 3:
+                btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
+                style="filter: invert(45%) sepia(41%) saturate(982%) hue-rotate(178deg) brightness(102%) contrast(94%);">Priority 3`;
+                break;
+            case 4:
+                btn.innerHTML = `<img class="svg" src="${flagOutline}" alt="more">Priority`;
+                break;
+        }
+    }
+
+    const styleDueDateBtn = function(date){
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const dueDateBtn = data.addTaskContainer.querySelector('.due-date');
+        const btn = dueDateBtn.querySelector('.btn');
+        const img = btn.querySelector('img');
+        const today = new Date();
+        const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
+        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+        
+        if(date === null){
+            btn.innerText = 'Set due date';
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#737373';
+            img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
+        }
+        else if(date < new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)){
+            btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#ef4444';
+            img.style.filter = 'invert(52%) sepia(82%) saturate(4219%) hue-rotate(335deg) brightness(97%) contrast(94%)';
+        }
+        else if(date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()){
+            btn.innerText = 'Today';
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#059669';
+            img.style.filter = 'invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%)';
+        }
+        else if(date.getDate() === tomorrow.getDate() && date.getMonth() === tomorrow.getMonth() && date.getFullYear() === tomorrow.getFullYear()){
+            btn.innerText = 'Tomorrow';
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#fbbf24';
+            img.style.filter = 'invert(84%) sepia(47%) saturate(2119%) hue-rotate(339deg) brightness(104%) contrast(97%)';
+        }
+        else if(date.getDate() <= nextWeek.getDate() && date.getMonth() <= nextWeek.getMonth() && date.getFullYear() === nextWeek.getFullYear()){
+            btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#7e22ce';
+            img.style.filter = 'invert(16%) sepia(67%) saturate(6573%) hue-rotate(272deg) brightness(84%) contrast(92%)';
+        }
+        else{
+            btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear() === today.getFullYear() ? '' : date.getFullYear()}`;
+            btn.insertBefore(img, btn.firstChild);
+            btn.style.color = '#737373';
+            img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
+        }
+    }
+
     const _activateChoices = function(btn, element, className){
         let isPriorityPicker = element.classList.contains('priority-picker');
         let isDatePicker = element.classList.contains('date-picker');
@@ -279,23 +382,8 @@ const addTaskBox = (function(){
                     choices.forEach(el2 => el2.classList.remove('checked'));
                     el.classList.add('checked');
 
-                    switch(data.priority){
-                        case 1:
-                            btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
-                            style="filter: invert(44%) sepia(74%) saturate(3398%) hue-rotate(334deg) brightness(96%) contrast(83%);">Priority 1`;
-                            break;
-                        case 2:
-                            btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
-                            style="filter: invert(70%) sepia(49%) saturate(4175%) hue-rotate(1deg) brightness(105%) contrast(92%);">Priority 2`;
-                            break;
-                        case 3:
-                            btn.innerHTML = `<img class="svg" src="${fullFlag}" alt="more" 
-                            style="filter: invert(45%) sepia(41%) saturate(982%) hue-rotate(178deg) brightness(102%) contrast(94%);">Priority 3`;
-                            break;
-                        case 4:
-                            btn.innerHTML = `<img class="svg" src="${flagOutline}" alt="more">Priority`;
-                            break;
-                    }
+                    contentPriorityBtn(btn, data.priority);
+                    
                     _hideElWithClass(/priority-picker/, className);
                 }, {once:true});
             });
@@ -707,45 +795,6 @@ const addTaskBox = (function(){
                     wrapper.appendChild(ul);
                 }
             }
-
-            function styleDueDateBtn(date){
-                const btn = dueDateBtn.querySelector('.btn');
-                const img = btn.querySelector('img');
-                const today = new Date();
-                const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
-                const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-                
-                if(date === null){
-                    btn.innerText = 'Set due date';
-                    btn.insertBefore(img, btn.firstChild);
-                    btn.style.color = '#737373';
-                    img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
-                }
-                else if(date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()){
-                    btn.innerText = 'Today';
-                    btn.insertBefore(img, btn.firstChild);
-                    btn.style.color = '#059669';
-                    img.style.filter = 'invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%)';
-                }
-                else if(date.getDate() === tomorrow.getDate() && date.getMonth() === tomorrow.getMonth() && date.getFullYear() === tomorrow.getFullYear()){
-                    btn.innerText = 'Tomorrow';
-                    btn.insertBefore(img, btn.firstChild);
-                    btn.style.color = '#fbbf24';
-                    img.style.filter = 'invert(84%) sepia(47%) saturate(2119%) hue-rotate(339deg) brightness(104%) contrast(97%)';
-                }
-                else if(date.getDate() <= nextWeek.getDate() && date.getMonth() <= nextWeek.getMonth() && date.getFullYear() === nextWeek.getFullYear()){
-                    btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
-                    btn.insertBefore(img, btn.firstChild);
-                    btn.style.color = '#7e22ce';
-                    img.style.filter = 'invert(16%) sepia(67%) saturate(6573%) hue-rotate(272deg) brightness(84%) contrast(92%)';
-                }
-                else{
-                    btn.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear() === today.getFullYear() ? '' : date.getFullYear()}`;
-                    btn.insertBefore(img, btn.firstChild);
-                    btn.style.color = '#737373';
-                    img.style.filter = 'invert(48%) sepia(2%) saturate(8%) hue-rotate(334deg) brightness(92%) contrast(92%)';
-                }
-            }
         }
         else if(isLabelPicker){
             const labelPicker = data.addTaskContainer.querySelector('.top .label .label-picker');
@@ -1041,6 +1090,15 @@ const addTaskBox = (function(){
 
     return{
         getAllButtons,
+        createData,
+        events,
+        setData,
+        setAllUniqueMatchesInsideTaskName,
+        contentPriorityBtn,
+        styleDueDateBtn,
+        setEditMode,
+        getTaskData,
+        setTaskData
     };
 
 })();

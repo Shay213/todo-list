@@ -44,6 +44,11 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.edit-task-container .top .inputs > div input{
+    z-index: 3;
+    position: relative;
+}
+
 .add-task-container .top .inputs div:first-of-type{
     position: relative;
 }
@@ -57,6 +62,10 @@
     background-color: #fecaca;
     z-index: -1;
     border-radius: 3px;
+}
+
+.edit-task-container .top .inputs div .label-added{
+    z-index: 1;
 }
 
 .add-task-container .top .inputs > div > input,

@@ -48,7 +48,7 @@
     margin-top: 30px;
 }
 
-.today ul li{
+.today ul > li[data-id]{
     padding: 10px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
@@ -69,7 +69,7 @@
     margin: 0;
 }
 
-.today figcaption p{
+.today .overdue > figcaption p{
     font-size: 0.8rem;
     color: var(--topPanel-color);
 }
@@ -99,14 +99,47 @@
 
 .today li > .bottom{
     display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
+    align-items: center;
+    font-size: 0.75rem;
     font-weight: 300;
+}
+
+.today .overdue > li .bottom > div p{
+    font-weight: 400;
+}
+.today .overdue > li .bottom > .date p{
+    color:#c95151;
+}
+.today .overdue > li .bottom > .date img{
+    filter: invert(52%) sepia(42%) saturate(4941%) hue-rotate(330deg) brightness(85%) contrast(82%);
+}
+
+.today li > .bottom > div:nth-last-child(2){
+    margin-right: auto;
 }
 
 .today li > .bottom .date{
     margin-left: 34px;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
 } 
+
+.today li > .bottom .label{
+    display: flex;
+    gap: 3px;
+}
+
+.today li > .bottom .label:hover{
+    cursor: pointer;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+.today li > .bottom .label img{
+    width: .9rem;
+}
 
 .today li .icons{
     display: flex;

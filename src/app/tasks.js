@@ -1,14 +1,15 @@
-import event from '../assets/icons/event.svg';
 import edit from '../assets/icons/edit.svg';
 import comment from '../assets/icons/comment.svg';
 import check from '../assets/icons/check-bold.svg';
 import projects from './projects';
+import labelIcon from '../assets/icons/pricetag-outline.svg';
+import calendarIcon from '../assets/icons/calendar-edit-svgrepo-com.svg';
 
 const tasks = (function(){
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     let allTasks = [];
-    const taskTemplate = (id, priority, taskName, description, date, projectName) => `
+    const taskTemplate = (id, priority, taskName, description, date, projectName, labelArr) => `
     <li data-id=${id}>
         <div class="top">
             <div class="priority-box">
@@ -23,21 +24,30 @@ const tasks = (function(){
                 </div>
             </div>
             <div class="icons">
-                <div><img class="svg grayFilter" src="${event}" alt="options"></div>
+                <div><img class="svg grayFilter" src="${calendarIcon}" alt="options"></div>
                 <div><img class="svg grayFilter" src="${edit}" alt="options"></div>
                 <div><img class="svg grayFilter" src="${comment}" alt="options"></div>
             </div>
         </div>
         <div class="bottom">
             <div class="date">
-                ${date}
+                <img src="${calendarIcon}" alt="date">
+                <p>${date}</p>
             </div>
+            ${createLabelTemplate(labelArr)}
             <div class="project-name">
                 ${projectName}
             </div>
         </div>
     </li>
     `;
+
+    const createLabelTemplate = labelsArr => {
+        let content = '';
+        let template = labelName => `<div class="label"><img src="${labelIcon}" alt="label"> <p>${labelName}</p></div>`;
+        labelsArr.forEach(label => content+=template(label.split('@')[1]));
+        return content;
+    };
     
     function Task(priority, taskName, description, dueDate, projectName, labels){
         this.id = allTasks.length+1,
@@ -91,10 +101,12 @@ const tasks = (function(){
 
     const getAllTasks = () => allTasks;
 
+    const taskNameWithoutLabels = (taskName) => taskName.replace(/@[^ @]+/g, '').replace(/\s+/g, ' ');
+
     const _createTestTasks = (function(){
         const date1 = new Date(2023, 1, 20);
         const date2 = new Date(2023, 2, 10);
-        const date3 = new Date(2023, 2, 10);
+        const date3 = new Date(2023, 2, 11);
 
         createTask({taskName: 'Task 1'});
         createTask({taskName: 'Task 2'});
@@ -136,7 +148,7 @@ const tasks = (function(){
         });
         createTask({
             priority: 3,
-            taskName: 'Task5',
+            taskName: 'Task5 @read',
             description: 'some text some textsome text some textsome text some textsome text some text',
             dueDate: {
                 year: date3.getFullYear(),
@@ -150,7 +162,7 @@ const tasks = (function(){
                 }
             },
             projectName: {element: projects.getAllProjects()[0], subProjectIndex: null}, 
-            labels: ['read']
+            labels: ['@read']
         });
     })();
 
@@ -159,7 +171,8 @@ const tasks = (function(){
         createTask,
         howManyTasksInSpecifiedDay,
         getPriorityClassName,
-        getAllTasks
+        getAllTasks,
+        taskNameWithoutLabels
     };
     
 })();

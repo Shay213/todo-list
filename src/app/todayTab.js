@@ -14,28 +14,42 @@ const todayTab = (function(){
         titleDate.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
     };
 
-    const _overdueTasks = () => tasks.getAllTasks().filter(task => task.getDateObj() ? task.getDateObj() < date : false);
-    const _todayTasks = () => tasks.getAllTasks().filter(task => task.getDateObj() ? task.getDateObj().getDate() === date.getDate()&&
+    const overdueTasks = (arr) => arr.filter(task => task.getDateObj() ? task.getDateObj() < date : false);
+    const todayTasks = (arr) => arr.filter(task => task.getDateObj() ? task.getDateObj().getDate() === date.getDate()&&
                                                                                     task.getDateObj().getMonth() === date.getMonth()&&
                                                                                     task.getDateObj().getFullYear() === date.getFullYear() : false);
 
-    const _displayTasks = function(element, tasksArr){
+    const displayTasks = function(tasksArr, todayTasks=false){
+        let content = '';
         tasksArr.forEach(el => {
-            if(element === overdue){
-                element.innerHTML += `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), el.taskName, el.description, el.dueDate.toText(),
-                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex))}`;
+            if(todayTasks){
+                content = `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), tasks.taskNameWithoutLabels(el.taskName), el.description, '',
+                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex), el.labels || [])}`;
+                
+                todayTasksEl.insertAdjacentHTML('beforeend', content);
             }else{
-                element.innerHTML += `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), el.taskName, el.description, '',
-                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex))}`;
-            } 
+                content = `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), tasks.taskNameWithoutLabels(el.taskName), el.description, el.dueDate.toText(),
+                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex), el.labels || [])}`;
+                
+                overdue.insertAdjacentHTML('beforeend', content);
+            }
         });
     };
+
+    
     
     const _init = (function(){
-        _displayTasks(overdue, _overdueTasks());
-        _displayTasks(todayTasksEl, _todayTasks());
+        displayTasks(overdueTasks(tasks.getAllTasks()));
+        displayTasks(todayTasks(tasks.getAllTasks()), true);
         _updateTextTimesTodayTab();
     })();
+
+    return{
+        overdueTasks,
+        todayTasks,
+        displayTasks
+    };
+
 })();
 
 export default todayTab
