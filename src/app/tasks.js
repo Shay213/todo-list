@@ -83,7 +83,7 @@ const tasks = (function(){
     ) => new Task(priority, taskName, description, dueDate, projectName, labels).pushToTasks(); 
     
     const howManyTasksInSpecifiedDay = function(date){
-        return allTasks.filter(task => task.date && task.date.year === date.getFullYear() && task.date.month === date.getMonth() && task.date.day === date.getDate());
+        return allTasks.filter(task => task.dueDate && task.dueDate.year === date.getFullYear() && task.dueDate.month === date.getMonth() && task.dueDate.day === date.getDate());
     };
 
     const getPriorityClassName = function(priority) {

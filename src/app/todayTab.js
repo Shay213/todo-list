@@ -1,7 +1,7 @@
 import tasks from "./tasks";
 
 const todayTab = (function(){
-    const overdue = document.querySelector('.today .overdue');
+    const overdueEl = document.querySelector('.today .overdue');
     const todayTasksEl = document.querySelector('.today .today-tasks');
     const titleDate = document.querySelector('.today .title .date');
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -14,40 +14,48 @@ const todayTab = (function(){
         titleDate.innerText = `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
     };
 
-    const overdueTasks = (arr) => arr.filter(task => task.getDateObj() ? task.getDateObj() < date : false);
-    const todayTasks = (arr) => arr.filter(task => task.getDateObj() ? task.getDateObj().getDate() === date.getDate()&&
+    const overdueTasks = arr => arr.filter(task => task.getDateObj() ? task.getDateObj() < date : false);
+    const todayTasks = arr => arr.filter(task => task.getDateObj() ? task.getDateObj().getDate() === date.getDate()&&
                                                                                     task.getDateObj().getMonth() === date.getMonth()&&
                                                                                     task.getDateObj().getFullYear() === date.getFullYear() : false);
 
-    const displayTasks = function(tasksArr, todayTasks=false){
+    const createTaskHTMLContent = task => `${tasks.taskTemplate(task.id, tasks.getPriorityClassName(task.priority), tasks.taskNameWithoutLabels(task.taskName), task.description, task.dueDate ? task.dueDate.toText():'',
+    task.projectName.element.getTemplateHTML(task.projectName.subProjectIndex), task.labels || [])}`;
+
+    const _updateTasksPlacement = function(){
         let content = '';
-        tasksArr.forEach(el => {
-            if(todayTasks){
-                content = `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), tasks.taskNameWithoutLabels(el.taskName), el.description, '',
-                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex), el.labels || [])}`;
-                
-                todayTasksEl.insertAdjacentHTML('beforeend', content);
-            }else{
-                content = `${tasks.taskTemplate(el.id, tasks.getPriorityClassName(el.priority), tasks.taskNameWithoutLabels(el.taskName), el.description, el.dueDate.toText(),
-                    el.projectName.element.getTemplateHTML(el.projectName.subProjectIndex), el.labels || [])}`;
-                
-                overdue.insertAdjacentHTML('beforeend', content);
-            }
+        tasks.getAllTasks().forEach(el => {
+            content = createTaskHTMLContent(el);
+            
+            const isOverdue = overdueTasks([el]).length > 0;
+            const isToday = todayTasks([el]).length > 0;
+            
+            if(isOverdue) overdueEl.insertAdjacentHTML('beforeend', content);
+            else if(isToday) todayTasksEl.insertAdjacentElement('beforeend', content);
         });
     };
 
-    
+    const editTask = (task, el) => {
+        const isOverdue = overdueTasks([task]).length > 0;
+        const isToday = todayTasks([task]).length > 0;
+        const content = createTaskHTMLContent(task);
+        const taskEl = new DOMParser().parseFromString(content, 'text/html').querySelector('li');
+        
+        if((isOverdue && el.parentNode.classList.contains('overdue')) || (isToday && el.parentNode.classList.contains('today-tasks'))) el.replaceWith(taskEl);
+        else{
+            el.remove();
+            if(isOverdue) overdueEl.appendChild(taskEl);
+            else if(isToday) todayTasksEl.appendChild(taskEl);
+        }
+    };   
     
     const _init = (function(){
-        displayTasks(overdueTasks(tasks.getAllTasks()));
-        displayTasks(todayTasks(tasks.getAllTasks()), true);
+        _updateTasksPlacement();
         _updateTextTimesTodayTab();
     })();
 
     return{
-        overdueTasks,
-        todayTasks,
-        displayTasks
+        editTask
     };
 
 })();

@@ -6,6 +6,7 @@ import addTaskBox from './app/addTaskBox';
 import todayTab from './app/todayTab';
 import editTaskBox from './app/editTaskBox';
 import tabs from './app/tabs';
+import editDate from './app/editDate';
 
 toggleSidebar();
 sidebarResize();

@@ -62,20 +62,9 @@ const editTaskBox = (function(){
     function saveChanges(currTask, el, id){
         const changes = addTaskBox.getTaskData();
         Object.keys(changes).forEach(el => currTask[el] = changes[el]);
-
-        const overdue = todayTab.overdueTasks([currTask]);
-        const today = todayTab.todayTasks([currTask]);
-         
-        if(overdue.length > 0){
-            todayTab.displayTasks(overdue, false);
-        }
-        else if(today.length > 0){
-            todayTab.displayTasks(today, true);
-        }
-        else{
-            // display only inside project or inbox
-        }
-        el.remove();
+        
+        todayTab.editTask(currTask, el);
+        
         document.querySelector(`li[data-id="${id}"] .icons > div:nth-of-type(2)`).addEventListener('click', showEditTaskBox);
     };
     

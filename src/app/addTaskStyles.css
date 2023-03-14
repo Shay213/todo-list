@@ -237,7 +237,7 @@
 
 /* Date picker */
 
-.add-task-container .date-picker{
+.date-picker{
     color: #000;
     background-color: #fff;
     box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
@@ -251,17 +251,17 @@
     transform-origin: top;
 }
 
-.add-task-container .date-picker.show{
+.date-picker.show{
     transform: scaleY(1);
 }
 
-.add-task-container .date-picker .type-date{
+.date-picker .type-date{
     padding: 15px;
     border-bottom: 1px solid var(--sidebar-hover-color);
     position: relative;
 }
 
-.add-task-container .date-picker .type-date input{
+.date-picker .type-date input{
     width: 100%;
     font-size: 0.85rem;
     margin: 0;
@@ -269,7 +269,7 @@
     font-weight: 100;
 }
 
-.add-task-container .date-picker .type-date .icon{
+.date-picker .type-date .icon{
     position: absolute;
     height: max-content;
     right: 10px;
@@ -278,83 +278,83 @@
     margin: auto 0;
 }
 
-.add-task-container .date-picker .type-date .icon img{
+.date-picker .type-date .icon img{
     filter: invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%);
     width: 1.4rem;
 }
 
-.add-task-container .date-picker .type-date input::placeholder{
+.date-picker .type-date input::placeholder{
     font-size: 0.85rem;
     font-weight: 100;
 }
 
-.add-task-container .date-picker .input-validation-text{
+.date-picker .input-validation-text{
     padding: 10px 10px 0;
     display: none;
 }
 
-.add-task-container .date-picker .input-validation-text p{
+.date-picker .input-validation-text p{
     margin: 0;
     font-weight: 300;
     font-size: 0.8rem;
 }
 
-.add-task-container .date-picker .input-validation-text > div img{
+.date-picker .input-validation-text > div img{
     width: 1.7rem;
     filter: invert(30%) sepia(2%) saturate(1790%) hue-rotate(202deg) brightness(96%) contrast(84%);
 }
 
-.add-task-container .date-picker .input-validation-text > div:first-of-type{
+.date-picker .input-validation-text > div:first-of-type{
     display: flex;
     gap: 8px;
 }
 
-.add-task-container .date-picker .input-validation-text > div:first-of-type p:first-of-type{
+.date-picker .input-validation-text > div:first-of-type p:first-of-type{
     font-weight: 400;
     font-size: 0.9rem;
 }
 
-.add-task-container .date-picker .input-validation-text > div:nth-of-type(2){
+.date-picker .input-validation-text > div:nth-of-type(2){
     padding-top: 10px;
 }
 
-.add-task-container .date-picker .input-validation-text .date-req{
+.date-picker .input-validation-text .date-req{
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.add-task-container .date-picker .input-validation-text .date-req img{
+.date-picker .input-validation-text .date-req img{
     width: 1.4rem;
     transition: 400ms;
 }
 
-.add-task-container .date-picker .input-validation-text .date-req img:hover{
+.date-picker .input-validation-text .date-req img:hover{
     cursor: pointer;
     transform: scale(1.1);
     transition: 400ms;
 }
 
-.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul.show{
+.date-picker .input-validation-text > div:nth-of-type(2) ul.show{
     transform: scaleY(1);
     height: auto;
 }
 
-.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul{
+.date-picker .input-validation-text > div:nth-of-type(2) ul{
     margin: 5px 20px;
     padding: 0;
     height: 0;
     transform: scaleY(0);
 }
-.add-task-container .date-picker .input-validation-text > div:nth-of-type(2) ul li{
+.date-picker .input-validation-text > div:nth-of-type(2) ul li{
     padding-top: 5px;
 }
 
-.add-task-container .date-picker .pick-icon{
+.date-picker .pick-icon{
     padding: 10px;
 }
 
-.add-task-container .date-picker .pick-icon > div{
+.date-picker .pick-icon > div{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -362,48 +362,48 @@
     border-radius: 5px;
 }
 
-.add-task-container .date-picker .pick-icon > div span{
+.date-picker .pick-icon > div span{
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-.add-task-container .date-picker .pick-icon > div:hover{
+.date-picker .pick-icon > div:hover{
     background-color: var(--sidebar-hover-color);
     cursor: pointer;
     transition: 500ms;
 }
 
-.add-task-container .date-picker .pick-icon > div p{
+.date-picker .pick-icon > div p{
     margin: 0;
 }
 
-.add-task-container .date-picker .pick-icon > div > p{
+.date-picker .pick-icon > div > p{
     font-weight: 100;
     font-size: 0.8rem;
 }
 
-.add-task-container .date-picker .pick-icon > div img{
+.date-picker .pick-icon > div img{
     width: 1.3rem;
 }
 
-.add-task-container .date-picker .pick-icon > div:first-of-type img{
+.date-picker .pick-icon > div:first-of-type img{
     filter: invert(39%) sepia(96%) saturate(520%) hue-rotate(115deg) brightness(92%) contrast(96%);
 }
-.add-task-container .date-picker .pick-icon > div:nth-of-type(2) img{
+.date-picker .pick-icon > div:nth-of-type(2) img{
     filter: invert(84%) sepia(47%) saturate(2119%) hue-rotate(339deg) brightness(104%) contrast(97%);
 }
-.add-task-container .date-picker .pick-icon > div:nth-of-type(3) img{
+.date-picker .pick-icon > div:nth-of-type(3) img{
     filter: invert(16%) sepia(67%) saturate(6573%) hue-rotate(272deg) brightness(84%) contrast(92%);
 }
-.add-task-container .date-picker .pick-icon > div:nth-of-type(4) img{
+.date-picker .pick-icon > div:nth-of-type(4) img{
     filter: invert(35%) sepia(24%) saturate(7486%) hue-rotate(180deg) brightness(94%) contrast(98%);
 }
-.add-task-container .date-picker .pick-icon > div:last-of-type img{
+.date-picker .pick-icon > div:last-of-type img{
     filter: invert(100%) sepia(31%) saturate(324%) hue-rotate(298deg) brightness(87%) contrast(91%);
 }
 
-.add-task-container .date-picker .calendar{
+.date-picker .calendar{
     border-top: 1px solid var(--sidebar-hover-color);
     padding: 0px 15px 15px;
     overflow: auto;
@@ -411,17 +411,17 @@
     height: 240px;
     position: relative;
 }
-.add-task-container .date-picker .calendar::-webkit-scrollbar{
+.date-picker .calendar::-webkit-scrollbar{
     display: none;
 }
 
-.add-task-container .date-picker .calendar ul{
+.date-picker .calendar ul{
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.add-task-container .date-picker .calendar .nav{
+.date-picker .calendar .nav{
     padding-top: 10px;
     display: flex;
     align-items: center;
@@ -433,19 +433,19 @@
     z-index: 50;
 }
 
-.add-task-container .date-picker .calendar .nav p{
+.date-picker .calendar .nav p{
     margin: 0;
 }
 
-.add-task-container .date-picker .calendar .nav img{
+.date-picker .calendar .nav img{
     filter: invert(67%) sepia(0%) saturate(565%) hue-rotate(240deg) brightness(106%) contrast(63%);
 }
 
-.add-task-container .date-picker .calendar .nav .icons{
+.date-picker .calendar .nav .icons{
     display: flex;
 }
 
-.add-task-container .date-picker .calendar .nav .icons > div{
+.date-picker .calendar .nav .icons > div{
     padding: 3px;
     border-radius: 5px;
     display: flex;
@@ -453,52 +453,52 @@
     justify-content: center;
 }
 
-.add-task-container .date-picker .calendar .nav .icons > div:hover{
+.date-picker .calendar .nav .icons > div:hover{
     background-color: var(--sidebar-hover-color);
     cursor: pointer;
     transition: 500ms;
 }
 
-.add-task-container .date-picker .calendar .bottom{
+.date-picker .calendar .bottom{
     border: none;
     padding-top: 0;
     display: flex;
 }
 
-.add-task-container .date-picker .calendar .bottom ul{
+.date-picker .calendar .bottom ul{
     display: flex;
     border: none;
 }
 
-.add-task-container .date-picker .calendar .bottom ul li{
+.date-picker .calendar .bottom ul li{
     border: none;
     font-size: 0.85rem;
     font-weight: 400;
 }
 
-.add-task-container .date-picker .calendar ul{
+.date-picker .calendar ul{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     width: 100%;
     gap: 9px;
 }
 
-.add-task-container .date-picker .calendar .nav ul{
+.date-picker .calendar .nav ul{
     height: 30px;
 }
 
-.add-task-container .date-picker .calendar .months ul{
+.date-picker .calendar .months ul{
     grid-auto-rows: 1fr;
     height: 150px;
 }
 
-.add-task-container .date-picker .calendar .months div{
+.date-picker .calendar .months div{
     border-bottom: 1px solid var(--sidebar-hover-color);
     padding: 12px 0 6px;
     margin-bottom: 8px;
 }
 
-.add-task-container .date-picker .calendar ul li{
+.date-picker .calendar ul li{
     height: 100%;
     width: 100%;
     border: none;
@@ -510,39 +510,39 @@
     border-radius: 50%;
 }
 
-.add-task-container .date-picker .calendar .months ul li:hover{
+.date-picker .calendar .months ul li:hover{
     cursor: pointer;
     background-color: var(--sidebar-hover-color);
 }
 
-.add-task-container .date-picker .calendar ul li.today,
-.add-task-container .date-picker .calendar ul li.today:hover{
+.date-picker .calendar ul li.today,
+.date-picker .calendar ul li.today:hover{
     background-color: var(--topPanel-color);
     color: #fff;
     font-weight: 700;
     font-size: 0.8rem;
 }
 
-.add-task-container .date-picker .calendar ul li.weekend{
+.date-picker .calendar ul li.weekend{
     opacity: 0.5;
 }
 
-.add-task-container .date-picker .calendar ul li.past{
+.date-picker .calendar ul li.past{
     opacity: 0.2;
 }
 
-.add-task-container .date-picker .calendar ul li.past:hover{
+.date-picker .calendar ul li.past:hover{
     background-color: #fff;
     cursor: auto;
 }
 
-.add-task-container .date-picker .add-time{
+.date-picker .add-time{
     border-top: 1px solid var(--sidebar-hover-color);
     padding: 5px 0 5px 15px;
     position: relative;
 }
 
-.add-task-container .date-picker .add-time p{
+.date-picker .add-time p{
     cursor: pointer;
     color: var(--topPanel-color);
     font-weight: 700;
@@ -551,7 +551,7 @@
     width: max-content;
 }
 
-.add-task-container .date-picker .add-time .time-picker{
+.date-picker .add-time .time-picker{
     position: absolute;
     width: 200px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
@@ -565,17 +565,17 @@
     transform-origin: bottom;
 }
 
-.add-task-container .date-picker .add-time .time-picker.show{
+.date-picker .add-time .time-picker.show{
     transform: scaleY(1);
 }
 
-.add-task-container .date-picker .add-time .time-picker > div{
+.date-picker .add-time .time-picker > div{
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.add-task-container .date-picker .add-time .time-picker input{
+.date-picker .add-time .time-picker input{
     width: 100px;
     margin: 0;
     padding: 0;
@@ -586,20 +586,20 @@
     border-radius: 5px;
 }
 
-.add-task-container .date-picker .add-time .time-picker input::placeholder{
+.date-picker .add-time .time-picker input::placeholder{
     font-size: 0.85rem;
     font-weight: 100;
 }
-.add-task-container .date-picker .add-time .time-picker input:focus{
+.date-picker .add-time .time-picker input:focus{
     outline: 1px solid var(--sidebar-hover-color);
 }
 
-.add-task-container .date-picker .add-time .time-picker .time{
+.date-picker .add-time .time-picker .time{
     border-bottom: 1px solid var(--sidebar-hover-color);
     padding-bottom: 10px;
 }
 
-.add-task-container .date-picker .add-time .time-picker .btns{
+.date-picker .add-time .time-picker .btns{
     padding-top: 10px;
 }
 

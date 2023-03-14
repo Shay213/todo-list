@@ -37,7 +37,7 @@
     border-radius: 3px;
 }
 
-.today ul{
+.today > ul{
     margin: 0;
     padding: 0;
     list-style: none;
@@ -48,12 +48,12 @@
     margin-top: 30px;
 }
 
-.today ul > li[data-id]{
+.today > ul > li[data-id]{
     padding: 10px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
-.today ul figcaption{
+.today > ul > figcaption{
     padding: 6px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
@@ -97,29 +97,33 @@
     margin: 0;
 }
 
-.today li > .bottom{
+.today li > div.bottom{
     display: flex;
     align-items: center;
     font-size: 0.75rem;
     font-weight: 300;
+    padding-left: 34px;
 }
 
-.today .overdue > li .bottom > div p{
+.today .overdue > li .bottom > div > p{
     font-weight: 400;
 }
-.today .overdue > li .bottom > .date p{
+.today .overdue > li .bottom > .date > p{
     color:#c95151;
 }
-.today .overdue > li .bottom > .date img{
+.today .today-tasks > li .bottom > .date{
+    display: none;
+}
+
+.today .overdue > li .bottom > .date > img{
     filter: invert(52%) sepia(42%) saturate(4941%) hue-rotate(330deg) brightness(85%) contrast(82%);
 }
 
-.today li > .bottom > div:nth-last-child(2){
-    margin-right: auto;
+.today li > .bottom > div:last-of-type{
+    margin-left: auto;
 }
 
 .today li > .bottom .date{
-    margin-left: 34px;
     padding-right: 10px;
     display: flex;
     align-items: center;
@@ -146,7 +150,7 @@
     align-items: center;
 }
 
-.today li .icons div{
+.today li .icons > div{
     padding: 2px;
     border-radius: 5px;
     display: flex;
@@ -154,7 +158,7 @@
     justify-content: center;
 }
 
-.today li .icons div:hover{
+.today li .icons > div:hover{
     cursor: pointer;
     background-color: var(--sidebar-hover-color);
     transition: 500ms;
@@ -236,4 +240,32 @@
 .today ul li .priority-box:hover img{   
     opacity: 1;
     transition: 400ms;
+}
+
+
+/* Date Picker*/
+.container > ul > li .bottom .date-picker input,
+.container > ul > li .top .icons div:first-of-type .date-picker input{
+    width: 450px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container > ul > li .bottom .date-picker,
+.container > ul > li .top .icons div:first-of-type .date-picker{
+    cursor: auto;
+}
+
+.container > ul > li .bottom .date-picker .pick-icon > div > span,
+.container > ul > li .top .icons div:first-of-type .date-picker .pick-icon > div > span{
+    font-size: .85rem;
+    font-weight: 400;
+}
+
+.container > ul > li .bottom .date-picker .calendar .nav .curr-month,
+.container > ul > li .top .icons div:first-of-type .date-picker .calendar .nav .curr-month{
+    font-size: .85rem;
+    font-weight: 400;
 }

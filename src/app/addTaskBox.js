@@ -46,6 +46,7 @@ const addTaskBox = (function(){
     const setData = container => data = createData(container);
     const setAllUniqueMatchesInsideTaskName = value => data.allUniqueMatchesInsideTaskName = value; 
     const setEditMode = (isEditMode) => data.editMode = isEditMode;
+    const getDueDate = () => data.dueDate;
 
     setData(document.querySelector('#content > .add-task-container'));
     
@@ -389,412 +390,8 @@ const addTaskBox = (function(){
             });
         }
         else if(isDatePicker){
-            const dueDateBtn = data.addTaskContainer.querySelector('.due-date');
-            const input = data.addTaskContainer.querySelector('.due-date .date-picker .type-date input');
-            const inputValidationText = data.addTaskContainer.querySelector('.date-picker .input-validation-text');
-            const dateReqText = data.addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
-            const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
-            const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
-            const eventIcon = inputValidationText.querySelector('div:first-of-type img');
-            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            const today = new Date();
-            const quickBtns = data.addTaskContainer.querySelectorAll('.due-date .date-picker .pick-icon > div');
-            const formatDate = (date, repeat = '') => {
-                return {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    day: date.getDate(),
-                    weekDay: date.getDay(),
-                    repeat: repeat,
-                    time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
-                    toText: function(){
-                        return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
-                    }
-                }
-            };
+            datePicker();
             
-            updateQuickBtnsSideDate();
-            dateReqText.classList.remove('show');
-            inputValidationText.style.display = 'none';
-
-            validateInputDate();
-            createCalendar();
-            input.addEventListener('focus', e => inputValidationText.style.display = 'block');
-            quickBtns.forEach(el => el.addEventListener('click', changeDateBtn));
-            
-            
-            data.dateUtilFunctions = {
-                formatDateFun: (date, repeat = '') => formatDate(date, repeat),
-                styleDueDateBtnFun: (date) => styleDueDateBtn(date),
-            };
-
-            function changeDateBtn(e){
-                let date;
-                const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
-                switch(e.currentTarget.querySelector('span').innerText){
-                    case 'Today':
-                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                        _hideElWithClass(/date-picker/, 'show');
-                        styleDueDateBtn(date);
-                        data.dueDate = formatDate(date);
-                        input.value = 'Today';
-                        break;
-                    case 'Tomorrow':
-                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
-                        _hideElWithClass(/date-picker/, 'show');
-                        styleDueDateBtn(date);
-                        data.dueDate = formatDate(date);
-                        input.value = 'Tomorrow';
-                        break;
-                    case 'Next week':
-                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-                        _hideElWithClass(/date-picker/, 'show');
-                        styleDueDateBtn(date);
-                        data.dueDate = formatDate(date);
-                        input.value = days[data.dueDate.weekDay];
-                        break;
-                    case 'Next weekend':
-                        let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
-                        date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
-                        _hideElWithClass(/date-picker/, 'show');
-                        styleDueDateBtn(date);
-                        data.dueDate = formatDate(date);
-                        input.value = days[data.dueDate.weekDay];
-                        break;
-                    case 'No date':
-                        styleDueDateBtn(null);
-                        data.dueDate = null;
-                        _hideElWithClass(/date-picker/, 'show');
-                        input.value = '';
-
-                        icon.src = `${light}`;
-                        icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
-                        eventIcon.src = eventBusy;
-                        fullDateTypedInInput.innerText = 'No results';
-                        anyTasksText.innerText = '';
-                        break;
-                }
-                if(e.currentTarget.querySelector('span').innerText != 'No date'){
-                    icon.src = `${lightFull}`;
-                    icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
-                    eventIcon.src = eventAvailable;
-                    fullDateTypedInInput.innerText = data.dueDate.toText();
-                    anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
-                }
-            }
-
-            function updateQuickBtnsSideDate(){
-                quickBtns.forEach(el => {
-                    const p = el.querySelector('p');
-                    const span = el.querySelector('span');
-                    switch(span.innerText){
-                        case 'Today':
-                            p.innerText = `${days[today.getDay()]}`;
-                            break;
-                        case 'Tomorrow':
-                            p.innerText = `${days[new Date(today.getFullYear(), today.getMonth(), today.getDate()+1).getDay()]}`;
-                            break;
-                        case 'Next week':
-                            let nextW = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
-                            p.innerText = `${days[nextW.getDay()]} ${nextW.getDate()} ${months[nextW.getMonth()]}`;
-                            break;
-                        case 'Next weekend':
-                            let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
-                            let nextWEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
-                            p.innerText = `${days[nextWEnd.getDay()]} ${nextWEnd.getDate()} ${months[nextWEnd.getMonth()]}`;
-                            break;
-                        case 'No date':
-                            break;
-                    }
-                });
-            }
-
-            function validateInputDate(){
-                const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
-                const currDay = today.getDate();  // 1-31
-                const currMonth = today.getMonth();  // 0-11
-                const currYear = today.getFullYear(); 
-                
-
-                input.addEventListener('input', e => {
-                    // match day depending on current month, month is not specified by user
-                    const re1 = /^((?:(?=1 )(1 (0?[1-9]|[12]\d))|((?=[024679]|11)(([024679]|11) (0?[1-9]|[12]\d|3[01]))|(([358]|10|12) (0?[1-9]|[12]\d|30))))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?)$/;
-                    // full input validation, month is required, and special keywords are available
-                    const re2 = /^((([0-9]{4}[\/\- ])?((?:(?=(0?2|Feb)[\/\- ])((0?2|Feb)[\/\- ](0?[1-9]|[12]\d))|((?=(0?[13578]|10|12|(Jan|Mar|May|Jul|Aug|Oct|Dec)[\/\- ]))((0?[13578]|10|12|(Jan|Mar|May|Jul|Aug|Oct|Dec))[\/\- ](0?[1-9]|[12]\d|3[01]))|(((0?[469]|11|(Apr|Jul|Sep|Nov))[\/\- ])(0?[1-9]|[12]\d|30)))))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?)|((Mon|Tue|Wed|Thu|Fri|Sat|Sun|Today|Weekend|Tomorrow|Day after tomorrow|Next week|in \d?\d?\d days|in \d?\d weeks|(in (([1-9]\d? months)|(1 month)))|(every (Day|Mon|Tue|Wed|Thu|Fri|Sat|Sun|Second|Third|Fourth|Fifth|sixth)))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?))$/i;
-        
-                    const inputVal = e.target.value;
-                    if(re2.test(inputVal)){
-                        icon.src = `${lightFull}`;
-                        icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
-                        eventIcon.src = eventAvailable;
-                        const values = inputVal.split(/[\-\/ ]/);
-                        const month = (value) => /[a-z]+/i.test(value) ? months.findIndex(el => (new RegExp(`${value}`, 'i')).test(el))+1 :                               
-                                                                        value.charAt(0) === '0' ? value.charAt(1) : value;
-                        const day = (value) => value.charAt(0) === '0' ? value.charAt(1) : value;
-                        const time = (value) => value ? value.split(':') : '';
-                        let date;
-                        let repeatDays = '';
-                        
-                        //console.log(values);
-                        if(values[0].length === 4 && !/[a-z]/i.test(values[0])) date = new Date(values[0], month(values[1])-1, day(values[2]), ...time(values[3]));
-                        else{
-                            if(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(inputVal)){
-                                date = getNextDayOfTheWeek(values[0]);
-                                if(values[1]) date.setHours(...time(values[1]));
-                            }
-                            else if(/Today/i.test(inputVal)){
-                                date = today;
-                                date.setHours(0, 0, 0, 0);
-                                if(values[1]) date.setHours(...time(values[1]));
-                            }
-                            else if(/Weekend/i.test(inputVal)){
-                                date = getNextDayOfTheWeek('sat');
-                                if(values[1]) date.setHours(...time(values[1]));
-                            }
-                            else if(/^Tomorrow/i.test(inputVal)){
-                                let weekDay = today.getDay()+1 > 6 ? 0 : today.getDay()+1;
-                                date = getNextDayOfTheWeek(days[weekDay]);
-                                if(values[1]) date.setHours(...time(values[1]));
-                            }
-                            else if(/Day after tomorrow/i.test(inputVal)){
-                                let weekDay = (today.getDay()+2) % 7;
-                                date = getNextDayOfTheWeek(days[weekDay]);
-                                if(values[3]) date.setHours(...time(values[3]));
-                            }
-                            else if(/Next week/i.test(inputVal)){
-                                let weekDay = today.getDay();
-                                date = getNextDayOfTheWeek(days[weekDay]);
-                                if(values[2]) date.setHours(...time(values[2]));
-                            }
-                            else if(/in/i.test(inputVal)){
-                                date = new Date(currYear, currMonth, currDay+values[1]);
-                                if(values[3]) date.setHours(...time(values[3]));
-                            }
-                            else if(/every/i.test(inputVal)){
-                                if(/day/i.test(values[1])){
-                                    date = today;
-                                    date.setHours(0, 0, 0, 0);
-                                }
-                                else if(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(values[1])){
-                                    date = getNextDayOfTheWeek(values[1]);
-                                }else{
-                                    let keywords = ['second', 'third', 'fourth', 'fifth', 'sixth'];
-                                    date = new Date(currYear, currMonth, currDay+keywords.findIndex(el => (new RegExp(`${values[1]}`,'i')).test(el))+2);
-                                }
-                                if(values[2]) date.setHours(...time(values[2]));
-                                repeatDays = values[1];
-                            }
-                            else{
-                                date = new Date(currYear, month(values[0])-1, day(values[1]), ...time(values[2]));
-                            }
-                            
-
-                            function getNextDayOfTheWeek(dayName, excludeToday = true, refDate = new Date()) {
-                                const dayOfWeek = ["sun","mon","tue","wed","thu","fri","sat"]
-                                                  .indexOf(dayName.slice(0,3).toLowerCase());
-                                if (dayOfWeek < 0) return;
-                                refDate.setHours(0,0,0,0);
-                                refDate.setDate(refDate.getDate() + +!!excludeToday + 
-                                                (dayOfWeek + 7 - refDate.getDay() - +!!excludeToday) % 7);
-                                return refDate;
-                            }
-                        }
-
-                        if(date < today){
-                            invalidInput('Only future dates are accepted');
-                        }
-                        else{
-                            let formattedDate;
-                            repeatDays.length === 0 ? formattedDate=formatDate(date) : formattedDate=formatDate(date, repeatDays);
-                            fullDateTypedInInput.innerText = formattedDate.toText();
-                            anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
-                            data.dueDate = formattedDate;
-
-                            input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});
-                        } 
-                    }
-                    else if(re1.test(`${currMonth} ${inputVal}`)){
-                        icon.src = `${lightFull}`;
-                        icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
-                        eventIcon.src = eventAvailable;
-                        const values = inputVal.split(' ');
-                        const day = values[0].charAt(0) === '0' ? values[0].charAt(1) : values[0];
-                        const time = values[1] ? values[1].split(':') : '';
-                        
-                        let date = new Date(currYear, currMonth, day, ...time);
-                        if(date < today && !(+day === +currDay && time === '')) date.setFullYear(currYear+1);
-                        let formattedDate = formatDate(date);
-                        fullDateTypedInInput.innerText = formattedDate.toText();
-                        anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
-                        data.dueDate = formattedDate;
-                        
-                        input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});                                                      
-                    }
-                    else invalidInput('No results');
-
-                    function invalidInput(txt){
-                        input.addEventListener('focusout', e => styleDueDateBtn(null),{once:true});
-                        data.dueDate = null;
-                        icon.src = `${light}`;
-                        icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
-                        eventIcon.src = eventBusy;
-                        fullDateTypedInInput.innerText = `${txt}`;
-                        anyTasksText.innerText = '';
-                    }
-                });
-            }
-
-            function createCalendar(){
-                const today = new Date();
-                let currentMonth = today.getMonth();
-                let currentYear = today.getFullYear();
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-   
-                const wrapper = data.addTaskContainer.querySelector('.date-picker .calendar .months');
-                wrapper.innerHTML = '';
-                const currMonthEl = data.addTaskContainer.querySelector('.date-picker .calendar .curr-month');
-                const calendar = data.addTaskContainer.querySelector('.date-picker .calendar');
-                const nav = data.addTaskContainer.querySelector('.date-picker .calendar .nav');
-                const navUl = nav.querySelector('ul');
-                const navUlElements = navUl.querySelectorAll('li');
-                const previousBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:first-of-type');
-                const goToStartBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:nth-of-type(2)');
-                const nextBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:last-of-type');
-                const input = data.addTaskContainer.querySelector('.due-date .date-picker .type-date input');
-                calendar.scrollTop = 0;
-
-                calendar.addEventListener('scroll', scrolling);
-                previousBtn.addEventListener('click', previous);
-                goToStartBtn.addEventListener('click', goToStart);
-                nextBtn.addEventListener('click', next);
-
-                currMonthEl.innerHTML = months[currentMonth] + ' ' + currentYear;
-                showMonth(currentMonth, currentYear);
-                showNextMonth();
-                const calendarUl = data.addTaskContainer.querySelector('.date-picker .calendar .months ul');
-                let currUl = calendarUl;
-
-                function scrolling(e){
-                    calendar.scrollTop === 0 ? nav.style.cssText = 'border: none;':nav.style.cssText = 'border-bottom: 1px solid gray;';
-                    
-                    if(currUl.nextElementSibling && isScrolledIntoView(currUl.nextElementSibling.nextElementSibling)){
-                        showNextMonth();
-                        currUl = currUl.nextElementSibling.nextElementSibling;
-                    }
-                    else if(currUl.previousElementSibling && isScrolledIntoView(currUl.previousElementSibling.previousElementSibling)){
-                        currUl = currUl.previousElementSibling.previousElementSibling;
-                    }
-                }
-
-                function goToStart(){
-                    nav.style.cssText = 'border: none;';
-                    calendar.removeEventListener('scroll', scrolling);
-                    currUl = calendarUl;
-                    currUl.scrollIntoView({behavior: 'smooth', block: 'end'});
-                    setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
-                }
-                
-                function next(){  
-                    nav.style.cssText = 'border-bottom: 1px solid gray;';
-                    calendar.removeEventListener('scroll', scrolling);
-                    if(!currUl.nextElementSibling.nextElementSibling.nextElementSibling){
-                        showNextMonth();
-                        showNextMonth();
-                    }
-                
-                    let nextUl = currUl.nextElementSibling.nextElementSibling;
-                    nextUl.scrollIntoView({behavior: "smooth", block: 'nearest'});
-                    currUl = nextUl;
-                    setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
-                }
-
-                function previous(){
-                    if(currUl.previousElementSibling){
-                        calendar.removeEventListener('scroll', scrolling);
-                        let prevUl = currUl.previousElementSibling.previousElementSibling;
-                        prevUl.scrollIntoView({behavior: 'smooth', block: 'end'});
-                        currUl = prevUl;
-                        if(!currUl.previousElementSibling) nav.style.cssText = 'border: none;';
-                        setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
-                    }
-                }
-
-                function isScrolledIntoView(elem){
-                    const parentViewTop = calendar.scrollTop;
-                    const parentViewBottom = parentViewTop + calendar.offsetHeight;
-
-                    const elemTop = elem.offsetTop;
-                    const elemBottom = elemTop + elem.offsetHeight
-
-                    return ((elemBottom <= parentViewBottom) && (elemTop >= parentViewTop));
-                }
-
-                function showNextMonth(){
-                    currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
-                    currentMonth = (currentMonth + 1) % 12;
-
-                    const div = document.createElement('div');
-                    div.innerText = months[currentMonth];
-                    wrapper.appendChild(div);
-
-                    showMonth(currentMonth, currentYear);
-                }
-
-                function showMonth(month, year){
-                    const firstDay = (new Date(year, month)).getDay();
-                    const daysInMonth = 32 - new Date(year, month, 32).getDate();
-                    const ul = document.createElement('ul');
-                    let date = 1;
-
-                    for(let i=0; i<6; i++){
-                        //create individual cells, and filling them up with data
-                        for(let j=0; j<7; j++){
-                            if(i === 0 && j < firstDay-1){
-                                const li = document.createElement('li');
-                                li.innerText = '';
-                                li.classList.add('past');
-                                ul.appendChild(li);
-                            }
-                            else if(date > daysInMonth) break;
-                            else{
-                                const li = document.createElement('li');
-                                li.innerText = date;
-                                if(date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) li.classList.add('today');
-                                else if(new Date(year, month, date) < today) li.classList.add('past');
-                                else if(j === 6 || j === 5) li.classList.add('weekend'); 
-
-                                if(!li.classList.contains('past')){
-                                    li.addEventListener('mouseover', e => {
-                                        navUl.innerHTML = '';
-                                        const p = document.createElement('p');
-                                        let date2 = new Date(year, month, li.innerText);
-
-                                        p.innerText = `${days[date2.getDay()]} ${date2.getDate()} ${months[date2.getMonth()]} ${year === today.getFullYear() ? '' : year}`;
-                                        p.innerText += ` - ${tasks.howManyTasksInSpecifiedDay(date2).length} tasks due`;
-                                        p.style.cssText = 'grid-area: 1 / 1 / 2 / -1; align-self: center; justify-self: center; font-size: .85rem; color: #737373';
-                                        navUl.appendChild(p);
-                                    });
-                                    li.addEventListener('mouseout', e => {
-                                        navUl.innerHTML = '';
-                                        navUlElements.forEach(el => navUl.appendChild(el));
-                                    });
-                                    li.addEventListener('click', e => {
-                                        let date2 = new Date(year, month, e.currentTarget.innerText);
-                                        data.dateUtilFunctions.styleDueDateBtnFun(date2);
-                                        data.dueDate = data.dateUtilFunctions.formatDateFun(date2);
-                                        _hideElWithClass(/date-picker/, 'show');
-                                        input.value = data.dueDate.toText();
-                                    });
-                                }
-                                ul.appendChild(li);
-                                date++;
-                            }
-                        }
-                    }
-                    wrapper.appendChild(ul);
-                }
-            }
         }
         else if(isLabelPicker){
             const labelPicker = data.addTaskContainer.querySelector('.top .label .label-picker');
@@ -888,6 +485,425 @@ const addTaskBox = (function(){
             });
         }
     };
+
+    function datePicker(changeDataObj){
+        if(changeDataObj) data = changeDataObj();
+        const input = data.addTaskContainer.querySelector('.date-picker .type-date input');
+        const inputValidationText = data.addTaskContainer.querySelector('.date-picker .input-validation-text');
+        const dateReqText = data.addTaskContainer.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul');
+        const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
+        const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
+        const eventIcon = inputValidationText.querySelector('div:first-of-type img');
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const today = new Date();
+        const quickBtns = data.addTaskContainer.querySelectorAll('.date-picker .pick-icon > div');
+        const formatDate = (date, repeat = '') => {
+            return {
+                year: date.getFullYear(),
+                month: date.getMonth(),
+                day: date.getDate(),
+                weekDay: date.getDay(),
+                repeat: repeat,
+                time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
+                toText: function(){
+                    return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                }
+            }
+        };
+        
+        updateQuickBtnsSideDate();
+        dateReqText.classList.remove('show');
+        inputValidationText.style.display = 'none';
+
+        validateInputDate();
+        createCalendar();
+        input.addEventListener('focus', e => inputValidationText.style.display = 'block');
+        quickBtns.forEach(el => el.addEventListener('click', changeDateBtn));
+        
+        
+        data.dateUtilFunctions = {
+            formatDateFun: (date, repeat = '') => formatDate(date, repeat),
+            styleDueDateBtnFun: (date) => styleDueDateBtn(date),
+        };
+
+        function changeDateBtn(e){
+            let date;
+            const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
+            switch(e.currentTarget.querySelector('span').innerText){
+                case 'Today':
+                    date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if(!changeDataObj){
+                        _hideElWithClass(/date-picker/, 'show');
+                        styleDueDateBtn(date);
+                    }
+                    data.dueDate = formatDate(date);
+                    input.value = 'Today';
+                    break;
+                case 'Tomorrow':
+                    date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1);
+                    if(!changeDataObj){
+                        _hideElWithClass(/date-picker/, 'show');
+                        styleDueDateBtn(date);
+                    }
+                    data.dueDate = formatDate(date);
+                    input.value = 'Tomorrow';
+                    break;
+                case 'Next week':
+                    date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                    if(!changeDataObj){
+                        _hideElWithClass(/date-picker/, 'show');
+                        styleDueDateBtn(date);
+                    }
+                    data.dueDate = formatDate(date);
+                    input.value = days[data.dueDate.weekDay];
+                    break;
+                case 'Next weekend':
+                    let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
+                    date = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
+                    if(!changeDataObj){
+                        _hideElWithClass(/date-picker/, 'show');
+                        styleDueDateBtn(date);
+                    }
+                    data.dueDate = formatDate(date);
+                    input.value = days[data.dueDate.weekDay];
+                    break;
+                case 'No date':
+                    data.dueDate = null;
+                    if(!changeDataObj){
+                        _hideElWithClass(/date-picker/, 'show');
+                        styleDueDateBtn(null);
+                    }
+                    input.value = '';
+
+                    icon.src = `${light}`;
+                    icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
+                    eventIcon.src = eventBusy;
+                    fullDateTypedInInput.innerText = 'No results';
+                    anyTasksText.innerText = '';
+                    break;
+            }
+            if(e.currentTarget.querySelector('span').innerText != 'No date'){
+                icon.src = `${lightFull}`;
+                icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
+                eventIcon.src = eventAvailable;
+                fullDateTypedInInput.innerText = data.dueDate.toText();
+                anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
+            }
+        }
+
+        function updateQuickBtnsSideDate(){
+            quickBtns.forEach(el => {
+                const p = el.querySelector('p');
+                const span = el.querySelector('span');
+                switch(span.innerText){
+                    case 'Today':
+                        p.innerText = `${days[today.getDay()]}`;
+                        break;
+                    case 'Tomorrow':
+                        p.innerText = `${days[new Date(today.getFullYear(), today.getMonth(), today.getDate()+1).getDay()]}`;
+                        break;
+                    case 'Next week':
+                        let nextW = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+                        p.innerText = `${days[nextW.getDay()]} ${nextW.getDate()} ${months[nextW.getMonth()]}`;
+                        break;
+                    case 'Next weekend':
+                        let howManyDaysToWeekend = today.getDay() === 6 || today.getDay === 7 ? 7 : 6-today.getDay(); 
+                        let nextWEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate()+howManyDaysToWeekend);
+                        p.innerText = `${days[nextWEnd.getDay()]} ${nextWEnd.getDate()} ${months[nextWEnd.getMonth()]}`;
+                        break;
+                    case 'No date':
+                        break;
+                }
+            });
+        }
+
+        function validateInputDate(){
+            const icon = data.addTaskContainer.querySelector('.date-picker .type-date .icon img');
+            const currDay = today.getDate();  // 1-31
+            const currMonth = today.getMonth();  // 0-11
+            const currYear = today.getFullYear(); 
+            
+
+            input.addEventListener('input', e => {
+                // match day depending on current month, month is not specified by user
+                const re1 = /^((?:(?=1 )(1 (0?[1-9]|[12]\d))|((?=[024679]|11)(([024679]|11) (0?[1-9]|[12]\d|3[01]))|(([358]|10|12) (0?[1-9]|[12]\d|30))))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?)$/;
+                // full input validation, month is required, and special keywords are available
+                const re2 = /^((([0-9]{4}[\/\- ])?((?:(?=(0?2|Feb)[\/\- ])((0?2|Feb)[\/\- ](0?[1-9]|[12]\d))|((?=(0?[13578]|10|12|(Jan|Mar|May|Jul|Aug|Oct|Dec)[\/\- ]))((0?[13578]|10|12|(Jan|Mar|May|Jul|Aug|Oct|Dec))[\/\- ](0?[1-9]|[12]\d|3[01]))|(((0?[469]|11|(Apr|Jul|Sep|Nov))[\/\- ])(0?[1-9]|[12]\d|30)))))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?)|((Mon|Tue|Wed|Thu|Fri|Sat|Sun|Today|Weekend|Tomorrow|Day after tomorrow|Next week|in \d?\d?\d days|in \d?\d weeks|(in (([1-9]\d? months)|(1 month)))|(every (Day|Mon|Tue|Wed|Thu|Fri|Sat|Sun|Second|Third|Fourth|Fifth|sixth)))( (0[0-9]|1[0-9]|2[0-3])((:[0-5][0-9])?){2})?))$/i;
+    
+                const inputVal = e.target.value;
+                if(re2.test(inputVal)){
+                    icon.src = `${lightFull}`;
+                    icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
+                    eventIcon.src = eventAvailable;
+                    const values = inputVal.split(/[\-\/ ]/);
+                    const month = (value) => /[a-z]+/i.test(value) ? months.findIndex(el => (new RegExp(`${value}`, 'i')).test(el))+1 :                               
+                                                                    value.charAt(0) === '0' ? value.charAt(1) : value;
+                    const day = (value) => value.charAt(0) === '0' ? value.charAt(1) : value;
+                    const time = (value) => value ? value.split(':') : '';
+                    let date;
+                    let repeatDays = '';
+                    
+                    //console.log(values);
+                    if(values[0].length === 4 && !/[a-z]/i.test(values[0])) date = new Date(values[0], month(values[1])-1, day(values[2]), ...time(values[3]));
+                    else{
+                        if(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(inputVal)){
+                            date = getNextDayOfTheWeek(values[0]);
+                            if(values[1]) date.setHours(...time(values[1]));
+                        }
+                        else if(/Today/i.test(inputVal)){
+                            date = today;
+                            date.setHours(0, 0, 0, 0);
+                            if(values[1]) date.setHours(...time(values[1]));
+                        }
+                        else if(/Weekend/i.test(inputVal)){
+                            date = getNextDayOfTheWeek('sat');
+                            if(values[1]) date.setHours(...time(values[1]));
+                        }
+                        else if(/^Tomorrow/i.test(inputVal)){
+                            let weekDay = today.getDay()+1 > 6 ? 0 : today.getDay()+1;
+                            date = getNextDayOfTheWeek(days[weekDay]);
+                            if(values[1]) date.setHours(...time(values[1]));
+                        }
+                        else if(/Day after tomorrow/i.test(inputVal)){
+                            let weekDay = (today.getDay()+2) % 7;
+                            date = getNextDayOfTheWeek(days[weekDay]);
+                            if(values[3]) date.setHours(...time(values[3]));
+                        }
+                        else if(/Next week/i.test(inputVal)){
+                            let weekDay = today.getDay();
+                            date = getNextDayOfTheWeek(days[weekDay]);
+                            if(values[2]) date.setHours(...time(values[2]));
+                        }
+                        else if(/in/i.test(inputVal)){
+                            date = new Date(currYear, currMonth, currDay+values[1]);
+                            if(values[3]) date.setHours(...time(values[3]));
+                        }
+                        else if(/every/i.test(inputVal)){
+                            if(/day/i.test(values[1])){
+                                date = today;
+                                date.setHours(0, 0, 0, 0);
+                            }
+                            else if(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(values[1])){
+                                date = getNextDayOfTheWeek(values[1]);
+                            }else{
+                                let keywords = ['second', 'third', 'fourth', 'fifth', 'sixth'];
+                                date = new Date(currYear, currMonth, currDay+keywords.findIndex(el => (new RegExp(`${values[1]}`,'i')).test(el))+2);
+                            }
+                            if(values[2]) date.setHours(...time(values[2]));
+                            repeatDays = values[1];
+                        }
+                        else{
+                            date = new Date(currYear, month(values[0])-1, day(values[1]), ...time(values[2]));
+                        }
+                        
+
+                        function getNextDayOfTheWeek(dayName, excludeToday = true, refDate = new Date()) {
+                            const dayOfWeek = ["sun","mon","tue","wed","thu","fri","sat"]
+                                            .indexOf(dayName.slice(0,3).toLowerCase());
+                            if (dayOfWeek < 0) return;
+                            refDate.setHours(0,0,0,0);
+                            refDate.setDate(refDate.getDate() + +!!excludeToday + 
+                                            (dayOfWeek + 7 - refDate.getDay() - +!!excludeToday) % 7);
+                            return refDate;
+                        }
+                    }
+
+                    if(date < today){
+                        invalidInput('Only future dates are accepted');
+                    }
+                    else{
+                        let formattedDate;
+                        repeatDays.length === 0 ? formattedDate=formatDate(date) : formattedDate=formatDate(date, repeatDays);
+                        fullDateTypedInInput.innerText = formattedDate.toText();
+                        anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
+                        data.dueDate = formattedDate;
+
+                        if(!changeDataObj) input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});
+                    } 
+                }
+                else if(re1.test(`${currMonth} ${inputVal}`)){
+                    icon.src = `${lightFull}`;
+                    icon.style.filter = 'invert(80%) sepia(61%) saturate(1076%) hue-rotate(338deg) brightness(102%) contrast(97%)';
+                    eventIcon.src = eventAvailable;
+                    const values = inputVal.split(' ');
+                    const day = values[0].charAt(0) === '0' ? values[0].charAt(1) : values[0];
+                    const time = values[1] ? values[1].split(':') : '';
+                    
+                    let date = new Date(currYear, currMonth, day, ...time);
+                    if(date < today && !(+day === +currDay && time === '')) date.setFullYear(currYear+1);
+                    let formattedDate = formatDate(date);
+                    fullDateTypedInInput.innerText = formattedDate.toText();
+                    anyTasksText.innerText = `${tasks.howManyTasksInSpecifiedDay(date).length} tasks`;
+                    data.dueDate = formattedDate;
+                    
+                    if(!changeDataObj) input.addEventListener('focusout', e => styleDueDateBtn(date),{once:true});                                                      
+                }
+                else invalidInput('No results');
+
+                function invalidInput(txt){
+                    if(!changeDataObj) input.addEventListener('focusout', e => styleDueDateBtn(null),{once:true});
+                    data.dueDate = null;
+                    icon.src = `${light}`;
+                    icon.style.filter = 'invert(23%) sepia(2%) saturate(3000%) hue-rotate(349deg) brightness(87%) contrast(82%)';
+                    eventIcon.src = eventBusy;
+                    fullDateTypedInInput.innerText = `${txt}`;
+                    anyTasksText.innerText = '';
+                }
+            });
+        }
+
+        function createCalendar(){
+            const today = new Date();
+            let currentMonth = today.getMonth();
+            let currentYear = today.getFullYear();
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            const wrapper = data.addTaskContainer.querySelector('.date-picker .calendar .months');
+            wrapper.innerHTML = '';
+            const currMonthEl = data.addTaskContainer.querySelector('.date-picker .calendar .curr-month');
+            const calendar = data.addTaskContainer.querySelector('.date-picker .calendar');
+            const nav = data.addTaskContainer.querySelector('.date-picker .calendar .nav');
+            const navUl = nav.querySelector('ul');
+            const navUlElements = navUl.querySelectorAll('li');
+            const previousBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:first-of-type');
+            const goToStartBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:nth-of-type(2)');
+            const nextBtn = data.addTaskContainer.querySelector('.date-picker .calendar .nav .icons > div:last-of-type');
+            const input = data.addTaskContainer.querySelector('.date-picker .type-date input');
+            calendar.scrollTop = 0;
+
+            calendar.addEventListener('scroll', scrolling);
+            previousBtn.addEventListener('click', previous);
+            goToStartBtn.addEventListener('click', goToStart);
+            nextBtn.addEventListener('click', next);
+
+            currMonthEl.innerHTML = months[currentMonth] + ' ' + currentYear;
+            showMonth(currentMonth, currentYear);
+            showNextMonth();
+            const calendarUl = data.addTaskContainer.querySelector('.date-picker .calendar .months ul');
+            let currUl = calendarUl;
+
+            function scrolling(e){
+                calendar.scrollTop === 0 ? nav.style.cssText = 'border: none;':nav.style.cssText = 'border-bottom: 1px solid gray;';
+                
+                if(currUl.nextElementSibling && isScrolledIntoView(currUl.nextElementSibling.nextElementSibling)){
+                    showNextMonth();
+                    currUl = currUl.nextElementSibling.nextElementSibling;
+                }
+                else if(currUl.previousElementSibling && isScrolledIntoView(currUl.previousElementSibling.previousElementSibling)){
+                    currUl = currUl.previousElementSibling.previousElementSibling;
+                }
+            }
+
+            function goToStart(){
+                nav.style.cssText = 'border: none;';
+                calendar.removeEventListener('scroll', scrolling);
+                currUl = calendarUl;
+                currUl.scrollIntoView({behavior: 'smooth', block: 'end'});
+                setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
+            }
+            
+            function next(){  
+                nav.style.cssText = 'border-bottom: 1px solid gray;';
+                calendar.removeEventListener('scroll', scrolling);
+                if(!currUl.nextElementSibling.nextElementSibling.nextElementSibling){
+                    showNextMonth();
+                    showNextMonth();
+                }
+            
+                let nextUl = currUl.nextElementSibling.nextElementSibling;
+                nextUl.scrollIntoView({behavior: "smooth", block: 'nearest'});
+                currUl = nextUl;
+                setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
+            }
+
+            function previous(){
+                if(currUl.previousElementSibling){
+                    calendar.removeEventListener('scroll', scrolling);
+                    let prevUl = currUl.previousElementSibling.previousElementSibling;
+                    prevUl.scrollIntoView({behavior: 'smooth', block: 'end'});
+                    currUl = prevUl;
+                    if(!currUl.previousElementSibling) nav.style.cssText = 'border: none;';
+                    setTimeout(() => calendar.addEventListener('scroll', scrolling),500);
+                }
+            }
+
+            function isScrolledIntoView(elem){
+                const parentViewTop = calendar.scrollTop;
+                const parentViewBottom = parentViewTop + calendar.offsetHeight;
+
+                const elemTop = elem.offsetTop;
+                const elemBottom = elemTop + elem.offsetHeight
+
+                return ((elemBottom <= parentViewBottom) && (elemTop >= parentViewTop));
+            }
+
+            function showNextMonth(){
+                currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
+                currentMonth = (currentMonth + 1) % 12;
+
+                const div = document.createElement('div');
+                div.innerText = months[currentMonth];
+                wrapper.appendChild(div);
+
+                showMonth(currentMonth, currentYear);
+            }
+
+            function showMonth(month, year){
+                const firstDay = (new Date(year, month)).getDay();
+                const daysInMonth = 32 - new Date(year, month, 32).getDate();
+                const ul = document.createElement('ul');
+                let date = 1;
+
+                for(let i=0; i<6; i++){
+                    //create individual cells, and filling them up with data
+                    for(let j=0; j<7; j++){
+                        if(i === 0 && j < firstDay-1){
+                            const li = document.createElement('li');
+                            li.innerText = '';
+                            li.classList.add('past');
+                            ul.appendChild(li);
+                        }
+                        else if(date > daysInMonth) break;
+                        else{
+                            const li = document.createElement('li');
+                            li.innerText = date;
+                            if(date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) li.classList.add('today');
+                            else if(new Date(year, month, date) < today) li.classList.add('past');
+                            else if(j === 6 || j === 5) li.classList.add('weekend'); 
+
+                            if(!li.classList.contains('past')){
+                                li.addEventListener('mouseover', e => {
+                                    navUl.innerHTML = '';
+                                    const p = document.createElement('p');
+                                    let date2 = new Date(year, month, li.innerText);
+                                    console.log(tasks.getAllTasks());
+                                    p.innerText = `${days[date2.getDay()]} ${date2.getDate()} ${months[date2.getMonth()]} ${year === today.getFullYear() ? '' : year}`;
+                                    p.innerText += ` - ${tasks.howManyTasksInSpecifiedDay(date2).length} tasks due`;
+                                    p.style.cssText = 'grid-area: 1 / 1 / 2 / -1; align-self: center; justify-self: center; font-size: .85rem; color: #737373';
+                                    navUl.appendChild(p);
+                                });
+                                li.addEventListener('mouseout', e => {
+                                    navUl.innerHTML = '';
+                                    navUlElements.forEach(el => navUl.appendChild(el));
+                                });
+                                li.addEventListener('click', e => {
+                                    let date2 = new Date(year, month, e.currentTarget.innerText);
+                                    if(!changeDataObj)data.dateUtilFunctions.styleDueDateBtnFun(date2);
+                                    data.dueDate = data.dateUtilFunctions.formatDateFun(date2);
+                                    if(!changeDataObj)_hideElWithClass(/date-picker/, 'show');
+                                    input.value = data.dueDate.toText();
+                                });
+                            }
+                            ul.appendChild(li);
+                            date++;
+                        }
+                    }
+                }
+                wrapper.appendChild(ul);
+            }
+        }
+    }
 
     const _resetValuesAddTaskContainer = function(){
         data.priority = null;
@@ -1098,7 +1114,9 @@ const addTaskBox = (function(){
         styleDueDateBtn,
         setEditMode,
         getTaskData,
-        setTaskData
+        setTaskData,
+        datePicker,
+        getDueDate
     };
 
 })();
