@@ -507,7 +507,7 @@ const addTaskBox = (function(){
                 repeat: repeat,
                 time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
                 toText: function(){
-                    return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                    return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
                 }
             }
         };
@@ -877,7 +877,7 @@ const addTaskBox = (function(){
                                     navUl.innerHTML = '';
                                     const p = document.createElement('p');
                                     let date2 = new Date(year, month, li.innerText);
-                                    console.log(tasks.getAllTasks());
+                                    
                                     p.innerText = `${days[date2.getDay()]} ${date2.getDate()} ${months[date2.getMonth()]} ${year === today.getFullYear() ? '' : year}`;
                                     p.innerText += ` - ${tasks.howManyTasksInSpecifiedDay(date2).length} tasks due`;
                                     p.style.cssText = 'grid-area: 1 / 1 / 2 / -1; align-self: center; justify-self: center; font-size: .85rem; color: #737373';

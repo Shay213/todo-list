@@ -1,0 +1,19 @@
+.main-container > .project{
+    display: none;
+}
+
+.main-container > .project .title > div.more{
+    margin-left: 8px;
+}
+
+.main-container > .project .title > div:first-of-type{
+    margin-left: auto;
+}
+
+.main-container > .project > ul > li > .bottom > .project-name{
+    display: none;
+}
+
+.main-container > .project > ul > li > .bottom > .empty-date{
+    display: none;
+}

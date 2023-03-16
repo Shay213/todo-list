@@ -1,5 +1,5 @@
 import tasks from "./tasks";
-
+import { createTaskHTMLContent } from "./createTaskHTMLContent";
 const todayTab = (function(){
     const overdueEl = document.querySelector('.today .overdue');
     const todayTasksEl = document.querySelector('.today .today-tasks');
@@ -19,43 +19,29 @@ const todayTab = (function(){
                                                                                     task.getDateObj().getMonth() === date.getMonth()&&
                                                                                     task.getDateObj().getFullYear() === date.getFullYear() : false);
 
-    const createTaskHTMLContent = task => `${tasks.taskTemplate(task.id, tasks.getPriorityClassName(task.priority), tasks.taskNameWithoutLabels(task.taskName), task.description, task.dueDate ? task.dueDate.toText():'',
-    task.projectName.element.getTemplateHTML(task.projectName.subProjectIndex), task.labels || [])}`;
+    
 
-    const _updateTasksPlacement = function(){
+    const _displayTasksInsideOverdueOrToday = function(){
         let content = '';
         tasks.getAllTasks().forEach(el => {
-            content = createTaskHTMLContent(el);
-            
             const isOverdue = overdueTasks([el]).length > 0;
             const isToday = todayTasks([el]).length > 0;
+
+            isOverdue ? content = createTaskHTMLContent(el, true) : content = createTaskHTMLContent(el);
             
             if(isOverdue) overdueEl.insertAdjacentHTML('beforeend', content);
             else if(isToday) todayTasksEl.insertAdjacentElement('beforeend', content);
         });
     };
-
-    const editTask = (task, el) => {
-        const isOverdue = overdueTasks([task]).length > 0;
-        const isToday = todayTasks([task]).length > 0;
-        const content = createTaskHTMLContent(task);
-        const taskEl = new DOMParser().parseFromString(content, 'text/html').querySelector('li');
-        
-        if((isOverdue && el.parentNode.classList.contains('overdue')) || (isToday && el.parentNode.classList.contains('today-tasks'))) el.replaceWith(taskEl);
-        else{
-            el.remove();
-            if(isOverdue) overdueEl.appendChild(taskEl);
-            else if(isToday) todayTasksEl.appendChild(taskEl);
-        }
-    };   
     
     const _init = (function(){
-        _updateTasksPlacement();
+        _displayTasksInsideOverdueOrToday();
         _updateTextTimesTodayTab();
     })();
 
     return{
-        editTask
+        overdueTasks,
+        todayTasks
     };
 
 })();

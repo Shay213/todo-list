@@ -4,14 +4,15 @@ import { sidebarResize } from './app/sidebarResize';
 import { searchBarFocus } from './app/searchBarFocus';
 import addTaskBox from './app/addTaskBox';
 import todayTab from './app/todayTab';
+import projectsTabs from './app/projectsTabs';
 import editTaskBox from './app/editTaskBox';
-import tabs from './app/tabs';
 import editDate from './app/editDate';
+import { tabSwitch } from './app/tabSwitch';
 
 toggleSidebar();
 sidebarResize();
 searchBarFocus();
-
+tabSwitch();
 
 
 

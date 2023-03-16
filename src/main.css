@@ -253,24 +253,6 @@ img.svg{
     filter: invert(49%) sepia(52%) saturate(2467%) hue-rotate(353deg) brightness(102%) contrast(95%);
 }
 
-.sidebar ul:nth-of-type(2) li{
-    position: relative;
-    padding-left: 30px;
-}
-
-.sidebar ul:nth-of-type(2) li::before{
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 0;
-    bottom: 0;
-    margin: auto 0;
-    width: 20px;
-    height: 20px;
-    background: url('./assets/icons/dot.svg');
-    filter: invert(60%) sepia(44%) saturate(0%) hue-rotate(255deg) brightness(97%) contrast(98%);
-}
-
 .sidebar ul figcaption{
     display: flex;
     height: 2.1rem;
@@ -281,6 +263,7 @@ img.svg{
 
 .sidebar ul figcaption p{
     margin-right: auto;
+    font-size: 1rem;
 }
 
 .sidebar ul figcaption img{
@@ -328,11 +311,10 @@ img.svg{
     margin: 0 auto;
 }
 
-/* add task box styles */
-@import url('./app/addTaskStyles.css');
 
-/* Today Tab */
-@import url('./app/todayTabStyles.css');
+@import url('./app/addTaskStyles.css');
+@import url('./app/tabsStyles.css');
+@import url('./app/projectsStyles.css');
 
 .bullet{
     width: 10px;
@@ -422,4 +404,61 @@ img.svg{
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 80;
+}
+
+.prioOne{
+    width: 20px;
+    height: 20px;
+    background-color: #fee2e2;
+    border-radius: 50%;
+    border: 2px solid #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioTwo{
+    width: 20px;
+    height: 20px;
+    background-color: #ffedd5;
+    border-radius: 50%;
+    border: 2px solid #f97316;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioThree{
+    width: 20px;
+    height: 20px;
+    background-color: #dbeafe;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioFour{
+    width: 20px;
+    height: 20px;
+    background-color: #f5f5f4;
+    border-radius: 50%;
+    border: 2px solid #78716c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prioOne img{
+    filter: invert(39%) sepia(61%) saturate(3822%) hue-rotate(338deg) brightness(96%) contrast(95%);
+}
+.prioTwo img{
+    filter: invert(66%) sepia(87%) saturate(4239%) hue-rotate(352deg) brightness(100%) contrast(96%);
+}
+.prioThree img{
+    filter: invert(40%) sepia(93%) saturate(1911%) hue-rotate(203deg) brightness(99%) contrast(94%);
+}
+.prioFour img{
+    filter: invert(50%) sepia(7%) saturate(470%) hue-rotate(342deg) brightness(87%) contrast(80%);
 }

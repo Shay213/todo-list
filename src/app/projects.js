@@ -2,10 +2,12 @@ import checkBold from '../assets/icons/check-bold.svg';
 import inboxIcon from '../assets/icons/inbox.svg';
 import pentagon from '../assets/icons/pentagon.svg';
 import inbox from '../assets/icons/inbox.svg';
+import more from '../assets/icons/more-dots.svg';
 
 const projects = (function(){
     const allProjects = [];
     const projectPicker = document.querySelector('.add-task-container .project-picker');
+    const sidebarProjects = document.querySelector('.sidebar > ul:last-of-type');
 
     class Project{
         constructor(name, color){
@@ -50,6 +52,22 @@ const projects = (function(){
         }
     };
 
+    const _updateProjectsSidebar = function(){
+        let content = '';
+        const projectTemplate = (color, name) =>
+        `<li>
+            <div class="bullet" style="background-color: ${color}"></div>
+            <p>${name}</p>
+            <p class="counter"></p>
+            <img class="svg" src="${more}" alt="more">
+        </li>`;
+        allProjects.forEach(el => {
+            if(el.name === 'Inbox') return;
+            content += projectTemplate(el.colorValue, el.name);
+        });
+        sidebarProjects.innerHTML += content;
+    };
+
     const _updateProjectPicker = function(){
         let content = '<input type="text" placeholder="Type a project">';
         const inboxTemplate = `
@@ -87,8 +105,10 @@ const projects = (function(){
     const _initialProjects = (function(){
         allProjects.push(new Project('Inbox', ''));
         allProjects.push(new Project('Home', 'neutral'));
-        allProjects[1].createSubProject('some text');
+        allProjects[1].createSubProject('Routines');
+        allProjects[1].createSubProject('Inspiration');
         _updateProjectPicker();
+        _updateProjectsSidebar();
     })();
 
     const getAllProjects = () => allProjects;
@@ -100,3 +120,7 @@ const projects = (function(){
 
 
 export default projects
+
+
+
+// CREATE TEMPLATE FOR PROJECTS

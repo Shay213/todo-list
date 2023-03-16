@@ -1,21 +1,21 @@
-.today .title{
+.container .title{
     display: flex;
     align-items: end;
     gap: 5px;
     margin-bottom: 40px;
 }
 
-.today .title h3,
-.today .title p{
+.container .title h3,
+.container .title p{
     margin: 0;
 }
 
-.today .title p{
+.container .title p{
     font-weight: 100;
     font-size: 0.85rem;
 }
 
-.today .title p.date{
+.container .title p.date{
     margin-right: auto;
 }
 
@@ -23,63 +23,63 @@
     filter: invert(76%) sepia(0%) saturate(713%) hue-rotate(243deg) brightness(87%) contrast(84%);
 }
 
-.today .title .view{
+.container .title > div{
     display: flex;
     align-items: center;
     gap: 5px;
     padding: 2px;
 }
 
-.today .title .view:hover{
+.container .title > div:hover{
     background-color: var(--sidebar-hover-color);
     cursor: pointer;
     transition: 500ms;
     border-radius: 3px;
 }
 
-.today > ul{
+.container > ul{
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: 0.95rem;
 }
 
-.today ul.today-tasks{
+.container ul:not(:first-of-type){
     margin-top: 30px;
 }
 
-.today > ul > li[data-id]{
+.container > ul > li[data-id]{
     padding: 10px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
-.today > ul > figcaption{
+.container > ul > figcaption{
     padding: 6px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
 }
 
-.today figcaption{
+.container figcaption{
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.today figcaption p,
-.today figcaption h4{
+.container figcaption p,
+.container figcaption h4{
     margin: 0;
 }
 
-.today .overdue > figcaption p{
+.container .overdue > figcaption p{
     font-size: 0.8rem;
     color: var(--topPanel-color);
 }
 
-.today li > .top{
+.container li > .top{
     display: flex;
     align-items: flex-start;
 }
 
-.today li > .top .text{
+.container li > .top .text{
     margin-right: auto;
     padding-top: 2px;
     padding-left: 10px;
@@ -87,17 +87,17 @@
     max-width: 52ch;
 }
 
-.today li > .top .text .description{
+.container li > .top .text .description{
     font-size: 0.85rem;
     font-weight: 300;
     padding: 5px 0 10px;
 }
 
-.today p{
+.container p{
     margin: 0;
 }
 
-.today li > div.bottom{
+.container li > div.bottom{
     display: flex;
     align-items: center;
     font-size: 0.75rem;
@@ -105,25 +105,23 @@
     padding-left: 34px;
 }
 
-.today .overdue > li .bottom > div > p{
+.container > ul > li > .bottom > .overdue > p{
     font-weight: 400;
-}
-.today .overdue > li .bottom > .date > p{
     color:#c95151;
 }
-.today .today-tasks > li .bottom > .date{
-    display: none;
-}
-
-.today .overdue > li .bottom > .date > img{
+.container > ul > li > .bottom > .overdue > img{
     filter: invert(52%) sepia(42%) saturate(4941%) hue-rotate(330deg) brightness(85%) contrast(82%);
 }
 
-.today li > .bottom > div:last-of-type{
+.container .today-tasks > li .bottom > .date{
+    display: none;
+}
+
+.container li > .bottom > div:last-of-type{
     margin-left: auto;
 }
 
-.today li > .bottom .date{
+.container li > .bottom .date{
     padding-right: 10px;
     display: flex;
     align-items: center;
@@ -131,26 +129,26 @@
     cursor: pointer;
 } 
 
-.today li > .bottom .label{
+.container li > .bottom .label{
     display: flex;
     gap: 3px;
 }
 
-.today li > .bottom .label:hover{
+.container li > .bottom .label:hover{
     cursor: pointer;
     border-bottom: 1px solid #bbbbbb;
 }
 
-.today li > .bottom .label img{
+.container li > .bottom .label img{
     width: .9rem;
 }
 
-.today li .icons{
+.container li .icons{
     display: flex;
     align-items: center;
 }
 
-.today li .icons > div{
+.container li .icons > div{
     padding: 2px;
     border-radius: 5px;
     display: flex;
@@ -158,86 +156,29 @@
     justify-content: center;
 }
 
-.today li .icons > div:hover{
+.container li .icons > div:hover{
     cursor: pointer;
     background-color: var(--sidebar-hover-color);
     transition: 500ms;
 }
 
-.today li .project-name{
+.container li .project-name{
     display: flex;
     gap: 5px;
 }
 
-.prioOne{
-    width: 20px;
-    height: 20px;
-    background-color: #fee2e2;
-    border-radius: 50%;
-    border: 2px solid #ef4444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioTwo{
-    width: 20px;
-    height: 20px;
-    background-color: #ffedd5;
-    border-radius: 50%;
-    border: 2px solid #f97316;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioThree{
-    width: 20px;
-    height: 20px;
-    background-color: #dbeafe;
-    border-radius: 50%;
-    border: 2px solid #3b82f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioFour{
-    width: 20px;
-    height: 20px;
-    background-color: #f5f5f4;
-    border-radius: 50%;
-    border: 2px solid #78716c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.prioOne img{
-    filter: invert(39%) sepia(61%) saturate(3822%) hue-rotate(338deg) brightness(96%) contrast(95%);
-}
-.prioTwo img{
-    filter: invert(66%) sepia(87%) saturate(4239%) hue-rotate(352deg) brightness(100%) contrast(96%);
-}
-.prioThree img{
-    filter: invert(40%) sepia(93%) saturate(1911%) hue-rotate(203deg) brightness(99%) contrast(94%);
-}
-.prioFour img{
-    filter: invert(50%) sepia(7%) saturate(470%) hue-rotate(342deg) brightness(87%) contrast(80%);
-}
-
-.today ul li .priority-box img{
+.container ul li .priority-box img{
     width: 0.85rem;
     opacity: 0;
     transition: 400ms;
 }
 
-.today ul li .priority-box{
+.container ul li .priority-box{
     cursor: pointer;
     padding: 2px;
 }
 
-.today ul li .priority-box:hover img{   
+.container ul li .priority-box:hover img{   
     opacity: 1;
     transition: 400ms;
 }

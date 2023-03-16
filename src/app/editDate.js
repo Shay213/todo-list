@@ -1,6 +1,6 @@
 import addTaskBox from "./addTaskBox";
 import tasks from "./tasks";
-import todayTab from "./todayTab";
+import editTaskBox from "./editTaskBox";
 
 const editDate = (function(){
     let editDateIcons = document.querySelectorAll('.container > ul li .icons > div:first-of-type');
@@ -27,7 +27,7 @@ const editDate = (function(){
         const container = clickedIcon.closest('[data-id]');
         addTaskBox.events(true);
 
-        editDate(+container.dataset.id, container);
+        editDate(+container.dataset.id);
     }
 
     const changeDataObj = () => {
@@ -37,7 +37,7 @@ const editDate = (function(){
         };
     };
     
-    const editDate = (id, container) => {
+    const editDate = id => {
         addTaskBox.datePicker(changeDataObj);
         const pickIcon = clonedDatePicker.querySelector('.pick-icon');
         const months = clonedDatePicker.querySelector('.calendar .months');
@@ -51,7 +51,7 @@ const editDate = (function(){
                 const chosenDate = addTaskBox.getDueDate();
                 if(chosenDate != '') {
                     currTask.dueDate = chosenDate;
-                    todayTab.editTask(currTask, container);
+                    editTaskBox.editTask(currTask, id);
                 }
                 
                 document.removeEventListener('click', checkTarget);
@@ -61,12 +61,20 @@ const editDate = (function(){
                 addTaskBox.setEditMode(false);
                 addTaskBox.getAllButtons(true);
 
-                editDateIcons = document.querySelectorAll('.container > ul li .icons > div:first-of-type');
-                editDateIcons2 = document.querySelectorAll('.container > ul li .bottom .date');
-                allIcons = [...editDateIcons, ...editDateIcons2];
-                allIcons.forEach(el => el.addEventListener('click', showDatePicker, {once:true}));
+                activateEditDateIcons();
             }
         };
+    };
+
+    const activateEditDateIcons = () => {
+        editDateIcons = document.querySelectorAll('.container > ul li .icons > div:first-of-type');
+        editDateIcons2 = document.querySelectorAll('.container > ul li .bottom .date');
+        allIcons = [...editDateIcons, ...editDateIcons2];
+        allIcons.forEach(el => el.addEventListener('click', showDatePicker, {once:true}));
+    };
+
+    return {
+        activateEditDateIcons
     };
 
 })();

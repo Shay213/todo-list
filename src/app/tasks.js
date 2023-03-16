@@ -9,7 +9,7 @@ const tasks = (function(){
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     let allTasks = [];
-    const taskTemplate = (id, priority, taskName, description, date, projectName, labelArr) => `
+    const taskTemplate = (id, priority, taskName, description, date, projectName, labelArr, isOverdue = false) => `
     <li data-id=${id}>
         <div class="top">
             <div class="priority-box">
@@ -30,7 +30,7 @@ const tasks = (function(){
             </div>
         </div>
         <div class="bottom">
-            <div class="date">
+            <div class="date${isOverdue ? ' overdue':''}">
                 <img src="${calendarIcon}" alt="date">
                 <p>${date}</p>
             </div>
@@ -86,6 +86,10 @@ const tasks = (function(){
         return allTasks.filter(task => task.dueDate && task.dueDate.year === date.getFullYear() && task.dueDate.month === date.getMonth() && task.dueDate.day === date.getDate());
     };
 
+    const howManyTasksInProject = function(projectName){
+        return allTasks.filter(task => task.projectName.element.name === projectName);
+    };
+
     const getPriorityClassName = function(priority) {
         switch(priority){
             case 1:
@@ -122,7 +126,7 @@ const tasks = (function(){
                 repeat: '',
                 time: `${(date1.getHours()<10 ? '0':'')+date1.getHours()}:${(date1.getMinutes()<10 ? '0':'')+date1.getMinutes()}`,
                 toText: function(){
-                    return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                    return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
                 }
             },
             projectName: {element: projects.getAllProjects()[0], subProjectIndex: null}, 
@@ -140,7 +144,7 @@ const tasks = (function(){
                 repeat: '',
                 time: `${(date2.getHours()<10 ? '0':'')+date2.getHours()}:${(date2.getMinutes()<10 ? '0':'')+date2.getMinutes()}`,
                 toText: function(){
-                    return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                    return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
                 }
             },
             projectName: {element: projects.getAllProjects()[1], subProjectIndex: 0}, 
@@ -158,12 +162,13 @@ const tasks = (function(){
                 repeat: '',
                 time: `${(date3.getHours()<10 ? '0':'')+date3.getHours()}:${(date3.getMinutes()<10 ? '0':'')+date3.getMinutes()}`,
                 toText: function(){
-                    return `${days[this.weekDay]} ${this.day} ${months[this.month]} ${this.year} ${this.time === '00:00' ? '' : this.time}`;
+                    return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
                 }
             },
             projectName: {element: projects.getAllProjects()[0], subProjectIndex: null}, 
             labels: ['@read']
         });
+
     })();
 
     return {
@@ -172,7 +177,8 @@ const tasks = (function(){
         howManyTasksInSpecifiedDay,
         getPriorityClassName,
         getAllTasks,
-        taskNameWithoutLabels
+        taskNameWithoutLabels,
+        howManyTasksInProject
     };
     
 })();
