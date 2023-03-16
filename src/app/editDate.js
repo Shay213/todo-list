@@ -2,6 +2,7 @@ import addTaskBox from "./addTaskBox";
 import tasks from "./tasks";
 import editTaskBox from "./editTaskBox";
 import { taskIconsEventsManager } from "./taskIconsEventsManager";
+import addTaskBoxInline from "./addTaskBoxInline";
 
 const editDate = (function(){
     const datePicker = document.querySelector('#content > .add-task-container .top .flex-container .due-date .date-picker');
@@ -14,7 +15,7 @@ const editDate = (function(){
 
     function showDatePicker(e){
         e.stopImmediatePropagation();
-        taskIconsEventsManager(false, showDatePicker, editTaskBox.showEditTaskBox);
+        taskIconsEventsManager(false, showDatePicker, editTaskBox.showEditTaskBox, addTaskBoxInline.showAddTaskBox);
         clonedDatePicker = datePicker.cloneNode(true);
         clonedDatePicker.classList.add('edit-date-picker');
         clonedDatePicker.classList.add('show');
@@ -22,7 +23,6 @@ const editDate = (function(){
         clickedIcon = e.currentTarget;
         clickedIcon.style.position = 'relative';
         clickedIcon.appendChild(clonedDatePicker);
-        console.log(clickedIcon);
         const container = clickedIcon.closest('[data-id]');
         addTaskBox.events(true);
 
@@ -59,7 +59,7 @@ const editDate = (function(){
                 addTaskBox.setEditMode(false);
                 addTaskBox.getAllButtons(true);
 
-                taskIconsEventsManager(true, showDatePicker, editTaskBox.showEditTaskBox);
+                taskIconsEventsManager(true, showDatePicker, editTaskBox.showEditTaskBox, addTaskBoxInline.showAddTaskBox);
             }
         };
     };

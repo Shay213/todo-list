@@ -80,7 +80,11 @@ const tasks = (function(){
             projectName = {element: projects.getAllProjects()[0], sideProjectIndex: null}, 
             labels = null
         }
-    ) => new Task(priority, taskName, description, dueDate, projectName, labels).pushToTasks(); 
+    ) => {
+        const newTask = new Task(priority, taskName, description, dueDate, projectName, labels);
+        newTask.pushToTasks();
+        return newTask;
+    }; 
     
     const howManyTasksInSpecifiedDay = function(date){
         return allTasks.filter(task => task.dueDate && task.dueDate.year === date.getFullYear() && task.dueDate.month === date.getMonth() && task.dueDate.day === date.getDate());

@@ -5,6 +5,7 @@ import todayTab from "./todayTab";
 import { createTaskHTMLContent } from "./createTaskHTMLContent";
 import editDate from "./editDate";
 import { taskIconsEventsManager } from "./taskIconsEventsManager";
+import addTaskBoxInline from "./addTaskBoxInline";
 
 const editTaskBox = (function(){
     const addTaskContainer = document.querySelector('#content > .add-task-container');
@@ -13,7 +14,6 @@ const editTaskBox = (function(){
     const [...projectsTabs] = document.querySelectorAll('.main-container > .project');
     const todayTabContainer = document.querySelector('.main-container > .today');
     let taskContainer;
-    let isEdited = false;
     
     const findTaskWithId = id => tasks.getAllTasks().find(task => task.id === id);
 
@@ -71,7 +71,7 @@ const editTaskBox = (function(){
     };   
 
     function showEditTaskBox(e){
-        taskIconsEventsManager(false, editDate.showDatePicker, showEditTaskBox);
+        taskIconsEventsManager(false, editDate.showDatePicker, showEditTaskBox, addTaskBoxInline.showAddTaskBox);
         const clone = addTaskContainer.cloneNode(true);
         taskContainer = e.currentTarget.parentNode.parentNode.parentNode;
         const topEl = taskContainer.querySelector('.top');
@@ -112,7 +112,7 @@ const editTaskBox = (function(){
             this.bottomEl.style.display = 'flex';
             this.el.remove();
         }
-        taskIconsEventsManager(true, editDate.showDatePicker, showEditTaskBox);
+        taskIconsEventsManager(true, editDate.showDatePicker, showEditTaskBox, addTaskBoxInline.showAddTaskBox);
     };
     
     function saveChanges(currTask, id){
@@ -127,10 +127,8 @@ const editTaskBox = (function(){
         addTaskBox.setTaskData(currTask);
         const taskName = editTaskContainer.querySelector('.top .inputs > div > input');
         const description = editTaskContainer.querySelector('.top .inputs > input');
-        const dueDateBtn = editTaskContainer.querySelector('.top .flex-container > .due-date');
         const priorityBtn = editTaskContainer.querySelector('.top .flex-container > .priority .btn');
         const priorityPickerElements = editTaskContainer.querySelectorAll('.top .flex-container > .priority .priority-picker > div');
-        const labelBtn = editTaskContainer.querySelector('.top .flex-container > .label');
         const selectProjectBtn = editTaskContainer.querySelector('.bottom .select-project');
         const projectChecked = editTaskContainer.querySelectorAll('.bottom .project-picker img.projectChecked');
         const [...projectsNames] = editTaskContainer.querySelectorAll('.bottom .project-picker > * p');

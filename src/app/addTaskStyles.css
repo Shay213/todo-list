@@ -12,7 +12,8 @@
     transition: 200ms;
     width: min-content;
 }
-.edit-task-container{
+.edit-task-container,
+.add-task-container-inline{
     background-color: var(--bg-color);
     position:static;
     transform: none;

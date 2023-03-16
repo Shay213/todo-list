@@ -11,6 +11,9 @@ import moreSvg from '../assets/icons/more.svg';
 import projects from "./projects";
 import inboxIcon from '../assets/icons/inbox.svg';
 import existingLabels from './labels';
+import { createTaskHTMLContent } from "./createTaskHTMLContent";
+import addTaskBoxInline from "./addTaskBoxInline";
+import todayTab from "./todayTab";
 
 const addTaskBox = (function(){
     const createData = (container) => {
@@ -24,9 +27,9 @@ const addTaskBox = (function(){
             labelBox: container.querySelector('.label-box'),
             expandArrow: container.querySelector('.date-picker .input-validation-text .date-req img'),
             dateReqText: container.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul'),
-            priority: null,
+            priority: 4,
             dueDate: null,
-            projectName: null,
+            projectName: {element: projects.getAllProjects()[0], sideProjectIndex: null},
             labels: null,
             isLabelBoxVisible: false,
             activeLabelBoxItem: null,
@@ -51,7 +54,7 @@ const addTaskBox = (function(){
     setData(document.querySelector('#content > .add-task-container'));
     
     const _addTask = function(e){
-        tasks.createTask({
+        const task = tasks.createTask({
             priority: data.priority,
             taskName: data.taskName.value,
             description: data.description.value,
@@ -60,11 +63,38 @@ const addTaskBox = (function(){
             labels: data.labels
         });
 
+        const template = createTaskHTMLContent(task, false);
+        const subProjIndex = task.projectName.subProjectIndex;
+        const projName = task.projectName.element.name.toLowerCase();
+        const taskEl = () => new DOMParser().parseFromString(template, 'text/html').querySelector('li');
+        
+        if(typeof subProjIndex === 'number'){
+            const subProjName = task.projectName.element.subProjects[subProjIndex].name.toLowerCase();
+            const container = document.querySelector(`.main-container > .${projName} > ul.${subProjName}`);
+            const newTaskEl = taskEl();
+            if(!task.dueDate) newTaskEl.querySelector('.bottom > .date').classList.add('empty-date');
+            container.appendChild(newTaskEl);
+        }else{
+            const container = document.querySelector(`.main-container > .${projName} > ul:first-of-type`);
+            const newTaskEl = taskEl();
+            if(!task.dueDate) newTaskEl.querySelector('.bottom > .date').classList.add('empty-date');
+            container.appendChild(newTaskEl);
+        }
+
+        const isToday = todayTab.todayTasks([task]).length > 0;
+        if(isToday){
+            const container = document.querySelector(`.main-container > .today > ul.today-tasks`);
+            const newTaskEl = taskEl();
+            container.appendChild(newTaskEl);
+        }
+
         data.showHideBtn.forEach(item => {
             item.el.active = false;
             item.el.classList.remove(item.className);
         });
         _resetValuesAddTaskContainer();
+
+        if(data.addTaskContainer.classList.contains('add-task-container-inline')) addTaskBoxInline.deleteTaskBox(e);
     };
 
     const _checkTaskNameEmpty = function(){

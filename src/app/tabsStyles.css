@@ -214,3 +214,40 @@
     font-size: .85rem;
     font-weight: 400;
 }
+
+/* Add task */
+.container > div.add-task{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.container > div.add-task > div{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 200ms;
+    color: #f05252;
+}
+
+.container > div.add-task > p{
+    font-size: .9rem;
+    font-weight: 300;
+    transition: 200ms;
+}
+
+.container > div.add-task:hover > div{
+    background-color: #f05252;
+    color: #fff;
+    transition: 200ms;
+}
+
+.container > div.add-task:hover > p{
+    color: #f05252;
+    transition: 200ms;
+}
