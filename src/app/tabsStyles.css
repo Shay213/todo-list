@@ -185,6 +185,10 @@
 
 
 /* Date Picker*/
+.container > ul > li .top .icons .date-picker{
+    left: -180px;
+}
+
 .container > ul > li .bottom .date-picker input,
 .container > ul > li .top .icons div:first-of-type .date-picker input{
     width: 450px;

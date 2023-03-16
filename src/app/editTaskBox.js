@@ -4,9 +4,9 @@ import more from "../assets/icons/more.svg";
 import todayTab from "./todayTab";
 import { createTaskHTMLContent } from "./createTaskHTMLContent";
 import editDate from "./editDate";
+import { taskIconsEventsManager } from "./taskIconsEventsManager";
 
 const editTaskBox = (function(){
-    const editTaskIcons = document.querySelectorAll('.container > ul li .icons > div:nth-of-type(2)');
     const addTaskContainer = document.querySelector('#content > .add-task-container');
     const overdueEl = document.querySelector('.today .overdue');
     const todayTasksEl = document.querySelector('.today .today-tasks');
@@ -17,7 +17,7 @@ const editTaskBox = (function(){
     
     const findTaskWithId = id => tasks.getAllTasks().find(task => task.id === id);
 
-    editTaskIcons.forEach(el => el.addEventListener('click', showEditTaskBox));
+    taskIconsEventsManager(true, null, showEditTaskBox);
 
     const editTask = (task, id) => {
         const isOverdue = todayTab.overdueTasks([task]).length > 0;
@@ -68,14 +68,10 @@ const editTaskBox = (function(){
             if(isOverdue) overdueEl.appendChild(taskEl());
             else if(isToday) todayTasksEl.appendChild(taskEl());
         }
-
-        document.querySelectorAll(`li[data-id="${id}"] .icons > div:nth-of-type(2)`).forEach(el => el.addEventListener('click', showEditTaskBox));
-        editDate.activateEditDateIcons();
     };   
 
     function showEditTaskBox(e){
-        if(isEdited) return;
-        isEdited = true;
+        taskIconsEventsManager(false, editDate.showDatePicker, showEditTaskBox);
         const clone = addTaskContainer.cloneNode(true);
         taskContainer = e.currentTarget.parentNode.parentNode.parentNode;
         const topEl = taskContainer.querySelector('.top');
@@ -110,13 +106,13 @@ const editTaskBox = (function(){
         addTaskBox.setEditMode(false);
         addTaskBox.getAllButtons(true);
         addTaskBox.events(false);
-        isEdited = false;
 
         if(!save){
             this.topEl.style.display = 'flex';
             this.bottomEl.style.display = 'flex';
             this.el.remove();
         }
+        taskIconsEventsManager(true, editDate.showDatePicker, showEditTaskBox);
     };
     
     function saveChanges(currTask, id){
@@ -165,7 +161,8 @@ const editTaskBox = (function(){
     };
 
     return {
-        editTask
+        editTask,
+        showEditTaskBox
     };
 
 })();

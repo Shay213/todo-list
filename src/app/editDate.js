@@ -1,22 +1,20 @@
 import addTaskBox from "./addTaskBox";
 import tasks from "./tasks";
 import editTaskBox from "./editTaskBox";
+import { taskIconsEventsManager } from "./taskIconsEventsManager";
 
 const editDate = (function(){
-    let editDateIcons = document.querySelectorAll('.container > ul li .icons > div:first-of-type');
-    let editDateIcons2 = document.querySelectorAll('.container > ul li .bottom .date');
-    let allIcons = [...editDateIcons, ...editDateIcons2];
     const datePicker = document.querySelector('#content > .add-task-container .top .flex-container .due-date .date-picker');
     const addTaskContainer = document.querySelector('#content > .add-task-container');
     let clonedDatePicker;
     let clickedIcon;
     const findTaskWithId = id => tasks.getAllTasks().find(task => task.id === id);
 
-    allIcons.forEach(el => el.addEventListener('click', showDatePicker, {once:true}));
+    taskIconsEventsManager(true, showDatePicker);
 
     function showDatePicker(e){
         e.stopImmediatePropagation();
-        allIcons.forEach(el => el.removeEventListener('click', showDatePicker));
+        taskIconsEventsManager(false, showDatePicker, editTaskBox.showEditTaskBox);
         clonedDatePicker = datePicker.cloneNode(true);
         clonedDatePicker.classList.add('edit-date-picker');
         clonedDatePicker.classList.add('show');
@@ -24,6 +22,7 @@ const editDate = (function(){
         clickedIcon = e.currentTarget;
         clickedIcon.style.position = 'relative';
         clickedIcon.appendChild(clonedDatePicker);
+        console.log(clickedIcon);
         const container = clickedIcon.closest('[data-id]');
         addTaskBox.events(true);
 
@@ -45,7 +44,6 @@ const editDate = (function(){
         document.addEventListener('click', checkTarget);
         
         function checkTarget(e){
-            e.stopImmediatePropagation();
             if(e.target != clonedDatePicker && !clonedDatePicker.contains(e.target) || 
             pickIcon.contains(e.target) || (months.contains(e.target) && e.target.tagName === 'LI' && !e.target.classList.contains('past'))) {
                 const chosenDate = addTaskBox.getDueDate();
@@ -61,20 +59,13 @@ const editDate = (function(){
                 addTaskBox.setEditMode(false);
                 addTaskBox.getAllButtons(true);
 
-                activateEditDateIcons();
+                taskIconsEventsManager(true, showDatePicker, editTaskBox.showEditTaskBox);
             }
         };
     };
 
-    const activateEditDateIcons = () => {
-        editDateIcons = document.querySelectorAll('.container > ul li .icons > div:first-of-type');
-        editDateIcons2 = document.querySelectorAll('.container > ul li .bottom .date');
-        allIcons = [...editDateIcons, ...editDateIcons2];
-        allIcons.forEach(el => el.addEventListener('click', showDatePicker, {once:true}));
-    };
-
     return {
-        activateEditDateIcons
+        showDatePicker
     };
 
 })();
