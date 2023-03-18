@@ -16,6 +16,8 @@ import addTaskBoxInline from "./addTaskBoxInline";
 import todayTab from "./todayTab";
 
 const addTaskBox = (function(){
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const createData = (container) => {
         const data = {
             showHideBtn: [],
@@ -27,6 +29,7 @@ const addTaskBox = (function(){
             labelBox: container.querySelector('.label-box'),
             expandArrow: container.querySelector('.date-picker .input-validation-text .date-req img'),
             dateReqText: container.querySelector('.date-picker .input-validation-text > div:nth-of-type(2) ul'),
+            transparentFilterBg: document.querySelector('.filter-background-transparent'),
             priority: 4,
             dueDate: null,
             projectName: {element: projects.getAllProjects()[0], sideProjectIndex: null},
@@ -516,6 +519,20 @@ const addTaskBox = (function(){
         }
     };
 
+    const formatDate = (date, repeat = '') => {
+        return {
+            year: date.getFullYear(),
+            month: date.getMonth(),
+            day: date.getDate(),
+            weekDay: date.getDay(),
+            repeat: repeat,
+            time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
+            toText: function(){
+                return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
+            }
+        }
+    };
+
     function datePicker(changeDataObj){
         if(changeDataObj) data = changeDataObj();
         const input = data.addTaskContainer.querySelector('.date-picker .type-date input');
@@ -524,23 +541,9 @@ const addTaskBox = (function(){
         const anyTasksText = inputValidationText.querySelector('div:first-of-type div p:nth-of-type(2)');
         const fullDateTypedInInput = inputValidationText.querySelector('div:first-of-type div p:first-of-type');
         const eventIcon = inputValidationText.querySelector('div:first-of-type img');
-        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         const today = new Date();
         const quickBtns = data.addTaskContainer.querySelectorAll('.date-picker .pick-icon > div');
-        const formatDate = (date, repeat = '') => {
-            return {
-                year: date.getFullYear(),
-                month: date.getMonth(),
-                day: date.getDate(),
-                weekDay: date.getDay(),
-                repeat: repeat,
-                time: `${(date.getHours()<10 ? '0':'')+date.getHours()}:${(date.getMinutes()<10 ? '0':'')+date.getMinutes()}`,
-                toText: function(){
-                    return `${days[this.weekDay]} ${this.day} ${months[this.month]}${this.year === new Date().getFullYear() ? '':this.year}${this.time === '00:00' ? '' : this.time}`;
-                }
-            }
-        };
+        
         
         updateQuickBtnsSideDate();
         dateReqText.classList.remove('show');
@@ -943,6 +946,7 @@ const addTaskBox = (function(){
         data.taskName.value = '';
         data.description.value = '';
         data.allUniqueMatchesInsideTaskName = [];
+        data.transparentFilterBg.style.display = 'none';
 
         // reset due date btn and date picker
         const dueDateBtn = data.addTaskContainer.querySelector('.top .due-date'); 
@@ -1025,11 +1029,35 @@ const addTaskBox = (function(){
         }
     };
 
+    const updateButtonsContentBasedOnTab = (subProjectEl = null) => {
+        const [...allTabs] = document.querySelectorAll('.main-container > .container');
+        const currTab = allTabs.find(tab => window.getComputedStyle(tab, null).display === 'block');
+        
+        if(currTab.classList.contains('today')){
+            const today = new Date();
+            data.dueDate = formatDate(today);
+            styleDueDateBtn(today);
+        }else{
+            const currProj = projects.getAllProjects().find(project => currTab.classList.contains(project.name.toLowerCase()));
+            const selectProjectBtn = data.addTaskContainer.querySelector('.bottom .select-project');
+            if(subProjectEl && subProjectEl.classList.length > 0){
+                const subProj = currProj.subProjects.findIndex(el => subProjectEl.classList.contains(el.name.toLowerCase()));
+                selectProjectBtn.innerHTML = currProj.getTemplateHTML(subProj) + `<img src="${moreSvg}" alt="expand">`;
+                data.projectName = {element: currProj, subProjectIndex: subProj};
+            }else{
+                selectProjectBtn.innerHTML = currProj.getTemplateHTML() + `<img src="${moreSvg}" alt="expand">`;
+                data.projectName = {element: currProj, subProjectIndex: null};
+            }
+            styleDueDateBtn(null);
+        }
+    };
+
     function activateButtons(e){
         const isAnyOfButtonsClicked = data.showHideBtn.findIndex(item => e.target === item.btn || item.btn.contains(e.target));
         const isBtnToggleElClicked = data.showHideBtn.find(item => e.target === item.el || (item.el.contains(e.target)&&e.target != data.cancelBtn));
         
         if(isAnyOfButtonsClicked != -1){
+            if(data.addTaskContainer === document.querySelector('#content > .add-task-container')) data.transparentFilterBg.style.display = 'block';
             const i = isAnyOfButtonsClicked;
             const itemsWithSameLayer = data.showHideBtn.filter(item => item.layer === data.showHideBtn[i].layer && item != data.showHideBtn[i]);
             
@@ -1037,6 +1065,8 @@ const addTaskBox = (function(){
             showClickedItem();
             
             function showClickedItem(){
+                if(data.showHideBtn[i].el.classList.contains('add-task-container')) updateButtonsContentBasedOnTab();
+                
                 data.showHideBtn[i].active = true;
                 _activateChoices(data.showHideBtn[i].btn, data.showHideBtn[i].el, data.showHideBtn[i].className);
                 data.showHideBtn[i].el.classList.toggle(data.showHideBtn[i].className);
@@ -1146,7 +1176,8 @@ const addTaskBox = (function(){
         getTaskData,
         setTaskData,
         datePicker,
-        getDueDate
+        getDueDate,
+        updateButtonsContentBasedOnTab
     };
 
 })();

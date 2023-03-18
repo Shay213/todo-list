@@ -200,7 +200,7 @@ img.svg{
     top: 0;
     right: -5px;
     opacity: 0;
-    z-index: 20;
+    z-index: 3;
 }
 
 .sidebar .handler:hover{
@@ -315,86 +315,15 @@ img.svg{
 @import url('./app/addTaskStyles.css');
 @import url('./app/tabsStyles.css');
 @import url('./app/projectsStyles.css');
+@import url('./app/addProject.css');
+@import url('./app/alertBox.css');
+@import url('./app/addSectionStyles.css');
 
 .bullet{
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background-color: #000;
-}
-
-.alert-box{
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    display:none;
-}
-
-.alert-box .icons{
-    display: flex;
-    justify-content: space-between;
-}
-
-.alert-box .icons > img{
-    width: 1.3rem;
-    height: 1.3rem;
-}
-
-.alert-box .icons .close{
-    height: 1.5rem;
-    width: 1.5rem;
-    border-radius: 6px;
-    transition: 400ms;
-}
-
-.alert-box .icons .close:hover{
-    background-color: var(--sidebar-hover-color);
-    cursor: pointer;
-    transition: 400ms;
-}
-
-.alert-box .buttons{
-    display: flex;
-    justify-content: end;
-    gap: 15px;
-}
-
-.alert-box .buttons button{
-    border: none;
-    outline: none;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-.alert-box .buttons button:first-of-type{
-    background-color: #f8f8f8;
-    transition: 400ms;
-}
-
-.alert-box .buttons button:last-of-type{
-    background-color: #eb7979;
-    color: #fff
-}
-
-.alert-box .buttons button:first-of-type:hover{
-    cursor: pointer;
-    background-color: var(--sidebar-hover-color);
-    transition: 400ms;
-}
-
-.alert-box .buttons button:last-of-type:hover{
-    cursor: pointer;
-    background-color: var(--topPanel-color);
-    transition: 400ms;
 }
 
 .filter-background{
@@ -404,6 +333,15 @@ img.svg{
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3);
     z-index: 80;
+}
+
+.filter-background-transparent{
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 5;
 }
 
 .prioOne{

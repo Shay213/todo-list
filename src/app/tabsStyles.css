@@ -132,6 +132,7 @@
 .container li > .bottom .label{
     display: flex;
     gap: 3px;
+    border-bottom: 1px solid #fff;
 }
 
 .container li > .bottom .label:hover{

@@ -3,6 +3,8 @@ import inboxIcon from '../assets/icons/inbox.svg';
 import pentagon from '../assets/icons/pentagon.svg';
 import inbox from '../assets/icons/inbox.svg';
 import more from '../assets/icons/more-dots.svg';
+import addIcon from '../assets/icons/add.svg';
+import moreIcon from '../assets/icons/more.svg';
 
 const projects = (function(){
     const allProjects = [];
@@ -52,8 +54,13 @@ const projects = (function(){
         }
     };
 
-    const _updateProjectsSidebar = function(){
-        let content = '';
+    const updateProjectsSidebar = function(){
+        let content = `
+        <figcaption>
+            <p>Projects</p>
+            <img class="svg" src="${addIcon}" alt="add">
+            <img class="svg" src="${moreIcon}" alt="more">
+        </figcaption>`;
         const projectTemplate = (color, name) =>
         `<li>
             <div class="bullet" style="background-color: ${color}"></div>
@@ -65,10 +72,10 @@ const projects = (function(){
             if(el.name === 'Inbox') return;
             content += projectTemplate(el.colorValue, el.name);
         });
-        sidebarProjects.innerHTML += content;
+        sidebarProjects.innerHTML = content;
     };
 
-    const _updateProjectPicker = function(){
+    const updateProjectPicker = function(){
         let content = '<input type="text" placeholder="Type a project">';
         const inboxTemplate = `
         <div class="inbox">
@@ -99,28 +106,33 @@ const projects = (function(){
             el.subProjects.forEach(el2 => subProjectsContent += subProjectTemplate(el2.name));
             content += projectTemplate(el.name, subProjectsContent);
         });
-        projectPicker.innerHTML += content;  
+        projectPicker.innerHTML = content;  
     };
 
-    const _initialProjects = (function(){
+    const createProject = (name, color) => {
+            const project = new Project(name.trim(), color);
+            allProjects.push(project);
+            return project;
+    };
+
+    const _init = (function(){
         allProjects.push(new Project('Inbox', ''));
         allProjects.push(new Project('Home', 'neutral'));
         allProjects[1].createSubProject('Routines');
         allProjects[1].createSubProject('Inspiration');
-        _updateProjectPicker();
-        _updateProjectsSidebar();
+        updateProjectPicker();
+        updateProjectsSidebar();
     })();
 
     const getAllProjects = () => allProjects;
 
     return {
         getAllProjects,
+        createProject,
+        updateProjectPicker,
+        updateProjectsSidebar
     };
 })();
 
 
 export default projects
-
-
-
-// CREATE TEMPLATE FOR PROJECTS

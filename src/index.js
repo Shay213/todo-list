@@ -9,6 +9,7 @@ import editTaskBox from './app/editTaskBox';
 import editDate from './app/editDate';
 import { tabSwitch } from './app/tabSwitch';
 import { toggleSidebarProjects } from './app/toggleSidebarProjects';
+import addProjects from './app/addProjects';
 
 toggleSidebar();
 sidebarResize();

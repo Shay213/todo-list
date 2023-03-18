@@ -1,0 +1,27 @@
+.container > .add-section{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    opacity: 0;
+    transition: 200ms;
+}
+
+.container > .add-section > div{
+    height: 1px;
+    flex: 1;
+    background-color: #f05252;
+}
+
+.container > .add-section > p{
+    font-size: .9rem;
+    width: max-content;
+    padding: 0 10px;
+    color: #f05252;
+    font-weight: 700;
+}
+
+.container > .add-section:hover{
+    opacity: 1;
+    cursor: pointer;
+    transition: 200ms;
+}

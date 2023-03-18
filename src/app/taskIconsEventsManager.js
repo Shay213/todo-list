@@ -4,18 +4,15 @@ export const taskIconsEventsManager = (activate, showDatePicker, showEditTaskBox
     const allIcons = [...editDateIcons, ...editDateIcons2];
     const editTaskIcons = document.querySelectorAll('.container > ul li .icons > div:nth-of-type(2)');
     const addButtons = document.querySelectorAll('.container > div.add-task');
-    let eventsActive = false;
 
-    if(activate && !eventsActive){
+    if(activate){
         if(showDatePicker) allIcons.forEach(el => el.addEventListener('click', showDatePicker, {once:true}));
         if(showEditTaskBox) editTaskIcons.forEach(el => el.addEventListener('click', showEditTaskBox, {once:true}));
         if(showAddTaskBox) addButtons.forEach(el => el.addEventListener('click', showAddTaskBox));
-        eventsActive = true;
     }
     else{
         allIcons.forEach(el => el.removeEventListener('click', showDatePicker));
         editTaskIcons.forEach(el => el.removeEventListener('click', showEditTaskBox));
         addButtons.forEach(el => el.removeEventListener('click', showAddTaskBox));
-        eventsActive = false;
     }
 };

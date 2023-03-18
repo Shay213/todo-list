@@ -1,0 +1,138 @@
+.add-project{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    background-color: #fff;
+    border-radius: 8px;
+    display: none;
+}
+
+.add-project > .header{
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.add-project > .header > h2{
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.add-project > .header > img{
+    width: 1.3rem;
+    margin-left: auto
+}
+
+.add-project > .inputs{
+    padding: 12px;
+    padding-bottom: 35px;
+}
+
+.add-project > .inputs > p{
+    margin: 5px 0;
+}
+
+.add-project > .inputs > p:last-of-type{
+    margin-top: 15px;
+}
+
+.add-project > .inputs > .noValid{
+    font-size: .9rem;
+    color: red;
+    margin-top: 5px;
+    display: none;
+}
+
+.add-project > .inputs > input{
+    width: 40ch;
+    border: none;
+    outline: 1px solid #cacaca;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 1rem;
+}
+
+.add-project > .inputs > .color-btn{
+    outline: 1px solid #cacaca;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.add-project > .inputs > .color-btn > div{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #737373;
+}
+
+.add-project > .buttons{
+    display: flex;
+    justify-content: end;
+    gap: 15px;
+    padding: 12px;
+    border-top: 1px solid #dddddd;
+}
+
+.add-project > .buttons > button{
+    font-size: .9rem;
+    width: 70px;
+    padding: 8px 0;
+    border: none;
+    border-radius: 6px;
+    transition: 400ms;
+    cursor: pointer;
+}
+
+.add-project > .buttons > button:first-of-type{
+    background-color: #f8f8f8;
+}
+
+.add-project > .buttons > button:first-of-type:hover{
+    background-color: #dfdfdf;
+    transition: 400ms;
+}
+
+.add-project > .buttons > button:last-of-type{
+    color: #fff;
+    background-color: rgb(235, 94, 94);
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.add-project > .inputs > .color-picker{
+    outline: 1px solid #cacaca;
+    border-radius: 3px;
+    font-size: .9rem;
+    display: none;
+    max-height: 140px;
+    overflow: auto;
+}
+
+.add-project > .inputs > .color-picker > div{
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+}
+
+.add-project > .inputs > .color-picker > div:hover{
+    cursor: pointer;
+    background-color: #dddddd;
+}
+
+.add-project > .inputs > .color-picker > div > div{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #737373;
+}
+

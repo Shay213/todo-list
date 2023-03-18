@@ -45,7 +45,8 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.edit-task-container .top .inputs > div input{
+.edit-task-container .top .inputs > div input,
+.add-task-container-inline .top .inputs > div input{
     z-index: 3;
     position: relative;
 }
@@ -65,7 +66,8 @@
     border-radius: 3px;
 }
 
-.edit-task-container .top .inputs div .label-added{
+.edit-task-container .top .inputs div .label-added,
+.add-task-container-inline .top .inputs div .label-added{
     z-index: 1;
 }
 
@@ -736,8 +738,8 @@
     transform: scale(0);
     transform-origin: top;
     padding: 0;
-    height: 140px;
-    overflow: hidden;
+    height: 240px;
+    overflow: auto;
 }
 
 .add-task-container .bottom .project-picker.show{

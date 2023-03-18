@@ -16,10 +16,10 @@ const addTaskBoxInline = (function(){
         clone.classList.add('add-task-container-inline');
         currTabUl.appendChild(clone);
         e.currentTarget.style.display = 'none';
-        _setUpAddTaskBox(clone, e.currentTarget);
+        _setUpAddTaskBox(clone, e.currentTarget, currTabUl);
     }
 
-    const _setUpAddTaskBox = (box, btn) => {
+    const _setUpAddTaskBox = (box, btn, currTabUl) => {
         deleteAddTaskInlineBox = () => {
             box.remove();
             btn.style.display = 'flex';
@@ -28,6 +28,7 @@ const addTaskBoxInline = (function(){
         addTaskBox.setData(box);
         addTaskBox.getAllButtons(false);
         addTaskBox.events(false);
+        addTaskBox.updateButtonsContentBasedOnTab(currTabUl);
         const cancelBtn = box.querySelector('.bottom > button.cancel-btn');
         cancelBtn.addEventListener('click', deleteTaskBox, {once:true});
     };
