@@ -32,6 +32,12 @@ const projectsTabs = (function(){
             });
         });
     })();
+
+    const allTasksElements = document.querySelectorAll('.main-container > .container > ul > li');
+    return {
+        allTasksElements
+    };
+
 })();
 
 export default projectsTabs

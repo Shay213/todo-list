@@ -94,6 +94,8 @@ const tasks = (function(){
         return allTasks.filter(task => task.projectName.element.name === projectName);
     };
 
+    const removeTask = id => allTasks.splice(allTasks.findIndex(task => task.id === id),1);
+
     const getPriorityClassName = function(priority) {
         switch(priority){
             case 1:
@@ -182,7 +184,8 @@ const tasks = (function(){
         getPriorityClassName,
         getAllTasks,
         taskNameWithoutLabels,
-        howManyTasksInProject
+        howManyTasksInProject,
+        removeTask
     };
     
 })();

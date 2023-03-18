@@ -14,6 +14,7 @@ import existingLabels from './labels';
 import { createTaskHTMLContent } from "./createTaskHTMLContent";
 import addTaskBoxInline from "./addTaskBoxInline";
 import todayTab from "./todayTab";
+import taskFinished from "./taskFinished";
 
 const addTaskBox = (function(){
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -76,11 +77,13 @@ const addTaskBox = (function(){
             const container = document.querySelector(`.main-container > .${projName} > ul.${subProjName}`);
             const newTaskEl = taskEl();
             if(!task.dueDate) newTaskEl.querySelector('.bottom > .date').classList.add('empty-date');
+            taskFinished.activateTaskDoneBtn(newTaskEl.querySelector('.top > .priority-box'));
             container.appendChild(newTaskEl);
         }else{
             const container = document.querySelector(`.main-container > .${projName} > ul:first-of-type`);
             const newTaskEl = taskEl();
             if(!task.dueDate) newTaskEl.querySelector('.bottom > .date').classList.add('empty-date');
+            taskFinished.activateTaskDoneBtn(newTaskEl.querySelector('.top > .priority-box'));
             container.appendChild(newTaskEl);
         }
 
@@ -88,6 +91,7 @@ const addTaskBox = (function(){
         if(isToday){
             const container = document.querySelector(`.main-container > .today > ul.today-tasks`);
             const newTaskEl = taskEl();
+            taskFinished.activateTaskDoneBtn(newTaskEl.querySelector('.top > .priority-box'));
             container.appendChild(newTaskEl);
         }
 
