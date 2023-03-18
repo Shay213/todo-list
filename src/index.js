@@ -10,6 +10,7 @@ import editDate from './app/editDate';
 import { tabSwitch } from './app/tabSwitch';
 import { toggleSidebarProjects } from './app/toggleSidebarProjects';
 import addProjects from './app/addProjects';
+import addSections from './app/addSections';
 
 toggleSidebar();
 sidebarResize();

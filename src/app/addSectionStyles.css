@@ -25,3 +25,51 @@
     cursor: pointer;
     transition: 200ms;
 }
+
+.container > .add-section-box{
+    margin-top: 25px;
+}
+
+.container > .add-section-box > input{
+    width: 100%;
+    border: none;
+    outline: 1px solid #cacaca;
+    border-radius: 3px;
+    padding: 10px 10px;
+    font-size: 1rem;
+}
+.container > .add-section-box > .noValid{
+    font-size: .9rem;
+    color: red;
+    margin: 5px 0;
+    display: none;
+}
+
+.container > .add-section-box > .buttons{
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.container > .add-section-box > .buttons > button{
+    border: none;
+    border-radius: 6px;
+    font-size: .9rem;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.container > .add-section-box > .buttons > button:first-of-type{
+    color: #fff;
+    background-color: rgb(235, 94, 94);
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.container > .add-section-box > .buttons > button:last-of-type{
+    background-color: #f8f8f8;
+}
+.container > .add-section-box > .buttons > button:last-of-type:hover{
+    background-color: #dfdfdf;
+    transition: 400ms;
+}

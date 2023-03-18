@@ -44,7 +44,6 @@ const addProjects = (function(){
     input.addEventListener('input', e => {
         const re = new RegExp(`^${e.target.value}$`, 'i');
         const isInExisting = projects.getAllProjects().find(project => re.test(project.name));
-        console.log(isInExisting);
         if(isInExisting){
             noValidMessage.style.display = 'block';
             input.style.outline = '1px solid red';
