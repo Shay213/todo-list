@@ -114,9 +114,9 @@ const tasks = (function(){
     const taskNameWithoutLabels = (taskName) => taskName.replace(/@[^ @]+/g, '').replace(/\s+/g, ' ');
 
     const _createTestTasks = (function(){
-        const date1 = new Date(2023, 1, 20);
-        const date2 = new Date(2023, 2, 10);
-        const date3 = new Date(2023, 2, 11);
+        const date1 = new Date(2023, 2, 25);
+        const date2 = new Date(2023, 2, 25);
+        const date3 = new Date(2023, 2, 24);
 
         createTask({taskName: 'Task 1'});
         createTask({taskName: 'Task 2'});

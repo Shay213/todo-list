@@ -2,7 +2,11 @@
     display: flex;
     align-items: end;
     gap: 5px;
+    padding-top:30px;
     margin-bottom: 40px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
 }
 
 .container .title h3,
@@ -56,6 +60,8 @@
 .container > ul > figcaption{
     padding: 6px 0;
     border-bottom: 1px solid var(--sidebar-hover-color);
+    position: sticky;
+    top: 0;
 }
 
 .container figcaption{

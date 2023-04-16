@@ -1,0 +1,97 @@
+.upcoming{
+    display: none;
+}
+
+.upcoming > .nav{
+    margin-bottom: 40px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background-color: #fff;
+}
+
+.upcoming > .nav > .title{
+    margin-bottom: 15px;
+    position: static;
+}
+
+.upcoming > .nav > .title > div{
+    height: 24.8px;
+}
+
+.upcoming > .nav >  .title > .arrows{
+    margin-left: auto;
+    border: 1px solid #c4c4c4;
+    padding: 0;
+    gap:0;
+    border-radius: 3px;
+}
+
+.upcoming > .nav >  .title > .arrows:hover{
+    margin-left: auto;
+    background-color: #fff;
+}
+
+.upcoming > .nav >  .title > .arrows > div:hover{
+    background-color: var(--sidebar-hover-color);
+}
+
+.upcoming > .nav >  .title > .arrows > div{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.upcoming > .nav >  .title > .back{
+    border: 1px solid #c4c4c4;
+    border-radius: 3px;
+    font-size: .87rem;
+    font-weight: 300;
+    padding: 3px 5px;
+    color: rgb(97, 97, 97);
+}
+
+.upcoming > .nav > .week{
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    justify-items: center;
+    align-items: center;
+}
+
+.upcoming > .nav > .week > div{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--sidebar-hover-color);
+    padding: 10px 0;
+}
+
+.upcoming > .nav > .week > div > .dayName{
+    font-size: .85rem;
+    font-weight: 300;
+}
+
+.upcoming > .nav > .week > div > .dayNum{
+    font-size: 1.1rem;
+}
+
+.upcoming > ul > li > .bottom > .date{
+    display: none;
+}
+
+.upcoming > .nav > .week > div.today p.dayNum{
+    color: rgb(230, 97, 97);
+    font-weight: 700;
+}
+
+.upcoming > .nav > .week > div.past p.dayNum{
+    color: rgb(202, 202, 202);
+}
+
+.upcoming > .nav > .week > div.active{
+    border-bottom: 2px solid rgb(230, 97, 97);
+}
+

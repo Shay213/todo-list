@@ -1041,7 +1041,7 @@ const addTaskBox = (function(){
             const today = new Date();
             data.dueDate = formatDate(today);
             styleDueDateBtn(today);
-        }else{
+        }else if(!currTab.classList.contains('upcoming') && !currTab.classList.contains('filters')){
             const currProj = projects.getAllProjects().find(project => currTab.classList.contains(project.name.toLowerCase()));
             const selectProjectBtn = data.addTaskContainer.querySelector('.bottom .select-project');
             if(subProjectEl && subProjectEl.classList.length > 0){

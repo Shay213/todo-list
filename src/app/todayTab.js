@@ -30,7 +30,7 @@ const todayTab = (function(){
             isOverdue ? content = createTaskHTMLContent(el, true) : content = createTaskHTMLContent(el);
             
             if(isOverdue) overdueEl.insertAdjacentHTML('beforeend', content);
-            else if(isToday) todayTasksEl.insertAdjacentElement('beforeend', content);
+            else if(isToday) todayTasksEl.insertAdjacentHTML('beforeend', content);
         });
     };
     

@@ -12,6 +12,7 @@ import { toggleSidebarProjects } from './app/toggleSidebarProjects';
 import addProjects from './app/addProjects';
 import addSections from './app/addSections';
 import taskFinished from './app/taskFinished';
+import upcomingTab from './app/upcomingTab';
 
 toggleSidebar();
 sidebarResize();
